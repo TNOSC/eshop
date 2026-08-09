@@ -37,7 +37,7 @@ public static class CustomResults
             title: GetTitle(result.FirstError),
             detail: GetDetail(result.FirstError),
             type: GetType(result.FirstError.Type),
-            statusCode: GetStatusCode(result.FirstError.Type),
+            statusCode: GetStatusCode(result.FirstError),
             extensions: GetErrors(result));
     }
     private static string GetTitle(Error error) =>
@@ -82,8 +82,8 @@ public static class CustomResults
             _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
         };
 
-    private static int GetStatusCode(ErrorType errorType) =>
-        errorType switch
+    private static int GetStatusCode(Error error) =>
+        error.Type switch
         {
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
@@ -92,9 +92,14 @@ public static class CustomResults
             ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             ErrorType.Failure => StatusCodes.Status500InternalServerError,
             ErrorType.Unexpected => StatusCodes.Status500InternalServerError,
-            ErrorType.Custom => StatusCodes.Status500InternalServerError,
+            ErrorType.Custom => IsValidHttpStatusCode(error.NumericType)
+                ? error.NumericType
+                : StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };
+
+    private static bool IsValidHttpStatusCode(int statusCode) =>
+        statusCode is >= 100 and <= 599;
 
     private static Dictionary<string, object?>? GetErrors(Result result)
     {
