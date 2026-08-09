@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DocumentationFile>bin\Debug\net10.0\Tnosc.Lib.Host.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
