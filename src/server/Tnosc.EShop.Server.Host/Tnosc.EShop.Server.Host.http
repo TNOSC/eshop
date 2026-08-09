@@ -1,0 +1,6 @@
+@Tnosc.EShop.Server.Host_HostAddress = http://localhost:5053
+
+GET {{Tnosc.EShop.Server.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

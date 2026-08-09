@@ -1,0 +1,46 @@
+<Solution>
+  <Folder Name="/aspire/">
+    <Project Path="aspire/Tnosc.EShop.AppHost/Tnosc.EShop.AppHost.csproj" Id="f6b12fe9-0a93-4e33-821b-b6049b50bb88" />
+    <Project Path="aspire/Tnosc.EShop.ServiceDefaults/Tnosc.EShop.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/lib/">
+    <Project Path="lib/Tnosc.Lib.Api/Tnosc.Lib.Api.csproj" Id="125c6462-6b4e-4bcf-b1f9-01682b2f0cae" />
+    <Project Path="lib/Tnosc.Lib.Application/Tnosc.Lib.Application.csproj" Id="324075fe-c754-4aaa-92c7-04a566dd86a7" />
+    <Project Path="lib/Tnosc.Lib.Domain/Tnosc.Lib.Domain.csproj" Id="7662c2e5-3a3f-4b38-9a19-2b1f32dd97f7" />
+    <Project Path="lib/Tnosc.Lib.Host/Tnosc.Lib.Host.csproj" Id="7b7d4852-7e5d-47bc-9ff6-2e28cbe61162" />
+    <Project Path="lib/Tnosc.Lib.Infrastructure.Persistence/Tnosc.Lib.Infrastructure.Persistence.csproj" Id="13e82821-77d3-41c7-8c18-b1e7669ba3d5" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/client/" />
+  <Folder Name="/src/client/web/" />
+  <Folder Name="/src/server/">
+    <Project Path="src/server/Tnosc.EShop.Server.Host/Tnosc.EShop.Server.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/server/Api/">
+    <Project Path="src/server/Tnosc.EShop.Server.Api/Tnosc.EShop.Server.Api.csproj" Id="da23fb67-2351-464a-b176-1c6c76e6ea56" />
+  </Folder>
+  <Folder Name="/src/server/ApplicationCore/">
+    <Project Path="src/server/Tnosc.EShop.Server.Application/Tnosc.EShop.Server.Application.csproj" Id="a0637436-ff9b-4baa-b843-920d11e07e08" />
+    <Project Path="src/server/Tnosc.EShop.Server.Domain/Tnosc.EShop.Server.Domain.csproj" Id="503dc29f-76b9-4e5f-9c3f-17abe1e78513" />
+  </Folder>
+  <Folder Name="/src/server/Infrastructure/">
+    <Project Path="src/server/Tnosc.EShop.Server.Infrastructure.External/Tnosc.EShop.Server.Infrastructure.External.csproj" Id="8f01755d-4ee2-4cdb-8d29-24ee1008e51a" />
+    <Project Path="src/server/Tnosc.EShop.Server.Infrastructure.Job/Tnosc.EShop.Server.Infrastructure.Job.csproj" Id="76200200-c52a-4095-97f2-4c33ee7d7fd8" />
+    <Project Path="src/server/Tnosc.EShop.Server.Infrastructure.Persistence/Tnosc.EShop.Server.Infrastructure.Persistence.csproj" Id="37411fd8-5ee9-4a88-8c2e-57c8233fe5b5" />
+  </Folder>
+  <Folder Name="/src/server/Shared/">
+    <Project Path="src/server/Tnosc.EShop.Server.Shared/Tnosc.EShop.Server.Shared.csproj" Id="bc067331-949b-4883-b404-e86863a6ce88" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/server/">
+    <Project Path="tests/server/Tnosc.EShop.Server.Tests.Acceptance/Tnosc.EShop.Server.Tests.Acceptance.csproj" Id="05ccabcc-2531-4f86-8191-3f09affb8e46" />
+    <Project Path="tests/server/Tnosc.EShop.Server.Tests.Architecture/Tnosc.EShop.Server.Tests.Architecture.csproj" Id="3414e588-dd5c-4e8c-9f87-2059ab7a5d1c" />
+    <Project Path="tests/server/Tnosc.EShop.Server.Tests.Integration/Tnosc.EShop.Server.Tests.Integration.csproj" Id="6a2c4f58-08ad-4588-be00-72a201932849" />
+    <Project Path="tests/server/Tnosc.EShop.Server.Tests.Unit/Tnosc.EShop.Server.Tests.Unit.csproj" Id="e50eb352-2091-45b2-a821-fc64af4697bb" />
+  </Folder>
+</Solution>

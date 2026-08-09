@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Tnosc.EShop.Server.Application\Tnosc.EShop.Server.Application.csproj" />
+  </ItemGroup>
+</Project>

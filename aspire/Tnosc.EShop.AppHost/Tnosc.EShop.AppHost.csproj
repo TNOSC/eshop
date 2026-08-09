@@ -1,0 +1,13 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.4.6">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UserSecretsId>2d34ade3-0fcc-417f-a3e9-f0827773adeb</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\server\Tnosc.EShop.Server.Host\Tnosc.EShop.Server.Host.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

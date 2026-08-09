@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Domain\Tnosc.Lib.Domain.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
+  </ItemGroup>
+</Project>
