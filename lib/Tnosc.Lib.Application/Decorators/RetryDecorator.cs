@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.Lib.Application.Attributes;
@@ -31,9 +30,12 @@ public static class RetryDecorator
     /// <typeparam name="TResponse">The response type.</typeparam>
     /// <param name="innerHandler">The inner command handler.</param>
     public sealed class CommandHandler<TCommand, TResponse>(ICommandHandler<TCommand, TResponse> innerHandler)
-        : ICommandHandler<TCommand, TResponse>
+        : ICommandHandler<TCommand, TResponse>, IHandlerDecorator
         where TCommand : ICommand<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command, retrying with backoff when the inner handler throws a retriable <see cref="BaseException"/>.
         /// </summary>
@@ -42,7 +44,7 @@ public static class RetryDecorator
         public ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
                 ct => innerHandler.HandleAsync(command, ct),
-                GetMaxAttempts(innerHandler),
+                GetMaxAttempts(this, typeof(TCommand)),
                 cancellationToken);
     }
 
@@ -52,9 +54,12 @@ public static class RetryDecorator
     /// <typeparam name="TCommand">The command type.</typeparam>
     /// <param name="innerHandler">The inner command handler.</param>
     public sealed class CommandBaseHandler<TCommand>(ICommandHandler<TCommand> innerHandler)
-        : ICommandHandler<TCommand>
+        : ICommandHandler<TCommand>, IHandlerDecorator
         where TCommand : ICommand
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command, retrying with backoff when the inner handler throws a retriable <see cref="BaseException"/>.
         /// </summary>
@@ -63,7 +68,7 @@ public static class RetryDecorator
         public ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
                 ct => innerHandler.HandleAsync(command, ct),
-                GetMaxAttempts(innerHandler),
+                GetMaxAttempts(this, typeof(TCommand)),
                 cancellationToken);
     }
 
@@ -74,9 +79,12 @@ public static class RetryDecorator
     /// <typeparam name="TResponse">The response type.</typeparam>
     /// <param name="innerHandler">The inner query handler.</param>
     public sealed class QueryHandler<TQuery, TResponse>(IQueryHandler<TQuery, TResponse> innerHandler)
-        : IQueryHandler<TQuery, TResponse>
+        : IQueryHandler<TQuery, TResponse>, IHandlerDecorator
         where TQuery : IQuery<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the query, retrying with backoff when the inner handler throws a retriable <see cref="BaseException"/>.
         /// </summary>
@@ -85,17 +93,18 @@ public static class RetryDecorator
         public ValueTask<Result<TResponse>> HandleAsync(TQuery query, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
                 ct => innerHandler.HandleAsync(query, ct),
-                GetMaxAttempts(innerHandler),
+                GetMaxAttempts(this, typeof(TQuery)),
                 cancellationToken);
     }
 
     /// <summary>
     /// Resolves the maximum number of attempts for the specified handler, from its <see cref="RetryAttribute"/>
-    /// if present, defaulting to 3 otherwise. Caches the reflection result per handler type.
+    /// if present, defaulting to 3 otherwise. Caches the reflection result per outermost decorator type.
     /// </summary>
-    /// <param name="handler">The inner handler instance.</param>
-    private static int GetMaxAttempts(object handler) =>
-        RetryCache.GetOrAdd(handler.GetType(), static t => t.GetCustomAttribute<RetryAttribute>())?.MaxRetries ?? 3;
+    /// <param name="handler">The decorator instance wrapping the handler.</param>
+    /// <param name="messageType">The command or query type the handler processes.</param>
+    private static int GetMaxAttempts(object handler, Type messageType) =>
+        RetryCache.GetOrAdd(handler.GetType(), _ => HandlerMetadata.Find<RetryAttribute>(handler, messageType))?.MaxRetries ?? 3;
 
     /// <summary>
     /// Executes <paramref name="action"/>, retrying with exponential backoff when it throws a

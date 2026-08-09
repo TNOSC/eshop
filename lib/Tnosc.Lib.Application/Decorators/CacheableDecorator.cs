@@ -37,9 +37,12 @@ public static class CacheableDecorator
     public sealed class QueryHandler<TQuery, TResponse>(
         IQueryHandler<TQuery, TResponse> innerHandler,
         HybridCache cache)
-        : IQueryHandler<TQuery, TResponse>
+        : IQueryHandler<TQuery, TResponse>, IHandlerDecorator
         where TQuery : IQuery<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the query, caching its result when the inner handler is marked <see cref="CacheableAttribute"/>.
         /// </summary>
@@ -48,8 +51,8 @@ public static class CacheableDecorator
         public async ValueTask<Result<TResponse>> HandleAsync(TQuery query, CancellationToken cancellationToken = default)
         {
             CacheableAttribute? attribute = CacheableCache.GetOrAdd(
-                innerHandler.GetType(),
-                static t => t.GetCustomAttribute<CacheableAttribute>());
+                GetType(),
+                _ => HandlerMetadata.Find<CacheableAttribute>(this, typeof(TQuery)));
 
             if (attribute is null)
             {
@@ -59,8 +62,8 @@ public static class CacheableDecorator
             string cacheKey = BuildCacheKey(query);
 
             string[] tags = TagsCache.GetOrAdd(
-                innerHandler.GetType(),
-                static t => [.. t.GetCustomAttributes<CacheTagAttribute>().Select(a => a.Tag)]);
+                GetType(),
+                _ => [.. HandlerMetadata.FindAll<CacheTagAttribute>(this, typeof(TQuery)).Select(a => a.Tag)]);
 
             HybridCacheEntryOptions options = new()
             {

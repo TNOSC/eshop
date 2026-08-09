@@ -39,9 +39,12 @@ public static class ExceptionDecorator
     public sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
         ILogger<CommandHandler<TCommand, TResponse>> logger)
-        : ICommandHandler<TCommand, TResponse>
+        : ICommandHandler<TCommand, TResponse>, IHandlerDecorator
         where TCommand : ICommand<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the specified command, converting any thrown exception into a failure result.
         /// </summary>
@@ -69,9 +72,12 @@ public static class ExceptionDecorator
     public sealed class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         ILogger<CommandBaseHandler<TCommand>> logger)
-        : ICommandHandler<TCommand>
+        : ICommandHandler<TCommand>, IHandlerDecorator
         where TCommand : ICommand
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the specified command, converting any thrown exception into a failure result.
         /// </summary>
@@ -99,9 +105,12 @@ public static class ExceptionDecorator
     public sealed class QueryHandler<TQuery, TResponse>(
         IQueryHandler<TQuery, TResponse> innerHandler,
         ILogger<QueryHandler<TQuery, TResponse>> logger)
-        : IQueryHandler<TQuery, TResponse>
+        : IQueryHandler<TQuery, TResponse>, IHandlerDecorator
         where TQuery : IQuery<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the specified query, converting any thrown exception into a failure result.
         /// </summary>

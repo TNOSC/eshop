@@ -32,9 +32,12 @@ public static class ValidationDecorator
     public sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
         IEnumerable<IValidator<TCommand>> validators)
-        : ICommandHandler<TCommand, TResponse>
+        : ICommandHandler<TCommand, TResponse>, IHandlerDecorator
         where TCommand : ICommand<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command after running validators. Returns validation errors if any.
         /// </summary>
@@ -62,9 +65,12 @@ public static class ValidationDecorator
     public sealed class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         IEnumerable<IValidator<TCommand>> validators)
-        : ICommandHandler<TCommand>
+        : ICommandHandler<TCommand>, IHandlerDecorator
         where TCommand : ICommand
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command after running validators. Returns validation errors if any.
         /// </summary>

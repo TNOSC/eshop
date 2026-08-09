@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -34,9 +33,12 @@ public static class CacheInvalidationDecorator
     public sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
         HybridCache cache)
-        : ICommandHandler<TCommand, TResponse>
+        : ICommandHandler<TCommand, TResponse>, IHandlerDecorator
         where TCommand : ICommand<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command and, on success, removes every cache entry tagged with the
         /// inner handler's <see cref="CacheTagAttribute"/> values.
@@ -45,7 +47,7 @@ public static class CacheInvalidationDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            string[] tags = GetTags(innerHandler.GetType());
+            string[] tags = GetTags(this, typeof(TCommand));
 
             if (tags.Length == 0)
             {
@@ -72,9 +74,12 @@ public static class CacheInvalidationDecorator
     public sealed class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         HybridCache cache)
-        : ICommandHandler<TCommand>
+        : ICommandHandler<TCommand>, IHandlerDecorator
         where TCommand : ICommand
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command and, on success, removes every cache entry tagged with the
         /// inner handler's <see cref="CacheTagAttribute"/> values.
@@ -83,7 +88,7 @@ public static class CacheInvalidationDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            string[] tags = GetTags(innerHandler.GetType());
+            string[] tags = GetTags(this, typeof(TCommand));
 
             if (tags.Length == 0)
             {
@@ -102,12 +107,14 @@ public static class CacheInvalidationDecorator
     }
 
     /// <summary>
-    /// Resolves the <see cref="CacheTagAttribute"/> values declared on the specified handler type,
-    /// caching the reflection result per handler type to avoid repeated attribute lookups.
+    /// Resolves the <see cref="CacheTagAttribute"/> values declared on the unwrapped handler type,
+    /// caching the result per outermost decorator type to avoid repeated attribute lookups.
     /// </summary>
-    /// <param name="handlerType">The inner command handler's runtime type.</param>
-    private static string[] GetTags(Type handlerType) =>
-        TagsCache.GetOrAdd(handlerType, static t => [.. t.GetCustomAttributes<CacheTagAttribute>().Select(a => a.Tag)]);
+    /// <param name="handler">The decorator instance wrapping the handler.</param>
+    /// <param name="messageType">The command type the handler processes.</param>
+    private static string[] GetTags(object handler, Type messageType) =>
+        TagsCache.GetOrAdd(handler.GetType(), _ =>
+            [.. HandlerMetadata.FindAll<CacheTagAttribute>(handler, messageType).Select(a => a.Tag)]);
 
     /// <summary>
     /// Removes every cache entry associated with the specified tags.

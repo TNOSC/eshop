@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.Lib.Application.Abstractions.Persistence;
@@ -24,12 +23,13 @@ public static class TransactionDecorator
     private static readonly ConcurrentDictionary<Type, bool> TransactionalCache = new();
 
     /// <summary>
-    /// Determines whether the specified handler's concrete type is marked <see cref="TransactionalAttribute"/>,
-    /// caching the reflection result per handler type to avoid repeated attribute lookups.
+    /// Determines whether the unwrapped handler type is marked <see cref="TransactionalAttribute"/>,
+    /// caching the result per outermost decorator type to avoid repeated attribute lookups.
     /// </summary>
-    /// <param name="handler">The inner command handler instance.</param>
-    private static bool IsTransactional(object handler) =>
-        TransactionalCache.GetOrAdd(handler.GetType(), static t => t.GetCustomAttribute<TransactionalAttribute>() is not null);
+    /// <param name="handler">The decorator instance wrapping the handler.</param>
+    /// <param name="messageType">The command type the handler processes.</param>
+    private static bool IsTransactional(object handler, Type messageType) =>
+        TransactionalCache.GetOrAdd(handler.GetType(), _ => HandlerMetadata.Find<TransactionalAttribute>(handler, messageType) is not null);
 
     /// <summary>
     /// Transaction decorator for command handlers that return a response.
@@ -41,9 +41,12 @@ public static class TransactionDecorator
     public sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
         IUnitOfWork unitOfWork)
-        : ICommandHandler<TCommand, TResponse>
+        : ICommandHandler<TCommand, TResponse>, IHandlerDecorator
         where TCommand : ICommand<TResponse>
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command within a transaction when the inner handler is marked <see cref="TransactionalAttribute"/>.
         /// Commits the transaction on success and rolls it back on error or exception.
@@ -52,7 +55,7 @@ public static class TransactionDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            if (!IsTransactional(innerHandler))
+            if (!IsTransactional(this, typeof(TCommand)))
             {
                 return await innerHandler.HandleAsync(command, cancellationToken);
             }
@@ -91,9 +94,12 @@ public static class TransactionDecorator
     public sealed class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         IUnitOfWork unitOfWork)
-        : ICommandHandler<TCommand>
+        : ICommandHandler<TCommand>, IHandlerDecorator
         where TCommand : ICommand
     {
+        /// <inheritdoc />
+        public object InnerHandler => innerHandler;
+
         /// <summary>
         /// Handles the command within a transaction when the inner handler is marked <see cref="TransactionalAttribute"/>.
         /// Commits the transaction on success and rolls it back on error or exception.
@@ -102,7 +108,7 @@ public static class TransactionDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            if (!IsTransactional(innerHandler))
+            if (!IsTransactional(this, typeof(TCommand)))
             {
                 return await innerHandler.HandleAsync(command, cancellationToken);
             }
