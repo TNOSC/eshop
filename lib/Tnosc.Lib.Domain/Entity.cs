@@ -106,6 +106,11 @@ public abstract class Entity<TEntityId> : IEntity<TEntityId>, IEquatable<Entity<
             return false;
         }
 
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+
         return Id.Equals(obj: other.Id);
     }
 

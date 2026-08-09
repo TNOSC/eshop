@@ -13,7 +13,7 @@ namespace Tnosc.Lib.Domain.Results;
 /// <summary>
 /// Represents a class containing utility methods for handling operation results.
 /// </summary>
-public class Result
+public class Result : IResult
 {
     /// <summary>
     /// Gets a value indicating whether the state is a success.
