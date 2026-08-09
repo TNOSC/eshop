@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -26,11 +26,13 @@ namespace Tnosc.Lib.Infrastructure.Persistence;
 /// Provides a unit-of-work wrapper around a DbContext to manage transactions and save operations.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type.</typeparam>
-public sealed class UnitOfWork<TContext> : IUnitOfWork
+public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
     where TContext : DbContext
 {
     private readonly TContext _context;
     private readonly IUserContext _userContext;
+    private readonly IDomainEventTypeRegistry _domainEventTypeRegistry;
+    private readonly TimeProvider _timeProvider;
     private IDbContextTransaction? _currentTransaction;
 
     /// <summary>
@@ -38,11 +40,21 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork
     /// </summary>
     /// <param name="context">The <typeparamref name="TContext"/> <see cref="DbContext"/> instance to wrap.</param>
     /// <param name="userContext">Provides information about the current caller.</param>
-    /// <exception cref="ArgumentNullException">Thrown if <paramref name="context"/> is <c>null</c>.</exception>
-    public UnitOfWork(TContext context, IUserContext userContext)
+    /// <param name="domainEventTypeRegistry">Resolves the durable contract name for a domain event type.</param>
+    /// <param name="timeProvider">Supplies the current UTC time for audit stamping.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if any of the required parameters is <c>null</c>.
+    /// </exception>
+    public UnitOfWork(
+        TContext context,
+        IUserContext userContext,
+        IDomainEventTypeRegistry domainEventTypeRegistry,
+        TimeProvider timeProvider)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _userContext = userContext ?? throw new ArgumentNullException(nameof(userContext));
+        _domainEventTypeRegistry = domainEventTypeRegistry ?? throw new ArgumentNullException(nameof(domainEventTypeRegistry));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
     /// <summary>
@@ -69,8 +81,14 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork
     /// Begins a new transaction on the underlying database.
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <exception cref="InvalidOperationException">Thrown when a transaction is already in flight.</exception>
     public async ValueTask BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
+        if (_currentTransaction is not null)
+        {
+            throw new InvalidOperationException("A transaction is already in progress on this unit of work.");
+        }
+
         _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 
@@ -118,13 +136,20 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork
         }
     }
 
+    /// <summary>
+    /// Releases the transaction currently in flight, if any.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+    {
+        if (_currentTransaction is not null)
+        {
+            await _currentTransaction.DisposeAsync();
+            _currentTransaction = null;
+        }
+    }
+
     private void ConvertDomainEventsToOutboxMessage()
     {
-        var jsonSerializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = false
-        };
-
         IEnumerable<OutboxMessage> outboxMessages = _context.ChangeTracker
             .Entries<IHasDomainEvent>()
             .Select(x => x.Entity)
@@ -137,8 +162,8 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork
 
             })
             .Select(domainEvent => new OutboxMessage(
-                domainEvent.GetType().Name,
-                JsonSerializer.Serialize(domainEvent, jsonSerializerOptions)
+                _domainEventTypeRegistry.GetName(domainEvent.GetType()),
+                JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), OutboxSerialization.Options)
             ));
 
         _context.Set<OutboxMessage>().AddRange(outboxMessages);
@@ -146,17 +171,19 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork
 
     private void UpdateAuditableEntries()
     {
+        DateTime utcNow = _timeProvider.GetUtcNow().UtcDateTime;
+
         foreach (EntityEntry<IAuditable> auditable in _context.ChangeTracker.Entries<IAuditable>())
         {
             if (auditable.State == EntityState.Added)
             {
-                auditable.Property(nameof(IAuditable.CreatedOnUtc)).CurrentValue = DateTimeOffset.UtcNow;
+                auditable.Property(nameof(IAuditable.CreatedOnUtc)).CurrentValue = utcNow;
                 auditable.Property(nameof(IAuditable.CreatedBy)).CurrentValue = _userContext.UserId ?? "system";
             }
 
             if (auditable.State == EntityState.Modified)
             {
-                auditable.Property(nameof(IAuditable.UpdatedOnUtc)).CurrentValue = DateTimeOffset.UtcNow;
+                auditable.Property(nameof(IAuditable.UpdatedOnUtc)).CurrentValue = utcNow;
                 auditable.Property(nameof(IAuditable.UpdatedBy)).CurrentValue = _userContext.UserId ?? "system";
             }
         }

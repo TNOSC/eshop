@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.Lib.Domain;
 
-namespace Tnosc.Lib.Infrastructure.Publishers;
+namespace Tnosc.Lib.Infrastructure.Persistence.Publishers;
 
 /// <summary>
 /// Interface for publishing domain events

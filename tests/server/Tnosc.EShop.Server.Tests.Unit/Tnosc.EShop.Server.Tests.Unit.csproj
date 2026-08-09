@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\..\src\server\Tnosc.EShop.Server.Domain\Tnosc.EShop.Server.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\server\Tnosc.EShop.Server.Application\Tnosc.EShop.Server.Application.csproj" />
     <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Api\Tnosc.Lib.Api.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Infrastructure.Persistence\Tnosc.Lib.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>

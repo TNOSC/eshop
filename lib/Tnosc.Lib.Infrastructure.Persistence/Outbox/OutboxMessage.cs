@@ -58,6 +58,16 @@ public sealed class OutboxMessage
     public string? Error { get; private set; }
 
     /// <summary>
+    /// Gets the number of processing attempts made for this message.
+    /// </summary>
+    public int Attempts { get; private set; }
+
+    /// <summary>
+    /// Gets the earliest UTC date and time at which the message may be attempted again, if it exists.
+    /// </summary>
+    public DateTime? NextAttemptOnUtc { get; private set; }
+
+    /// <summary>
     /// Marks the item as processed at the specified UTC date and time, and clears any existing error state.
     /// </summary>
     /// <param name="processedOnUtc">The date and time, in UTC, when the item was processed.</param>
@@ -69,12 +79,16 @@ public sealed class OutboxMessage
     }
 
     /// <summary>
-    /// Marks the operation as failed and records the specified error message.
+    /// Marks a processing attempt as failed, records the specified error message, increments
+    /// <see cref="Attempts"/>, and schedules the next attempt.
     /// </summary>
     /// <param name="error">The error message that describes the reason for the failure. Cannot be null.</param>
-    public void MarkFailed(string error)
+    /// <param name="nextAttemptOnUtc">The UTC date and time at which the next attempt may be made.</param>
+    public void MarkFailed(string error, DateTime nextAttemptOnUtc)
     {
         Error = error;
         ProcessedOnUtc = null;
+        Attempts++;
+        NextAttemptOnUtc = nextAttemptOnUtc;
     }
 }

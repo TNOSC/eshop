@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tnosc.Lib.Application.DomainEvents;
 using Tnosc.Lib.Domain;
 
-namespace Tnosc.Lib.Infrastructure.Publishers;
+namespace Tnosc.Lib.Infrastructure.Persistence.Publishers;
 
 internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
     : IDomainEventsPublisher
@@ -58,7 +58,8 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
                 domainEventType,
                 et => typeof(HandlerWrapper<>).MakeGenericType(et));
 
-            return (HandlerWrapper)Activator.CreateInstance(wrapperType, handler);
+            return (HandlerWrapper)(Activator.CreateInstance(wrapperType, handler)
+                ?? throw new InvalidOperationException($"Failed to create a handler wrapper for domain event type '{domainEventType}'."));
         }
     }
 
