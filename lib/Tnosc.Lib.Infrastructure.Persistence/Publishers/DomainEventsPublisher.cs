@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -29,10 +29,10 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
 
             Type domainEventType = domainEvent.GetType();
             Type handlerType = HandlerTypeDictionary.GetOrAdd(
-                domainEventType,
-                et => typeof(IDomainEventHandler<>).MakeGenericType(et));
+                key: domainEventType,
+                valueFactory: et => typeof(IDomainEventHandler<>).MakeGenericType(typeArguments: et));
 
-            IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
+            IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(serviceType: handlerType);
 
             foreach (object? handler in handlers)
             {
@@ -41,9 +41,9 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
                     continue;
                 }
 
-                var handlerWrapper = HandlerWrapper.Create(handler, domainEventType);
+                var handlerWrapper = HandlerWrapper.Create(handler: handler, domainEventType: domainEventType);
 
-                await handlerWrapper.HandleAsync(domainEvent, cancellationToken);
+                await handlerWrapper.HandleAsync(domainEvent: domainEvent, cancellationToken: cancellationToken);
             }
         }
     }
@@ -55,11 +55,11 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
         public static HandlerWrapper Create(object handler, Type domainEventType)
         {
             Type wrapperType = WrapperTypeDictionary.GetOrAdd(
-                domainEventType,
-                et => typeof(HandlerWrapper<>).MakeGenericType(et));
+                key: domainEventType,
+                valueFactory: et => typeof(HandlerWrapper<>).MakeGenericType(typeArguments: et));
 
-            return (HandlerWrapper)(Activator.CreateInstance(wrapperType, handler)
-                ?? throw new InvalidOperationException($"Failed to create a handler wrapper for domain event type '{domainEventType}'."));
+            return (HandlerWrapper)(Activator.CreateInstance(type: wrapperType, args: handler)
+                ?? throw new InvalidOperationException(message: $"Failed to create a handler wrapper for domain event type '{domainEventType}'."));
         }
     }
 
@@ -69,7 +69,7 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
 
         public override async ValueTask HandleAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
         {
-            await _handler.HandleAsync((T)domainEvent, cancellationToken);
+            await _handler.HandleAsync(@event: (T)domainEvent, cancellationToken: cancellationToken);
         }
     }
 }

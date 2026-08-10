@@ -37,12 +37,12 @@ internal sealed class OutboxProcessor<TContext>(
         DateTime claimedAt = timeProvider.GetUtcNow().UtcDateTime;
 
         List<OutboxMessage> claimed = await context.Set<OutboxMessage>()
-            .FromSqlRaw(OutboxClaimSql.Text, outboxOptions.MaxAttempts, claimedAt, outboxOptions.BatchSize)
-            .ToListAsync(cancellationToken);
+            .FromSqlRaw(sql: OutboxClaimSql.Text, outboxOptions.MaxAttempts, claimedAt, outboxOptions.BatchSize)
+            .ToListAsync(cancellationToken: cancellationToken);
 
         foreach (OutboxMessage message in claimed)
         {
-            await ProcessOneAsync(message, outboxOptions, cancellationToken);
+            await ProcessOneAsync(message: message, outboxOptions: outboxOptions, cancellationToken: cancellationToken);
         }
 
         return claimed.Count;
@@ -52,38 +52,38 @@ internal sealed class OutboxProcessor<TContext>(
     {
         try
         {
-            if (registry.TryResolve(message.Type, out Type? domainEventType))
+            if (registry.TryResolve(name: message.Type, domainEventType: out Type? domainEventType))
             {
-                object? domainEvent = JsonSerializer.Deserialize(message.Content, domainEventType, OutboxSerialization.Options);
+                object? domainEvent = JsonSerializer.Deserialize(json: message.Content, returnType: domainEventType, options: OutboxSerialization.Options);
 
                 if (domainEvent is null)
                 {
-                    Fail(message, outboxOptions, $"Deserializing outbox message '{message.Id}' of type '{message.Type}' produced null.");
+                    Fail(message: message, outboxOptions: outboxOptions, error: $"Deserializing outbox message '{message.Id}' of type '{message.Type}' produced null.");
                 }
                 else
                 {
-                    await publisher.PublishAsync([(IDomainEvent)domainEvent], cancellationToken);
-                    message.MarkProcessed(timeProvider.GetUtcNow().UtcDateTime);
+                    await publisher.PublishAsync(domainEvents: [(IDomainEvent)domainEvent], cancellationToken: cancellationToken);
+                    message.MarkProcessed(processedOnUtc: timeProvider.GetUtcNow().UtcDateTime);
                 }
             }
             else
             {
-                Fail(message, outboxOptions, $"No domain event type is registered for outbox contract name '{message.Type}'.");
+                Fail(message: message, outboxOptions: outboxOptions, error: $"No domain event type is registered for outbox contract name '{message.Type}'.");
             }
 
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
-            Fail(message, outboxOptions, Truncate(ex.ToString(), 4000));
+            Fail(message: message, outboxOptions: outboxOptions, error: Truncate(value: ex.ToString(), maxLength: 4000));
 
             try
             {
-                await context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken: cancellationToken);
             }
             catch (Exception saveEx)
             {
-                logger.LogError(saveEx, "Failed to persist failure state for outbox message {MessageId}.", message.Id);
+                logger.LogError(exception: saveEx, message: "Failed to persist failure state for outbox message {MessageId}.", args: message.Id);
             }
         }
     }
@@ -93,13 +93,13 @@ internal sealed class OutboxProcessor<TContext>(
         // `message.Attempts` already reflects this attempt — the claim query increments it before
         // this method ever runs — so the exponent below counts attempts already made, not a
         // predicted next one.
-        TimeSpan backoff = outboxOptions.BaseBackoff * Math.Pow(2, message.Attempts - 1);
-        message.MarkFailed(Truncate(error, 4000), timeProvider.GetUtcNow().UtcDateTime + backoff);
+        TimeSpan backoff = outboxOptions.BaseBackoff * Math.Pow(x: 2, y: message.Attempts - 1);
+        message.MarkFailed(error: Truncate(value: error, maxLength: 4000), nextAttemptOnUtc: timeProvider.GetUtcNow().UtcDateTime + backoff);
 
         if (message.Attempts >= outboxOptions.MaxAttempts)
         {
             logger.LogCritical(
-                "Outbox message {MessageId} of type {MessageType} reached {Attempts} attempts and will no longer be claimed.",
+                message: "Outbox message {MessageId} of type {MessageType} reached {Attempts} attempts and will no longer be claimed.",
                 message.Id, message.Type, message.Attempts);
         }
     }

@@ -31,42 +31,42 @@ public sealed class OutboxContentRegressionTests(PostgresFixture fixture) : Inte
     [Fact]
     public async Task SaveChangesAsync_Should_WriteExtraDomainEventPropertiesIntoOutboxContent_When_TheAggregateRaisesAnEventWithExtraProperties()
     {
-        var aggregate = TestAggregate.Create("widget");
+        var aggregate = TestAggregate.Create(name: "widget");
         aggregate.RaiseCreatedEvent(note: "handle with care", amount: 42, tags: ["red", "blue"]);
-        WriteContext.Add(aggregate);
+        WriteContext.Add(entity: aggregate);
 
         await UnitOfWork.SaveChangesAsync();
 
         OutboxMessage row = await WriteContext.Set<OutboxMessage>().AsNoTracking()
-            .SingleAsync(message => message.Type == "test.aggregate-created.v1");
+            .SingleAsync(predicate: message => message.Type == "test.aggregate-created.v1");
 
-        using var document = JsonDocument.Parse(row.Content);
+        using var document = JsonDocument.Parse(json: row.Content);
 
         // Against the pre-fix code, Content is exactly {"Id":...,"OccurredOnUtc":...} — none of these
         // properties exist and GetProperty throws.
-        document.RootElement.GetProperty("AggregateId").GetGuid().ShouldBe(aggregate.Id.Value);
-        document.RootElement.GetProperty("Name").GetString().ShouldBe("widget");
-        document.RootElement.GetProperty("Note").GetString().ShouldBe("handle with care");
-        document.RootElement.GetProperty("Amount").GetInt32().ShouldBe(42);
-        document.RootElement.GetProperty("Tags").EnumerateArray().Select(tag => tag.GetString())
-            .ShouldBe(["red", "blue"]);
+        document.RootElement.GetProperty(propertyName: "AggregateId").GetGuid().ShouldBe(expected: aggregate.Id.Value);
+        document.RootElement.GetProperty(propertyName: "Name").GetString().ShouldBe(expected: "widget");
+        document.RootElement.GetProperty(propertyName: "Note").GetString().ShouldBe(expected: "handle with care");
+        document.RootElement.GetProperty(propertyName: "Amount").GetInt32().ShouldBe(expected: 42);
+        document.RootElement.GetProperty(propertyName: "Tags").EnumerateArray().Select(selector: tag => tag.GetString())
+            .ShouldBe(expected: ["red", "blue"]);
 
         // Belt and braces: the pre-fix payload has exactly two properties.
-        document.RootElement.EnumerateObject().Count().ShouldBeGreaterThan(2);
+        document.RootElement.EnumerateObject().Count().ShouldBeGreaterThan(expected: 2);
     }
 
     [Fact]
     public async Task SaveChangesAsync_Should_WriteTheRegistryContractName_When_ConvertingADomainEventToAnOutboxMessage()
     {
-        var aggregate = TestAggregate.Create("widget");
+        var aggregate = TestAggregate.Create(name: "widget");
         aggregate.RaiseCreatedEvent(note: "n/a", amount: 1, tags: []);
-        WriteContext.Add(aggregate);
+        WriteContext.Add(entity: aggregate);
 
         await UnitOfWork.SaveChangesAsync();
 
         OutboxMessage row = await WriteContext.Set<OutboxMessage>().AsNoTracking().SingleAsync();
 
-        row.Type.ShouldBe("test.aggregate-created.v1");
-        row.Type.Equals(nameof(TestAggregateCreatedDomainEvent), StringComparison.Ordinal).ShouldBeFalse();
+        row.Type.ShouldBe(expected: "test.aggregate-created.v1");
+        row.Type.Equals(value: nameof(TestAggregateCreatedDomainEvent), comparisonType: StringComparison.Ordinal).ShouldBeFalse();
     }
 }

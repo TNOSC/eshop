@@ -41,46 +41,46 @@ internal sealed class TestAggregateConfiguration : IEntityTypeConfiguration<Test
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<TestAggregate> builder)
     {
-        builder.ToTable(TableName, SchemaName);
-        builder.HasKey(aggregate => aggregate.Id);
+        builder.ToTable(name: TableName, schema: SchemaName);
+        builder.HasKey(keyExpression: aggregate => aggregate.Id);
 
-        builder.Property(aggregate => aggregate.Id)
-            .HasColumnName("id")
-            .HasConversion(id => id.Value, value => TestAggregateId.From(value))
+        builder.Property(propertyExpression: aggregate => aggregate.Id)
+            .HasColumnName(name: "id")
+            .HasConversion(convertToProviderExpression: id => id.Value, convertFromProviderExpression: value => TestAggregateId.From(value: value))
             .ValueGeneratedNever();
 
-        builder.Property(aggregate => aggregate.Name)
-            .HasColumnName("name")
-            .HasMaxLength(200)
+        builder.Property(propertyExpression: aggregate => aggregate.Name)
+            .HasColumnName(name: "name")
+            .HasMaxLength(maxLength: 200)
             .IsRequired();
 
-        builder.Property(aggregate => aggregate.Version)
-            .HasColumnName("version");
+        builder.Property(propertyExpression: aggregate => aggregate.Version)
+            .HasColumnName(name: "version");
 
-        builder.Property(aggregate => aggregate.CreatedOnUtc)
-            .HasColumnName("created_on_utc")
-            .HasColumnType("timestamp with time zone")
-            .HasConversion(value => ForceUtcKind(value), value => value);
+        builder.Property(propertyExpression: aggregate => aggregate.CreatedOnUtc)
+            .HasColumnName(name: "created_on_utc")
+            .HasColumnType(typeName: "timestamp with time zone")
+            .HasConversion(convertToProviderExpression: value => ForceUtcKind(value: value), convertFromProviderExpression: value => value);
 
-        builder.Property(aggregate => aggregate.UpdatedOnUtc)
-            .HasColumnName("updated_on_utc")
-            .HasColumnType("timestamp with time zone")
-            .HasConversion(value => ForceUtcKind(value), value => value);
+        builder.Property(propertyExpression: aggregate => aggregate.UpdatedOnUtc)
+            .HasColumnName(name: "updated_on_utc")
+            .HasColumnType(typeName: "timestamp with time zone")
+            .HasConversion(convertToProviderExpression: value => ForceUtcKind(value: value), convertFromProviderExpression: value => value);
 
-        builder.Property(aggregate => aggregate.CreatedBy)
-            .HasColumnName("created_by")
-            .HasMaxLength(200);
+        builder.Property(propertyExpression: aggregate => aggregate.CreatedBy)
+            .HasColumnName(name: "created_by")
+            .HasMaxLength(maxLength: 200);
 
-        builder.Property(aggregate => aggregate.UpdatedBy)
-            .HasColumnName("updated_by")
-            .HasMaxLength(200);
+        builder.Property(propertyExpression: aggregate => aggregate.UpdatedBy)
+            .HasColumnName(name: "updated_by")
+            .HasMaxLength(maxLength: 200);
 
-        builder.Ignore(aggregate => aggregate.DomainEvents);
+        builder.Ignore(propertyExpression: aggregate => aggregate.DomainEvents);
     }
 
     // DateTime.MinValue — UpdatedOnUtc's unset default — has DateTimeKind.Unspecified, which Npgsql
     // rejects for "timestamp with time zone". Every value this test model ever produces is UTC by
     // convention (audit-stamped via TimeProvider.GetUtcNow().UtcDateTime), so forcing the Kind here
     // is a safe, test-only workaround, not a behavioural change.
-    private static DateTime ForceUtcKind(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc);
+    private static DateTime ForceUtcKind(DateTime value) => DateTime.SpecifyKind(value: value, kind: DateTimeKind.Utc);
 }

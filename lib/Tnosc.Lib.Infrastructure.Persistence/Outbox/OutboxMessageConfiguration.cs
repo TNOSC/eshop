@@ -28,21 +28,21 @@ public sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outbox
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
-        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(argument: builder);
 
-        builder.ToTable(TableName, SchemaName);
-        builder.HasKey(m => m.Id);
-        builder.Property(m => m.Id).HasColumnName("id").ValueGeneratedNever();
-        builder.Property(m => m.Type).HasColumnName("type").HasMaxLength(256).IsRequired();
-        builder.Property(m => m.Content).HasColumnName("content").HasColumnType("jsonb").IsRequired();
-        builder.Property(m => m.OccurredOnUtc).HasColumnName("occurred_on_utc").HasColumnType("timestamp with time zone");
-        builder.Property(m => m.ProcessedOnUtc).HasColumnName("processed_on_utc").HasColumnType("timestamp with time zone");
-        builder.Property(m => m.Attempts).HasColumnName("attempts");
-        builder.Property(m => m.NextAttemptOnUtc).HasColumnName("next_attempt_on_utc").HasColumnType("timestamp with time zone");
-        builder.Property(m => m.Error).HasColumnName("error").HasMaxLength(4000);
+        builder.ToTable(name: TableName, schema: SchemaName);
+        builder.HasKey(keyExpression: m => m.Id);
+        builder.Property(propertyExpression: m => m.Id).HasColumnName(name: "id").ValueGeneratedNever();
+        builder.Property(propertyExpression: m => m.Type).HasColumnName(name: "type").HasMaxLength(maxLength: 256).IsRequired();
+        builder.Property(propertyExpression: m => m.Content).HasColumnName(name: "content").HasColumnType(typeName: "jsonb").IsRequired();
+        builder.Property(propertyExpression: m => m.OccurredOnUtc).HasColumnName(name: "occurred_on_utc").HasColumnType(typeName: "timestamp with time zone");
+        builder.Property(propertyExpression: m => m.ProcessedOnUtc).HasColumnName(name: "processed_on_utc").HasColumnType(typeName: "timestamp with time zone");
+        builder.Property(propertyExpression: m => m.Attempts).HasColumnName(name: "attempts");
+        builder.Property(propertyExpression: m => m.NextAttemptOnUtc).HasColumnName(name: "next_attempt_on_utc").HasColumnType(typeName: "timestamp with time zone");
+        builder.Property(propertyExpression: m => m.Error).HasColumnName(name: "error").HasMaxLength(maxLength: 4000);
 
-        builder.HasIndex(m => new { m.NextAttemptOnUtc, m.OccurredOnUtc })
-               .HasFilter("processed_on_utc IS NULL")
-               .HasDatabaseName("ix_outbox_messages_pending");
+        builder.HasIndex(indexExpression: m => new { m.NextAttemptOnUtc, m.OccurredOnUtc })
+               .HasFilter(sql: "processed_on_utc IS NULL")
+               .HasDatabaseName(name: "ix_outbox_messages_pending");
     }
 }

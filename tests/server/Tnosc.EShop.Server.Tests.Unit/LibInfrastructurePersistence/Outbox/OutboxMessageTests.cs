@@ -16,34 +16,34 @@ public sealed class OutboxMessageTests
     [Fact]
     public void MarkFailed_Should_IncrementAttempts_And_SetNextAttemptOnUtc()
     {
-        var message = new OutboxMessage("test.event.v1", "{}");
-        var firstAttempt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var message = new OutboxMessage(type: "test.event.v1", content: "{}");
+        var firstAttempt = new DateTime(year: 2026, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 
-        message.MarkFailed("boom", firstAttempt);
+        message.MarkFailed(error: "boom", nextAttemptOnUtc: firstAttempt);
 
-        message.Attempts.ShouldBe(1);
-        message.NextAttemptOnUtc.ShouldBe(firstAttempt);
-        message.Error.ShouldBe("boom");
+        message.Attempts.ShouldBe(expected: 1);
+        message.NextAttemptOnUtc.ShouldBe(expected: firstAttempt);
+        message.Error.ShouldBe(expected: "boom");
         message.ProcessedOnUtc.ShouldBeNull();
 
-        DateTime secondAttempt = firstAttempt.AddMinutes(5);
-        message.MarkFailed("boom again", secondAttempt);
+        DateTime secondAttempt = firstAttempt.AddMinutes(value: 5);
+        message.MarkFailed(error: "boom again", nextAttemptOnUtc: secondAttempt);
 
-        message.Attempts.ShouldBe(2);
-        message.NextAttemptOnUtc.ShouldBe(secondAttempt);
-        message.Error.ShouldBe("boom again");
+        message.Attempts.ShouldBe(expected: 2);
+        message.NextAttemptOnUtc.ShouldBe(expected: secondAttempt);
+        message.Error.ShouldBe(expected: "boom again");
     }
 
     [Fact]
     public void MarkProcessed_Should_ClearError()
     {
-        var message = new OutboxMessage("test.event.v1", "{}");
-        message.MarkFailed("boom", DateTime.UtcNow);
+        var message = new OutboxMessage(type: "test.event.v1", content: "{}");
+        message.MarkFailed(error: "boom", nextAttemptOnUtc: DateTime.UtcNow);
 
-        var processedOnUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        message.MarkProcessed(processedOnUtc);
+        var processedOnUtc = new DateTime(year: 2026, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+        message.MarkProcessed(processedOnUtc: processedOnUtc);
 
-        message.ProcessedOnUtc.ShouldBe(processedOnUtc);
+        message.ProcessedOnUtc.ShouldBe(expected: processedOnUtc);
         message.Error.ShouldBeNull();
     }
 }

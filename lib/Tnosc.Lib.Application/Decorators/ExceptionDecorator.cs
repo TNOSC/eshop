@@ -55,12 +55,12 @@ public static class ExceptionDecorator
         {
             try
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Unhandled exception processing command {Command}", typeof(TCommand).Name);
-                return MapToErrors(ex);
+                logger.LogError(exception: ex, message: "Unhandled exception processing command {Command}", args: typeof(TCommand).Name);
+                return MapToErrors(ex: ex);
             }
         }
     }
@@ -88,12 +88,12 @@ public static class ExceptionDecorator
         {
             try
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Unhandled exception processing command {Command}", typeof(TCommand).Name);
-                return MapToErrors(ex);
+                logger.LogError(exception: ex, message: "Unhandled exception processing command {Command}", args: typeof(TCommand).Name);
+                return MapToErrors(ex: ex);
             }
         }
     }
@@ -121,12 +121,12 @@ public static class ExceptionDecorator
         {
             try
             {
-                return await innerHandler.HandleAsync(query, cancellationToken);
+                return await innerHandler.HandleAsync(query: query, cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Unhandled exception processing query {Query}", typeof(TQuery).Name);
-                return MapToErrors(ex);
+                logger.LogError(exception: ex, message: "Unhandled exception processing query {Query}", args: typeof(TQuery).Name);
+                return MapToErrors(ex: ex);
             }
         }
     }
@@ -141,15 +141,15 @@ public static class ExceptionDecorator
     private static Error[] MapToErrors(Exception ex) =>
         ex switch
         {
-            NotFoundException notFound => [Error.NotFound(notFound.ErrorCode, notFound.Message)],
-            ConflictException conflict => [Error.Conflict(conflict.ErrorCode, conflict.Message)],
-            UnauthorizedException unauthorized => [Error.Unauthorized(unauthorized.ErrorCode, unauthorized.Message)],
-            InvalidRequestException invalidRequest => MapValidationErrors(invalidRequest),
-            TransientFailureException transientFailure => [Error.Unexpected(transientFailure.ErrorCode, transientFailure.Message)],
+            NotFoundException notFound => [Error.NotFound(code: notFound.ErrorCode, description: notFound.Message)],
+            ConflictException conflict => [Error.Conflict(code: conflict.ErrorCode, description: conflict.Message)],
+            UnauthorizedException unauthorized => [Error.Unauthorized(code: unauthorized.ErrorCode, description: unauthorized.Message)],
+            InvalidRequestException invalidRequest => MapValidationErrors(ex: invalidRequest),
+            TransientFailureException transientFailure => [Error.Unexpected(code: transientFailure.ErrorCode, description: transientFailure.Message)],
             BaseException baseException => [Error.Unexpected(
-                string.IsNullOrEmpty(baseException.ErrorCode) ? "UNEXPECTED" : baseException.ErrorCode,
-                baseException.Message ?? "An unexpected error occurred.")],
-            _ => [Error.Unexpected("UNEXPECTED", ex.Message)],
+                code: string.IsNullOrEmpty(value: baseException.ErrorCode) ? "UNEXPECTED" : baseException.ErrorCode,
+                description: baseException.Message ?? "An unexpected error occurred.")],
+            _ => [Error.Unexpected(code: "UNEXPECTED", description: ex.Message)],
         };
 
     /// <summary>
@@ -162,10 +162,10 @@ public static class ExceptionDecorator
     {
         if (ex.ValidationErrors is null || ex.ValidationErrors.Count == 0)
         {
-            return [Error.Validation(ex.ErrorCode, ex.Message)];
+            return [Error.Validation(code: ex.ErrorCode, description: ex.Message)];
         }
 
         return [.. ex.ValidationErrors
-            .SelectMany(field => field.Value.Select(message => Error.Validation(field.Key, message)))];
+            .SelectMany(selector: field => field.Value.Select(selector: message => Error.Validation(code: field.Key, description: message)))];
     }
 }

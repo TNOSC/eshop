@@ -60,31 +60,31 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _container = new PostgreSqlBuilder("postgres:18-alpine")
-            .WithReuse(true)
+        _container = new PostgreSqlBuilder(image: "postgres:18-alpine")
+            .WithReuse(reuse: true)
             .Build();
 
         await _container.StartAsync();
 
         string connectionString = _container.GetConnectionString();
 
-        _host = BuildHost(connectionString);
+        _host = BuildHost(connectionString: connectionString);
 
         using (IServiceScope scope = _host.Services.CreateScope())
         {
             EShopWriteDbContext writeContext = scope.ServiceProvider.GetRequiredService<EShopWriteDbContext>();
             await writeContext.Database.MigrateAsync();
-            await CreateTestModelTableAsync(writeContext);
+            await CreateTestModelTableAsync(writeContext: writeContext);
         }
 
-        _respawnConnection = new NpgsqlConnection(connectionString);
+        _respawnConnection = new NpgsqlConnection(connectionString: connectionString);
         await _respawnConnection.OpenAsync();
 
-        _respawner = await Respawner.CreateAsync(_respawnConnection, new RespawnerOptions
+        _respawner = await Respawner.CreateAsync(connection: _respawnConnection, options: new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
             SchemasToInclude = SchemasToReset,
-            TablesToIgnore = [new Table("__EFMigrationsHistory")]
+            TablesToIgnore = [new Table(name: "__EFMigrationsHistory")]
         });
     }
 
@@ -105,7 +105,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
         // Deterministic clock for backoff / audit-stamping assertions. Registered before
         // AddInfrastructurePersistence so its TryAddSingleton(TimeProvider.System) becomes a no-op.
         builder.Services.AddSingleton<TestTimeProvider>();
-        builder.Services.AddSingleton<TimeProvider>(sp => sp.GetRequiredService<TestTimeProvider>());
+        builder.Services.AddSingleton<TimeProvider>(implementationFactory: sp => sp.GetRequiredService<TestTimeProvider>());
 
         builder.Services.AddSingleton<TestDomainEventSpy>();
 
@@ -120,12 +120,12 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
 
         // Extend the write model with the test-only aggregate without touching the sealed,
         // production EShopWriteDbContext — see TestModelCustomizer's remarks for why.
-        ReplaceModelCustomizerFor(builder.Services);
+        ReplaceModelCustomizerFor(services: builder.Services);
 
         // The production registry only scans the Server.Domain assembly. Add this test assembly so
         // the outbox processor can resolve and deserialize the test-only domain events.
-        builder.Services.Replace(ServiceDescriptor.Singleton<IDomainEventTypeRegistry>(
-            _ => new DomainEventTypeRegistry(DomainAssemblyReference.Assembly, typeof(TestAggregateCreatedDomainEvent).Assembly)));
+        builder.Services.Replace(descriptor: ServiceDescriptor.Singleton<IDomainEventTypeRegistry>(
+            implementationFactory: _ => new DomainEventTypeRegistry(DomainAssemblyReference.Assembly, typeof(TestAggregateCreatedDomainEvent).Assembly)));
 
         return builder.Build();
     }
@@ -137,7 +137,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// </summary>
     /// <param name="writeContext">The write context to run the raw SQL against.</param>
     private static async Task CreateTestModelTableAsync(EShopWriteDbContext writeContext) =>
-        await writeContext.Database.ExecuteSqlRawAsync($"""
+        await writeContext.Database.ExecuteSqlRawAsync(sql: $"""
             CREATE SCHEMA IF NOT EXISTS {TestAggregateConfiguration.SchemaName};
             CREATE TABLE IF NOT EXISTS {TestAggregateConfiguration.SchemaName}.{TestAggregateConfiguration.TableName} (
                 id uuid PRIMARY KEY,
@@ -176,7 +176,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// <see cref="IntegrationTestBase"/> before every test so tests never observe another test's data.
     /// </summary>
     public async Task ResetAsync() =>
-        await (_respawner ?? throw NotInitialized()).ResetAsync(_respawnConnection ?? throw NotInitialized());
+        await (_respawner ?? throw NotInitialized()).ResetAsync(connection: _respawnConnection ?? throw NotInitialized());
 
     /// <summary>
     /// Replaces <c>DbContextOptions&lt;EShopWriteDbContext&gt;</c>'s registration with one that wraps
@@ -189,25 +189,25 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// <param name="services">The service collection built by <c>AddInfrastructurePersistence</c>.</param>
     private static void ReplaceModelCustomizerFor(IServiceCollection services)
     {
-        ServiceDescriptor original = services.Single(descriptor => descriptor.ServiceType == typeof(DbContextOptions<EShopWriteDbContext>));
+        ServiceDescriptor original = services.Single(predicate: descriptor => descriptor.ServiceType == typeof(DbContextOptions<EShopWriteDbContext>));
         Func<IServiceProvider, object> originalFactory = original.ImplementationFactory
-            ?? throw new InvalidOperationException("DbContextOptions<EShopWriteDbContext> was not registered via a factory.");
+            ?? throw new InvalidOperationException(message: "DbContextOptions<EShopWriteDbContext> was not registered via a factory.");
 
-        services.Remove(original);
-        services.Add(ServiceDescriptor.Describe(
-            typeof(DbContextOptions<EShopWriteDbContext>),
-            serviceProvider =>
+        services.Remove(item: original);
+        services.Add(item: ServiceDescriptor.Describe(
+            serviceType: typeof(DbContextOptions<EShopWriteDbContext>),
+            implementationFactory: serviceProvider =>
             {
                 var options = (DbContextOptions<EShopWriteDbContext>)originalFactory(serviceProvider);
-                return new DbContextOptionsBuilder<EShopWriteDbContext>(options)
+                return new DbContextOptionsBuilder<EShopWriteDbContext>(options: options)
                     .ReplaceService<IModelCustomizer, TestModelCustomizer>()
                     // TestAggregate deliberately diverges the runtime model from the last migration's
                     // snapshot — EF's own startup check for that is irrelevant here and would otherwise
                     // fail MigrateAsync.
-                    .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
+                    .ConfigureWarnings(warningsConfigurationBuilderAction: warnings => warnings.Ignore(eventIds: RelationalEventId.PendingModelChangesWarning))
                     .Options;
             },
-            original.Lifetime));
+            lifetime: original.Lifetime));
     }
 
     private static InvalidOperationException NotInitialized() =>

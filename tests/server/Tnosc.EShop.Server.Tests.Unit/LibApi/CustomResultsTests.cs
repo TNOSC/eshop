@@ -45,12 +45,12 @@ public sealed class CustomResultsTests
             ErrorType.Conflict => Error.Conflict(code: "Test.Conflict", description: "conflict"),
             ErrorType.Failure => Error.Failure(code: "Test.Failure", description: "failure"),
             ErrorType.Unexpected => Error.Unexpected(code: "Test.Unexpected", description: "unexpected"),
-            _ => throw new ArgumentOutOfRangeException(nameof(errorType)),
+            _ => throw new ArgumentOutOfRangeException(paramName: nameof(errorType)),
         };
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync((Result)error);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(result: (Result)error);
 
-        statusCode.ShouldBe(expectedStatusCode);
+        statusCode.ShouldBe(expected: expectedStatusCode);
     }
 
     [Fact]
@@ -58,9 +58,9 @@ public sealed class CustomResultsTests
     {
         Result result = Error.Custom(type: 418, code: "Test.Teapot", description: "I'm a teapot");
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(result);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(result: result);
 
-        statusCode.ShouldBe(418);
+        statusCode.ShouldBe(expected: 418);
     }
 
     [Theory]
@@ -70,9 +70,9 @@ public sealed class CustomResultsTests
     {
         Result result = Error.Custom(type: numericType, code: "Test.Custom", description: "custom");
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(result);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(result: result);
 
-        statusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+        statusCode.ShouldBe(expected: StatusCodes.Status500InternalServerError);
     }
 
     [Theory]
@@ -82,9 +82,9 @@ public sealed class CustomResultsTests
     {
         Result result = Error.Custom(type: numericType, code: "Test.Custom", description: "custom");
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(result);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(result: result);
 
-        statusCode.ShouldBe(numericType);
+        statusCode.ShouldBe(expected: numericType);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class CustomResultsTests
     {
         var result = Result.Success();
 
-        Should.Throw<InvalidOperationException>(() => CustomResults.Problem(result));
+        Should.Throw<InvalidOperationException>(actual: () => CustomResults.Problem(result: result));
     }
 
     [Fact]
@@ -101,26 +101,26 @@ public sealed class CustomResultsTests
         var error = Error.Validation(code: "Test.Validation", description: "invalid");
         Result result = error;
 
-        var problemResult = CustomResults.Problem(result) as ProblemHttpResult;
+        var problemResult = CustomResults.Problem(result: result) as ProblemHttpResult;
 
         problemResult.ShouldNotBeNull();
-        problemResult.ProblemDetails.Extensions.ShouldContainKey("errors");
+        problemResult.ProblemDetails.Extensions.ShouldContainKey(key: "errors");
         var errors = problemResult.ProblemDetails.Extensions["errors"] as Dictionary<string, string[]>;
         errors.ShouldNotBeNull();
         errors.ShouldContainKey(error.Code);
-        errors[error.Code].ShouldBe([error.Description]);
+        errors[error.Code].ShouldBe(expected: [error.Description]);
     }
 
     private static async Task<int> ExecuteAndGetStatusCodeAsync(Result result)
     {
-        IResult httpResult = CustomResults.Problem(result);
+        IResult httpResult = CustomResults.Problem(result: result);
         var httpContext = new DefaultHttpContext
         {
             RequestServices = new ServiceCollection().AddLogging().BuildServiceProvider(),
             Response = { Body = new MemoryStream() },
         };
 
-        await httpResult.ExecuteAsync(httpContext);
+        await httpResult.ExecuteAsync(httpContext: httpContext);
 
         return httpContext.Response.StatusCode;
     }

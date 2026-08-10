@@ -28,24 +28,24 @@ internal sealed class HttpUserContext(IHttpContextAccessor httpContextAccessor) 
     public bool IsAuthenticated => AuthenticatedUser is not null;
 
     /// <inheritdoc />
-    public string? UserId => AuthenticatedUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-        ?? AuthenticatedUser?.FindFirst("sub")?.Value;
+    public string? UserId => AuthenticatedUser?.FindFirst(type: ClaimTypes.NameIdentifier)?.Value
+        ?? AuthenticatedUser?.FindFirst(type: "sub")?.Value;
 
     /// <inheritdoc />
-    public string? Email => AuthenticatedUser?.FindFirst(ClaimTypes.Email)?.Value
-        ?? AuthenticatedUser?.FindFirst("email")?.Value;
+    public string? Email => AuthenticatedUser?.FindFirst(type: ClaimTypes.Email)?.Value
+        ?? AuthenticatedUser?.FindFirst(type: "email")?.Value;
 
     /// <inheritdoc />
     public IReadOnlyCollection<string> Roles =>
-        AuthenticatedUser is null ? [] : [.. AuthenticatedUser.FindAll(ClaimTypes.Role).Select(claim => claim.Value)];
+        AuthenticatedUser is null ? [] : [.. AuthenticatedUser.FindAll(type: ClaimTypes.Role).Select(selector: claim => claim.Value)];
 
     /// <inheritdoc />
     public IReadOnlyCollection<string> Permissions =>
-        AuthenticatedUser is null ? [] : [.. AuthenticatedUser.FindAll(PermissionClaimType).Select(claim => claim.Value)];
+        AuthenticatedUser is null ? [] : [.. AuthenticatedUser.FindAll(type: PermissionClaimType).Select(selector: claim => claim.Value)];
 
     /// <inheritdoc />
-    public bool IsInRole(string role) => Roles.Contains(role, System.StringComparer.Ordinal);
+    public bool IsInRole(string role) => Roles.Contains(value: role, comparer: System.StringComparer.Ordinal);
 
     /// <inheritdoc />
-    public bool HasPermission(string permission) => Permissions.Contains(permission, System.StringComparer.Ordinal);
+    public bool HasPermission(string permission) => Permissions.Contains(value: permission, comparer: System.StringComparer.Ordinal);
 }

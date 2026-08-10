@@ -43,9 +43,9 @@ public static class RetryDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
-                ct => innerHandler.HandleAsync(command, ct),
-                GetMaxAttempts(this, typeof(TCommand)),
-                cancellationToken);
+                action: ct => innerHandler.HandleAsync(command: command, cancellationToken: ct),
+                maxAttempts: GetMaxAttempts(handler: this, messageType: typeof(TCommand)),
+                cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -67,9 +67,9 @@ public static class RetryDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
-                ct => innerHandler.HandleAsync(command, ct),
-                GetMaxAttempts(this, typeof(TCommand)),
-                cancellationToken);
+                action: ct => innerHandler.HandleAsync(command: command, cancellationToken: ct),
+                maxAttempts: GetMaxAttempts(handler: this, messageType: typeof(TCommand)),
+                cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -92,9 +92,9 @@ public static class RetryDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public ValueTask<Result<TResponse>> HandleAsync(TQuery query, CancellationToken cancellationToken = default) =>
             ExecuteWithRetryAsync(
-                ct => innerHandler.HandleAsync(query, ct),
-                GetMaxAttempts(this, typeof(TQuery)),
-                cancellationToken);
+                action: ct => innerHandler.HandleAsync(query: query, cancellationToken: ct),
+                maxAttempts: GetMaxAttempts(handler: this, messageType: typeof(TQuery)),
+                cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public static class RetryDecorator
     /// <param name="handler">The decorator instance wrapping the handler.</param>
     /// <param name="messageType">The command or query type the handler processes.</param>
     private static int GetMaxAttempts(object handler, Type messageType) =>
-        RetryCache.GetOrAdd(handler.GetType(), _ => HandlerMetadata.Find<RetryAttribute>(handler, messageType))?.MaxRetries ?? 3;
+        RetryCache.GetOrAdd(key: handler.GetType(), valueFactory: _ => HandlerMetadata.Find<RetryAttribute>(handler: handler, messageType: messageType))?.MaxRetries ?? 3;
 
     /// <summary>
     /// Executes <paramref name="action"/>, retrying with exponential backoff when it throws a
@@ -131,8 +131,8 @@ public static class RetryDecorator
             }
             catch (BaseException ex) when (ex.IsRetriable && attempt < maxAttempts)
             {
-                var delay = TimeSpan.FromMilliseconds(200 * Math.Pow(2, attempt - 1));
-                await Task.Delay(delay, cancellationToken);
+                var delay = TimeSpan.FromMilliseconds(value: 200 * Math.Pow(x: 2, y: attempt - 1));
+                await Task.Delay(delay: delay, cancellationToken: cancellationToken);
             }
         }
     }

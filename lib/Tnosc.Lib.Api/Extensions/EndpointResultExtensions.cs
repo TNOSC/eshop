@@ -33,7 +33,7 @@ public static class EndpointResultExtensions
     /// <returns>An <see cref="IResult"/> representing <paramref name="result"/>.</returns>
     public static IResult ToHttp(this Result result, int successStatusCode = StatusCodes.Status204NoContent) =>
         result.Match(
-            onSuccess: () => Results.StatusCode(successStatusCode),
+            onSuccess: () => Results.StatusCode(statusCode: successStatusCode),
             onFailure: CustomResults.Problem);
 
     /// <summary>
@@ -59,6 +59,6 @@ public static class EndpointResultExtensions
     /// <returns>An <see cref="IResult"/> representing <paramref name="result"/>.</returns>
     public static IResult ToCreated<TValue>(this Result<TValue> result, Func<TValue, string> location) =>
         result.Match(
-            onSuccess: value => Results.Created(location(value), value),
+            onSuccess: value => Results.Created(uri: location(value), value: value),
             onFailure: CustomResults.Problem);
 }

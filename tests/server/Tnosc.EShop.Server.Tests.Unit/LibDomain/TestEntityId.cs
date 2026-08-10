@@ -17,5 +17,5 @@ internal sealed record TestEntityId : GuidEntityId, IEntityId<TestEntityId, Guid
     }
 
     public static TestEntityId From(Guid value)
-        => new TestEntityId(value);
+        => new TestEntityId(value: value);
 }

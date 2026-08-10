@@ -47,18 +47,18 @@ public static class CacheInvalidationDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            string[] tags = GetTags(this, typeof(TCommand));
+            string[] tags = GetTags(handler: this, messageType: typeof(TCommand));
 
             if (tags.Length == 0)
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
 
-            Result<TResponse> result = await innerHandler.HandleAsync(command, cancellationToken);
+            Result<TResponse> result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
-                await InvalidateAsync(cache, tags, cancellationToken);
+                await InvalidateAsync(cache: cache, tags: tags, cancellationToken: cancellationToken);
             }
 
             return result;
@@ -88,18 +88,18 @@ public static class CacheInvalidationDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            string[] tags = GetTags(this, typeof(TCommand));
+            string[] tags = GetTags(handler: this, messageType: typeof(TCommand));
 
             if (tags.Length == 0)
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
 
-            Result result = await innerHandler.HandleAsync(command, cancellationToken);
+            Result result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
-                await InvalidateAsync(cache, tags, cancellationToken);
+                await InvalidateAsync(cache: cache, tags: tags, cancellationToken: cancellationToken);
             }
 
             return result;
@@ -113,8 +113,8 @@ public static class CacheInvalidationDecorator
     /// <param name="handler">The decorator instance wrapping the handler.</param>
     /// <param name="messageType">The command type the handler processes.</param>
     private static string[] GetTags(object handler, Type messageType) =>
-        TagsCache.GetOrAdd(handler.GetType(), _ =>
-            [.. HandlerMetadata.FindAll<CacheTagAttribute>(handler, messageType).Select(a => a.Tag)]);
+        TagsCache.GetOrAdd(key: handler.GetType(), valueFactory: _ =>
+            [.. HandlerMetadata.FindAll<CacheTagAttribute>(handler: handler, messageType: messageType).Select(selector: a => a.Tag)]);
 
     /// <summary>
     /// Removes every cache entry associated with the specified tags.
@@ -126,7 +126,7 @@ public static class CacheInvalidationDecorator
     {
         foreach (string tag in tags)
         {
-            await cache.RemoveByTagAsync(tag, cancellationToken);
+            await cache.RemoveByTagAsync(tag: tag, cancellationToken: cancellationToken);
         }
     }
 }

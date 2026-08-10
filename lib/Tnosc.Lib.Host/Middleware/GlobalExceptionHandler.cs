@@ -35,18 +35,18 @@ public sealed class GlobalExceptionHandler(
         Exception exception,
         CancellationToken cancellationToken)
     {
-        (int StatusCode, string Title) problem = MapToProblem(exception);
+        (int StatusCode, string Title) problem = MapToProblem(exception: exception);
 
         logger.LogError(
-            exception,
-            "Unhandled exception processing {Method} {Path} -> {StatusCode}",
+            exception: exception,
+            message: "Unhandled exception processing {Method} {Path} -> {StatusCode}",
             httpContext.Request.Method,
             httpContext.Request.Path,
             problem.StatusCode);
 
         httpContext.Response.StatusCode = problem.StatusCode;
 
-        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await problemDetailsService.TryWriteAsync(context: new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,

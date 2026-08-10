@@ -14,29 +14,29 @@ public sealed class ValueObjectTests
     [Fact]
     public void ValueObjects_Should_BeEqual_When_ValuesAreEqual()
     {
-        var first = new TestMoney(10, "EUR");
-        var second = new TestMoney(10, "EUR");
+        var first = new TestMoney(Amount: 10, Currency: "EUR");
+        var second = new TestMoney(Amount: 10, Currency: "EUR");
 
-        first.ShouldBe(second);
+        first.ShouldBe(expected: second);
         (first == second).ShouldBeTrue();
     }
 
     [Fact]
     public void ValueObjects_Should_NotBeEqual_When_ValuesDiffer()
     {
-        var first = new TestMoney(10, "EUR");
-        var second = new TestMoney(20, "EUR");
+        var first = new TestMoney(Amount: 10, Currency: "EUR");
+        var second = new TestMoney(Amount: 20, Currency: "EUR");
 
-        first.ShouldNotBe(second);
+        first.ShouldNotBe(expected: second);
         (first == second).ShouldBeFalse();
     }
 
     [Fact]
     public void ValueObjects_Should_NotBeEqual_When_SiblingTypeWithSameValues()
     {
-        var money = new TestMoney(10, "EUR");
-        var discountedMoney = new TestDiscountedMoney(10, "EUR");
+        var money = new TestMoney(Amount: 10, Currency: "EUR");
+        var discountedMoney = new TestDiscountedMoney(Amount: 10, Currency: "EUR");
 
-        money.Equals(discountedMoney).ShouldBeFalse();
+        money.Equals(other: discountedMoney).ShouldBeFalse();
     }
 }

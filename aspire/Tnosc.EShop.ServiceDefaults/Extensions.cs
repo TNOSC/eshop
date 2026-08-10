@@ -30,7 +30,7 @@ public static class Extensions
 
         builder.Services.AddServiceDiscovery();
 
-        builder.Services.ConfigureHttpClientDefaults(http =>
+        builder.Services.ConfigureHttpClientDefaults(configure: http =>
         {
             // Turn on resilience by default
             http.AddStandardResilienceHandler();
@@ -50,27 +50,27 @@ public static class Extensions
 
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        builder.Logging.AddOpenTelemetry(logging =>
+        builder.Logging.AddOpenTelemetry(configure: logging =>
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
         });
 
         builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics =>
+            .WithMetrics(configure: metrics =>
             {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
-            .WithTracing(tracing =>
+            .WithTracing(configure: tracing =>
             {
-                tracing.AddSource(builder.Environment.ApplicationName)
-                    .AddAspNetCoreInstrumentation(tracing =>
+                tracing.AddSource(names: builder.Environment.ApplicationName)
+                    .AddAspNetCoreInstrumentation(configureAspNetCoreTraceInstrumentationOptions: tracing =>
                         // Exclude health check requests from tracing
                         tracing.Filter = context =>
-                            !context.Request.Path.StartsWithSegments(HealthEndpointPath, StringComparison.OrdinalIgnoreCase)
-                            && !context.Request.Path.StartsWithSegments(AlivenessEndpointPath, StringComparison.OrdinalIgnoreCase)
+                            !context.Request.Path.StartsWithSegments(other: HealthEndpointPath, comparisonType: StringComparison.OrdinalIgnoreCase)
+                            && !context.Request.Path.StartsWithSegments(other: AlivenessEndpointPath, comparisonType: StringComparison.OrdinalIgnoreCase)
                     )
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()
@@ -84,7 +84,7 @@ public static class Extensions
 
     private static void AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        bool useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+        bool useOtlpExporter = !string.IsNullOrWhiteSpace(value: builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
         if (useOtlpExporter)
         {
@@ -103,7 +103,7 @@ public static class Extensions
     {
         builder.Services.AddHealthChecks()
             // Add a default liveness check to ensure app is responsive
-            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+            .AddCheck(name: "self", check: () => HealthCheckResult.Healthy(), tags: ["live"]);
 
         return builder;
     }
@@ -115,12 +115,12 @@ public static class Extensions
         if (app.Environment.IsDevelopment())
         {
             // All health checks must pass for app to be considered ready to accept traffic after starting
-            app.MapHealthChecks(HealthEndpointPath);
+            app.MapHealthChecks(pattern: HealthEndpointPath);
 
             // Only health checks tagged with the "live" tag must pass for app to be considered alive
-            app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
+            app.MapHealthChecks(pattern: AlivenessEndpointPath, options: new HealthCheckOptions
             {
-                Predicate = r => r.Tags.Contains("live")
+                Predicate = r => r.Tags.Contains(item: "live")
             });
         }
 

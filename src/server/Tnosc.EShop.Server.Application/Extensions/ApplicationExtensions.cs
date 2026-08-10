@@ -31,31 +31,31 @@ public static class ApplicationExtensions
 
     private static IServiceCollection AddCommands(this IServiceCollection services)
     {
-        services.Scan(s => s.FromAssemblies(AssemblyReference.Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<>)), publicOnly: false)
-                .As(implementationType => ScanExtensions.ClosedInterfacesOf(implementationType, typeof(ICommandHandler<>))).WithScopedLifetime()
-            .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
-                .As(implementationType => ScanExtensions.ClosedInterfacesOf(implementationType, typeof(ICommandHandler<,>))).WithScopedLifetime()
-            .AddClasses(c => c.AssignableTo(typeof(IValidator<>)), publicOnly: false)
-                .As(implementationType => ScanExtensions.ClosedInterfacesOf(implementationType, typeof(IValidator<>))).WithScopedLifetime()
-            .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
-                .As(implementationType => ScanExtensions.ClosedInterfacesOf(implementationType, typeof(IDomainEventHandler<>))).WithScopedLifetime());
+        services.Scan(action: s => s.FromAssemblies(assemblies: AssemblyReference.Assembly)
+            .AddClasses(action: c => c.AssignableTo(type: typeof(ICommandHandler<>)), publicOnly: false)
+                .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(ICommandHandler<>))).WithScopedLifetime()
+            .AddClasses(action: c => c.AssignableTo(type: typeof(ICommandHandler<,>)), publicOnly: false)
+                .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(ICommandHandler<,>))).WithScopedLifetime()
+            .AddClasses(action: c => c.AssignableTo(type: typeof(IValidator<>)), publicOnly: false)
+                .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(IValidator<>))).WithScopedLifetime()
+            .AddClasses(action: c => c.AssignableTo(type: typeof(IDomainEventHandler<>)), publicOnly: false)
+                .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(IDomainEventHandler<>))).WithScopedLifetime());
 
         // Commands (with response) — innermost first, the last TryDecorate call becomes outermost.
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(TransactionDecorator.CommandHandler<,>));
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(CacheInvalidationDecorator.CommandHandler<,>));
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(RetryDecorator.CommandHandler<,>));
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandHandler<,>));
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(ExceptionDecorator.CommandHandler<,>));
-        services.TryDecorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(TransactionDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(CacheInvalidationDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(RetryDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(ValidationDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(ExceptionDecorator.CommandHandler<,>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(LoggingDecorator.CommandHandler<,>));
 
         // Commands (no response) — identical sequence using the *.CommandBaseHandler<> variants.
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(TransactionDecorator.CommandBaseHandler<>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(CacheInvalidationDecorator.CommandBaseHandler<>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(RetryDecorator.CommandBaseHandler<>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(ValidationDecorator.CommandBaseHandler<>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(ExceptionDecorator.CommandBaseHandler<>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(TransactionDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(CacheInvalidationDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(RetryDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(ValidationDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(ExceptionDecorator.CommandBaseHandler<>));
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(LoggingDecorator.CommandBaseHandler<>));
 
         return services;
     }

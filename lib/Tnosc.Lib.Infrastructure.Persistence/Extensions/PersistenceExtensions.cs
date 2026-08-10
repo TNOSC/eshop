@@ -52,17 +52,17 @@ public static class PersistenceExtensions
         where TWriteContext : WriteDbContextBase
         where TReadContext : ReadDbContextBase
     {
-        ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(configure);
+        ArgumentNullException.ThrowIfNull(argument: builder);
+        ArgumentNullException.ThrowIfNull(argument: configure);
 
         var options = new PersistenceOptions();
         configure(options);
-        Validate(options);
+        Validate(options: options);
 
-        builder.Services.TryAddSingleton(TimeProvider.System);
+        builder.Services.TryAddSingleton(instance: TimeProvider.System);
 
         builder.Services.TryAddSingleton<IDomainEventTypeRegistry>(
-            _ => new DomainEventTypeRegistry(options.DomainEventAssemblies));
+            implementationFactory: _ => new DomainEventTypeRegistry(assemblies: options.DomainEventAssemblies));
 
         // Singleton over the ROOT provider: DomainEventsPublisher opens a fresh scope per event so
         // handler-scoped services (including their own DbContext) stay isolated from the processor's
@@ -71,7 +71,7 @@ public static class PersistenceExtensions
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork<TWriteContext>>();
 
-        builder.Services.Configure<OutboxOptions>(o =>
+        builder.Services.Configure<OutboxOptions>(configureOptions: o =>
         {
             o.BatchSize = options.Outbox.BatchSize;
             o.PollingInterval = options.Outbox.PollingInterval;
@@ -96,16 +96,16 @@ public static class PersistenceExtensions
 
     private static void Validate(PersistenceOptions options)
     {
-        if (string.IsNullOrWhiteSpace(options.ConnectionName))
+        if (string.IsNullOrWhiteSpace(value: options.ConnectionName))
         {
             throw new InvalidOperationException(
-                $"{nameof(PersistenceOptions.ConnectionName)} must be set by the configuration delegate passed to AddPersistence.");
+                message: $"{nameof(PersistenceOptions.ConnectionName)} must be set by the configuration delegate passed to AddPersistence.");
         }
 
         if (options.DomainEventAssemblies.Length == 0)
         {
             throw new InvalidOperationException(
-                $"{nameof(PersistenceOptions.DomainEventAssemblies)} must be set by the configuration delegate passed to AddPersistence.");
+                message: $"{nameof(PersistenceOptions.DomainEventAssemblies)} must be set by the configuration delegate passed to AddPersistence.");
         }
     }
 }

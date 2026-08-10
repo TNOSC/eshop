@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -33,11 +33,11 @@ public static class ApiEndpointExtensions
     {
         ServiceDescriptor[] serviceDescriptors = [.. assembly
             .DefinedTypes
-            .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                           type.IsAssignableTo(typeof(IApiEndpoint)))
-            .Select(type => ServiceDescriptor.Transient(typeof(IApiEndpoint), type))];
+            .Where(predicate: type => type is { IsAbstract: false, IsInterface: false } &&
+                           type.IsAssignableTo(targetType: typeof(IApiEndpoint)))
+            .Select(selector: type => ServiceDescriptor.Transient(service: typeof(IApiEndpoint), implementationType: type))];
 
-        services.TryAddEnumerable(serviceDescriptors);
+        services.TryAddEnumerable(descriptors: serviceDescriptors);
 
         return services;
     }
@@ -54,7 +54,7 @@ public static class ApiEndpointExtensions
 
         foreach (IApiEndpoint endpoint in endpoints)
         {
-            endpoint.MapEndpoint(app);
+            endpoint.MapEndpoint(app: app);
         }
 
         return app;
@@ -68,6 +68,6 @@ public static class ApiEndpointExtensions
     /// <returns>The same <see cref="RouteHandlerBuilder"/> instance to allow chaining.</returns>
     public static RouteHandlerBuilder HasPermission(this RouteHandlerBuilder app, string permission)
     {
-        return app.RequireAuthorization(permission);
+        return app.RequireAuthorization(policyNames: permission);
     }
 }

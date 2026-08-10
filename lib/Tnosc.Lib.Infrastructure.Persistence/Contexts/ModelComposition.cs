@@ -30,11 +30,11 @@ internal static class ModelComposition
     /// <param name="assembly">The assembly to scan for write-side configurations.</param>
     public static void ApplyWriteModel(ModelBuilder modelBuilder, Assembly assembly)
     {
-        ArgumentNullException.ThrowIfNull(modelBuilder);
-        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(argument: modelBuilder);
+        ArgumentNullException.ThrowIfNull(argument: assembly);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(assembly, ConfiguresEntity<IAggregateRoot>);
-        ApplySharedModelRules(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(assembly: assembly, predicate: ConfiguresEntity<IAggregateRoot>);
+        ApplySharedModelRules(modelBuilder: modelBuilder);
     }
 
     /// <summary>
@@ -45,11 +45,11 @@ internal static class ModelComposition
     /// <param name="assembly">The assembly to scan for read-side configurations.</param>
     public static void ApplyReadModel(ModelBuilder modelBuilder, Assembly assembly)
     {
-        ArgumentNullException.ThrowIfNull(modelBuilder);
-        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(argument: modelBuilder);
+        ArgumentNullException.ThrowIfNull(argument: assembly);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(assembly, ConfiguresEntity<IReadModel>);
-        ApplySharedModelRules(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(assembly: assembly, predicate: ConfiguresEntity<IReadModel>);
+        ApplySharedModelRules(modelBuilder: modelBuilder);
     }
 
     /// <summary>
@@ -61,10 +61,10 @@ internal static class ModelComposition
     /// <param name="assembly">The assembly to scan for <see cref="IEntityId{TSelf, TValue}"/> implementations.</param>
     public static void ApplySharedConventions(ModelConfigurationBuilder configurationBuilder, Assembly assembly)
     {
-        ArgumentNullException.ThrowIfNull(configurationBuilder);
-        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(argument: configurationBuilder);
+        ArgumentNullException.ThrowIfNull(argument: assembly);
 
-        configurationBuilder.ApplyEntityIdConversions(assembly);
+        configurationBuilder.ApplyEntityIdConversions(assemblies: assembly);
     }
 
     /// <summary>
@@ -79,11 +79,11 @@ internal static class ModelComposition
     {
         Type? entityType = configurationType
             .GetInterfaces()
-            .Where(static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
-            .Select(static i => i.GetGenericArguments()[0])
+            .Where(predicate: static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
+            .Select(selector: static i => i.GetGenericArguments()[0])
             .FirstOrDefault();
 
-        return entityType is not null && typeof(TMarker).IsAssignableFrom(entityType);
+        return entityType is not null && typeof(TMarker).IsAssignableFrom(c: entityType);
     }
 
     /// <summary>
@@ -98,15 +98,15 @@ internal static class ModelComposition
         {
             foreach (IMutableProperty keyProperty in entityType.FindPrimaryKey()?.Properties ?? [])
             {
-                if (typeof(IEntityId).IsAssignableFrom(keyProperty.ClrType))
+                if (typeof(IEntityId).IsAssignableFrom(c: keyProperty.ClrType))
                 {
                     keyProperty.ValueGenerated = ValueGenerated.Never;
                 }
             }
 
-            if (typeof(IAggregateRoot).IsAssignableFrom(entityType.ClrType))
+            if (typeof(IAggregateRoot).IsAssignableFrom(c: entityType.ClrType))
             {
-                IMutableProperty? versionProperty = entityType.FindProperty(nameof(AggregateRoot<IEntityId>.Version));
+                IMutableProperty? versionProperty = entityType.FindProperty(name: nameof(AggregateRoot<IEntityId>.Version));
                 if (versionProperty is { } property)
                 {
                     property.IsConcurrencyToken = true;

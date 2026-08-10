@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -34,11 +34,11 @@ public static class CustomResults
         }
 
         return Results.Problem(
-            title: GetTitle(result.FirstError),
-            detail: GetDetail(result.FirstError),
-            type: GetType(result.FirstError.Type),
-            statusCode: GetStatusCode(result.FirstError),
-            extensions: GetErrors(result));
+            title: GetTitle(error: result.FirstError),
+            detail: GetDetail(error: result.FirstError),
+            type: GetType(errorType: result.FirstError.Type),
+            statusCode: GetStatusCode(error: result.FirstError),
+            extensions: GetErrors(result: result));
     }
     private static string GetTitle(Error error) =>
         error.Type switch
@@ -92,7 +92,7 @@ public static class CustomResults
             ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             ErrorType.Failure => StatusCodes.Status500InternalServerError,
             ErrorType.Unexpected => StatusCodes.Status500InternalServerError,
-            ErrorType.Custom => IsValidHttpStatusCode(error.NumericType)
+            ErrorType.Custom => IsValidHttpStatusCode(statusCode: error.NumericType)
                 ? error.NumericType
                 : StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
@@ -108,12 +108,12 @@ public static class CustomResults
             return null;
         }
 
-        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        return new Dictionary<string, object?>(comparer: StringComparer.Ordinal)
             {
                 { "errors", result.Errors.ToDictionary(
-                    k => k.Code,
-                    v => new[] { v.Description },
-                    StringComparer.Ordinal)
+                    keySelector: k => k.Code,
+                    elementSelector: v => new[] { v.Description },
+                    comparer: StringComparer.Ordinal)
                 },
             };
     }

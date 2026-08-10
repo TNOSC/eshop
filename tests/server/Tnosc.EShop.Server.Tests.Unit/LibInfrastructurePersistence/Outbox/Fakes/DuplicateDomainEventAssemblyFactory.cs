@@ -23,12 +23,12 @@ internal static class DuplicateDomainEventAssemblyFactory
 {
     public static Assembly Build(string sharedName)
     {
-        var assemblyName = new AssemblyName($"Tnosc.Tests.DuplicateDomainEvents.{Guid.NewGuid():N}");
-        var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
-        ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name!);
+        var assemblyName = new AssemblyName(assemblyName: $"Tnosc.Tests.DuplicateDomainEvents.{Guid.NewGuid():N}");
+        var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(name: assemblyName, access: AssemblyBuilderAccess.Run);
+        ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(name: assemblyName.Name!);
 
-        DefineDomainEventType(moduleBuilder, "FirstDuplicateDomainEvent", sharedName);
-        DefineDomainEventType(moduleBuilder, "SecondDuplicateDomainEvent", sharedName);
+        DefineDomainEventType(moduleBuilder: moduleBuilder, typeName: "FirstDuplicateDomainEvent", domainEventName: sharedName);
+        DefineDomainEventType(moduleBuilder: moduleBuilder, typeName: "SecondDuplicateDomainEvent", domainEventName: sharedName);
 
         return assemblyBuilder;
     }
@@ -36,41 +36,41 @@ internal static class DuplicateDomainEventAssemblyFactory
     private static void DefineDomainEventType(ModuleBuilder moduleBuilder, string typeName, string domainEventName)
     {
         TypeBuilder typeBuilder = moduleBuilder.DefineType(
-            typeName,
-            TypeAttributes.Public | TypeAttributes.Class,
-            typeof(object),
-            [typeof(IDomainEvent)]);
+            name: typeName,
+            attr: TypeAttributes.Public | TypeAttributes.Class,
+            parent: typeof(object),
+            interfaces: [typeof(IDomainEvent)]);
 
-        ImplementThrowingProperty(typeBuilder, nameof(IDomainEvent.Id), typeof(Guid));
-        ImplementThrowingProperty(typeBuilder, nameof(IDomainEvent.OccurredOnUtc), typeof(DateTime));
+        ImplementThrowingProperty(typeBuilder: typeBuilder, name: nameof(IDomainEvent.Id), propertyType: typeof(Guid));
+        ImplementThrowingProperty(typeBuilder: typeBuilder, name: nameof(IDomainEvent.OccurredOnUtc), propertyType: typeof(DateTime));
 
-        ConstructorInfo attributeConstructor = typeof(DomainEventNameAttribute).GetConstructor([typeof(string)])
-            ?? throw new MissingMethodException(nameof(DomainEventNameAttribute), ".ctor(string)");
-        typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(attributeConstructor, [domainEventName]));
+        ConstructorInfo attributeConstructor = typeof(DomainEventNameAttribute).GetConstructor(types: [typeof(string)])
+            ?? throw new MissingMethodException(className: nameof(DomainEventNameAttribute), methodName: ".ctor(string)");
+        typeBuilder.SetCustomAttribute(customBuilder: new CustomAttributeBuilder(con: attributeConstructor, constructorArgs: [domainEventName]));
 
         typeBuilder.CreateType();
     }
 
     private static void ImplementThrowingProperty(TypeBuilder typeBuilder, string name, Type propertyType)
     {
-        PropertyInfo interfaceProperty = typeof(IDomainEvent).GetProperty(name)
-            ?? throw new MissingMemberException(nameof(IDomainEvent), name);
+        PropertyInfo interfaceProperty = typeof(IDomainEvent).GetProperty(name: name)
+            ?? throw new MissingMemberException(className: nameof(IDomainEvent), memberName: name);
 
         MethodBuilder getter = typeBuilder.DefineMethod(
-            $"get_{name}",
-            MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName,
-            propertyType,
-            Type.EmptyTypes);
+            name: $"get_{name}",
+            attributes: MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName,
+            returnType: propertyType,
+            parameterTypes: Type.EmptyTypes);
 
         // These fixtures are never instantiated: the registry only reflects over Type metadata,
         // so the getter body is unreachable and simply throws.
-        getter.GetILGenerator().ThrowException(typeof(NotSupportedException));
+        getter.GetILGenerator().ThrowException(excType: typeof(NotSupportedException));
 
-        PropertyBuilder property = typeBuilder.DefineProperty(name, PropertyAttributes.None, propertyType, null);
-        property.SetGetMethod(getter);
+        PropertyBuilder property = typeBuilder.DefineProperty(name: name, attributes: PropertyAttributes.None, returnType: propertyType, parameterTypes: null);
+        property.SetGetMethod(mdBuilder: getter);
 
         MethodInfo interfaceGetter = interfaceProperty.GetGetMethod()
-            ?? throw new MissingMemberException(nameof(IDomainEvent), $"get_{name}");
-        typeBuilder.DefineMethodOverride(getter, interfaceGetter);
+            ?? throw new MissingMemberException(className: nameof(IDomainEvent), memberName: $"get_{name}");
+        typeBuilder.DefineMethodOverride(methodInfoBody: getter, methodInfoDeclaration: interfaceGetter);
     }
 }

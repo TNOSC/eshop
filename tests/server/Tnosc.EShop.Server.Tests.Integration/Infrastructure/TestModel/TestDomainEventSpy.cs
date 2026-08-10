@@ -30,7 +30,7 @@ public sealed class TestDomainEventSpy
     /// a handler.
     /// </summary>
     /// <param name="aggregateId">The raising aggregate's identifier, used as the delivery key.</param>
-    public void RecordDelivery(Guid aggregateId) => _delivered.Add(aggregateId);
+    public void RecordDelivery(Guid aggregateId) => _delivered.Add(item: aggregateId);
 
     /// <summary>
     /// Gets a snapshot of every aggregate id delivered since the last <see cref="Clear"/>.

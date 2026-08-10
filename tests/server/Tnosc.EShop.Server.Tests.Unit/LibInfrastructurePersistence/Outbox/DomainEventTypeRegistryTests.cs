@@ -20,50 +20,50 @@ public sealed class DomainEventTypeRegistryTests
     [Fact]
     public void GetName_Should_UseAttributeName_When_DomainEventNameAttributeIsPresent()
     {
-        var registry = new DomainEventTypeRegistry(FixtureAssembly);
+        var registry = new DomainEventTypeRegistry(assemblies: FixtureAssembly);
 
-        registry.GetName(typeof(NamedTestDomainEvent)).ShouldBe("test.registry.named-event.v1");
+        registry.GetName(domainEventType: typeof(NamedTestDomainEvent)).ShouldBe(expected: "test.registry.named-event.v1");
     }
 
     [Fact]
     public void GetName_Should_FallBackToTypeName_When_DomainEventNameAttributeIsAbsent()
     {
-        var registry = new DomainEventTypeRegistry(FixtureAssembly);
+        var registry = new DomainEventTypeRegistry(assemblies: FixtureAssembly);
 
-        registry.GetName(typeof(UnnamedTestDomainEvent)).ShouldBe(nameof(UnnamedTestDomainEvent));
+        registry.GetName(domainEventType: typeof(UnnamedTestDomainEvent)).ShouldBe(expected: nameof(UnnamedTestDomainEvent));
     }
 
     [Fact]
     public void TryResolve_Should_RoundTrip_ForARegisteredName()
     {
-        var registry = new DomainEventTypeRegistry(FixtureAssembly);
-        string name = registry.GetName(typeof(NamedTestDomainEvent));
+        var registry = new DomainEventTypeRegistry(assemblies: FixtureAssembly);
+        string name = registry.GetName(domainEventType: typeof(NamedTestDomainEvent));
 
-        bool resolved = registry.TryResolve(name, out Type? domainEventType);
+        bool resolved = registry.TryResolve(name: name, domainEventType: out Type? domainEventType);
 
         resolved.ShouldBeTrue();
-        domainEventType.ShouldBe(typeof(NamedTestDomainEvent));
+        domainEventType.ShouldBe(expected: typeof(NamedTestDomainEvent));
     }
 
     [Fact]
     public void TryResolve_Should_ReturnFalse_When_NameIsUnknown()
     {
-        var registry = new DomainEventTypeRegistry(FixtureAssembly);
+        var registry = new DomainEventTypeRegistry(assemblies: FixtureAssembly);
 
-        registry.TryResolve("nothing.registered.v1", out Type? domainEventType).ShouldBeFalse();
+        registry.TryResolve(name: "nothing.registered.v1", domainEventType: out Type? domainEventType).ShouldBeFalse();
         domainEventType.ShouldBeNull();
     }
 
     [Fact]
     public void Constructor_Should_Throw_When_TwoDomainEventTypesShareTheSameContractName()
     {
-        Assembly duplicateAssembly = DuplicateDomainEventAssemblyFactory.Build("test.duplicate.v1");
+        Assembly duplicateAssembly = DuplicateDomainEventAssemblyFactory.Build(sharedName: "test.duplicate.v1");
 
-        Action act = () => _ = new DomainEventTypeRegistry(duplicateAssembly);
+        Action act = () => _ = new DomainEventTypeRegistry(assemblies: duplicateAssembly);
 
-        InvalidOperationException exception = Should.Throw<InvalidOperationException>(act);
-        exception.Message.ShouldContain("test.duplicate.v1");
-        exception.Message.ShouldContain("FirstDuplicateDomainEvent");
-        exception.Message.ShouldContain("SecondDuplicateDomainEvent");
+        InvalidOperationException exception = Should.Throw<InvalidOperationException>(actual: act);
+        exception.Message.ShouldContain(expected: "test.duplicate.v1");
+        exception.Message.ShouldContain(expected: "FirstDuplicateDomainEvent");
+        exception.Message.ShouldContain(expected: "SecondDuplicateDomainEvent");
     }
 }

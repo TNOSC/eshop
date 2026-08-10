@@ -36,14 +36,14 @@ public sealed class OutboxBackgroundService<TContext>(
     {
         using PeriodicTimer timer = new(options.Value.PollingInterval);
 
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        while (await timer.WaitForNextTickAsync(cancellationToken: stoppingToken))
         {
             try
             {
                 using IServiceScope scope = scopeFactory.CreateScope();
                 IOutboxProcessor processor = scope.ServiceProvider.GetRequiredService<IOutboxProcessor>();
 
-                await processor.ProcessBatchAsync(stoppingToken);
+                await processor.ProcessBatchAsync(cancellationToken: stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
@@ -51,7 +51,7 @@ public sealed class OutboxBackgroundService<TContext>(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Outbox processing tick failed; will retry on the next poll.");
+                logger.LogError(exception: ex, message: "Outbox processing tick failed; will retry on the next poll.");
             }
         }
     }

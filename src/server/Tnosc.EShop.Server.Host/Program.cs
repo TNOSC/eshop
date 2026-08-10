@@ -14,7 +14,7 @@ using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Host.Extensions;
 using Tnosc.Lib.Host.Middleware;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args: args);
 
 builder.AddServiceDefaults();
 

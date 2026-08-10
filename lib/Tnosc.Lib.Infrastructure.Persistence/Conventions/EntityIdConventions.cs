@@ -43,17 +43,17 @@ public static class EntityIdConventions
         this ModelConfigurationBuilder configurationBuilder,
         params Assembly[] assemblies)
     {
-        ArgumentNullException.ThrowIfNull(configurationBuilder);
-        ArgumentNullException.ThrowIfNull(assemblies);
+        ArgumentNullException.ThrowIfNull(argument: configurationBuilder);
+        ArgumentNullException.ThrowIfNull(argument: assemblies);
 
         IEnumerable<Type> idTypes = assemblies
-            .SelectMany(static a => a.GetTypes())
-            .Where(static t => t is { IsClass: true, IsAbstract: false });
+            .SelectMany(selector: static a => a.GetTypes())
+            .Where(predicate: static t => t is { IsClass: true, IsAbstract: false });
 
         foreach (Type idType in idTypes)
         {
             Type? closedInterface = idType.GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType
+                .FirstOrDefault(predicate: i => i.IsGenericType
                     && i.GetGenericTypeDefinition() == typeof(IEntityId<,>)
                     && i.GetGenericArguments()[0] == idType);
 
@@ -65,7 +65,7 @@ public static class EntityIdConventions
             Type valueType = closedInterface.GetGenericArguments()[1];
             Type converterType = typeof(EntityIdConverter<,>).MakeGenericType(idType, valueType);
 
-            configurationBuilder.Properties(idType).HaveConversion(converterType);
+            configurationBuilder.Properties(propertyType: idType).HaveConversion(conversionType: converterType);
         }
 
         return configurationBuilder;

@@ -32,15 +32,15 @@ public abstract class WriteDbContextBase(DbContextOptions options) : DbContext(o
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ModelComposition.ApplyWriteModel(modelBuilder, ConfigurationAssembly);
-        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
-        base.OnModelCreating(modelBuilder);
+        ModelComposition.ApplyWriteModel(modelBuilder: modelBuilder, assembly: ConfigurationAssembly);
+        modelBuilder.ApplyConfiguration(configuration: new OutboxMessageConfiguration());
+        base.OnModelCreating(modelBuilder: modelBuilder);
     }
 
     /// <inheritdoc />
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        ModelComposition.ApplySharedConventions(configurationBuilder, ConfigurationAssembly);
-        base.ConfigureConventions(configurationBuilder);
+        ModelComposition.ApplySharedConventions(configurationBuilder: configurationBuilder, assembly: ConfigurationAssembly);
+        base.ConfigureConventions(configurationBuilder: configurationBuilder);
     }
 }

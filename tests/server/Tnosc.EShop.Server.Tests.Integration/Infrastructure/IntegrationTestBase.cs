@@ -79,7 +79,7 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
         // and IServiceScope.Dispose() throws for a scoped service that has no synchronous Dispose.
         _scope = fixture.Services.CreateAsyncScope();
         Spy.Clear();
-        TimeProvider.SetUtcNow(DateTimeOffset.UtcNow);
+        TimeProvider.SetUtcNow(utcNow: DateTimeOffset.UtcNow);
     }
 
     /// <inheritdoc />
@@ -101,7 +101,7 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
     /// <param name="entities">The entities to add and save.</param>
     protected async Task SeedAsync(params object[] entities)
     {
-        WriteContext.AddRange(entities);
+        WriteContext.AddRange(entities: entities);
         await WriteContext.SaveChangesAsync();
 
         // Production never processes an outbox row through the same DbContext instance that inserted

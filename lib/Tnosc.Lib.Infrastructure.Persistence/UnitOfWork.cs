@@ -51,10 +51,10 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
         IDomainEventTypeRegistry domainEventTypeRegistry,
         TimeProvider timeProvider)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _userContext = userContext ?? throw new ArgumentNullException(nameof(userContext));
-        _domainEventTypeRegistry = domainEventTypeRegistry ?? throw new ArgumentNullException(nameof(domainEventTypeRegistry));
-        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        _context = context ?? throw new ArgumentNullException(paramName: nameof(context));
+        _userContext = userContext ?? throw new ArgumentNullException(paramName: nameof(userContext));
+        _domainEventTypeRegistry = domainEventTypeRegistry ?? throw new ArgumentNullException(paramName: nameof(domainEventTypeRegistry));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(paramName: nameof(timeProvider));
     }
 
     /// <summary>
@@ -68,12 +68,12 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
         {
             ConvertDomainEventsToOutboxMessage();
             UpdateAuditableEntries();
-            return await _context.SaveChangesAsync(cancellationToken);
+            return await _context.SaveChangesAsync(cancellationToken: cancellationToken);
         }
         catch (DBConcurrencyException ex)
         {
             // throw conflict exception to be handled by upper layers
-            throw new ConflictException("A concurrency conflict occurred while saving changes to the database.", correlationId: null, inner: ex);
+            throw new ConflictException(message: "A concurrency conflict occurred while saving changes to the database.", correlationId: null, inner: ex);
         }
     }
 
@@ -86,10 +86,10 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
     {
         if (_currentTransaction is not null)
         {
-            throw new InvalidOperationException("A transaction is already in progress on this unit of work.");
+            throw new InvalidOperationException(message: "A transaction is already in progress on this unit of work.");
         }
 
-        _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
 
         try
         {
-            await _currentTransaction.CommitAsync(cancellationToken);
+            await _currentTransaction.CommitAsync(cancellationToken: cancellationToken);
         }
         finally
         {
@@ -127,7 +127,7 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
 
         try
         {
-            await _currentTransaction.RollbackAsync(cancellationToken);
+            await _currentTransaction.RollbackAsync(cancellationToken: cancellationToken);
         }
         finally
         {
@@ -152,8 +152,8 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
     {
         var outboxMessages = _context.ChangeTracker
             .Entries<IHasDomainEvent>()
-            .Select(x => x.Entity)
-            .SelectMany(aggregateRoot =>
+            .Select(selector: x => x.Entity)
+            .SelectMany(selector: aggregateRoot =>
             {
                 List<IDomainEvent> events = [.. aggregateRoot.DomainEvents];
                 aggregateRoot.ClearDomainEvents();
@@ -161,13 +161,13 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
                 return events;
 
             })
-            .Select(domainEvent => new OutboxMessage(
-                _domainEventTypeRegistry.GetName(domainEvent.GetType()),
-                JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), OutboxSerialization.Options)
+            .Select(selector: domainEvent => new OutboxMessage(
+                type: _domainEventTypeRegistry.GetName(domainEventType: domainEvent.GetType()),
+                content: JsonSerializer.Serialize(value: domainEvent, inputType: domainEvent.GetType(), options: OutboxSerialization.Options)
             ))
             .ToList();
 
-        _context.Set<OutboxMessage>().AddRange(outboxMessages);
+        _context.Set<OutboxMessage>().AddRange(entities: outboxMessages);
     }
 
     private void UpdateAuditableEntries()
@@ -178,14 +178,14 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
         {
             if (auditable.State == EntityState.Added)
             {
-                auditable.Property(nameof(IAuditable.CreatedOnUtc)).CurrentValue = utcNow;
-                auditable.Property(nameof(IAuditable.CreatedBy)).CurrentValue = _userContext.UserId ?? "system";
+                auditable.Property(propertyName: nameof(IAuditable.CreatedOnUtc)).CurrentValue = utcNow;
+                auditable.Property(propertyName: nameof(IAuditable.CreatedBy)).CurrentValue = _userContext.UserId ?? "system";
             }
 
             if (auditable.State == EntityState.Modified)
             {
-                auditable.Property(nameof(IAuditable.UpdatedOnUtc)).CurrentValue = utcNow;
-                auditable.Property(nameof(IAuditable.UpdatedBy)).CurrentValue = _userContext.UserId ?? "system";
+                auditable.Property(propertyName: nameof(IAuditable.UpdatedOnUtc)).CurrentValue = utcNow;
+                auditable.Property(propertyName: nameof(IAuditable.UpdatedBy)).CurrentValue = _userContext.UserId ?? "system";
             }
         }
     }

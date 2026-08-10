@@ -33,17 +33,17 @@ public static class InfrastructurePersistenceExtensions
     /// <returns>The same <paramref name="builder"/> instance, for chaining.</returns>
     public static IHostApplicationBuilder AddInfrastructurePersistence(this IHostApplicationBuilder builder)
     {
-        builder.AddNpgsqlDbContext<EShopWriteDbContext>(ConnectionName);
-        builder.AddNpgsqlDbContext<EShopReadDbContext>(ConnectionName);
+        builder.AddNpgsqlDbContext<EShopWriteDbContext>(connectionName: ConnectionName);
+        builder.AddNpgsqlDbContext<EShopReadDbContext>(connectionName: ConnectionName);
 
-        builder.AddPersistence<EShopWriteDbContext, EShopReadDbContext>(options =>
+        builder.AddPersistence<EShopWriteDbContext, EShopReadDbContext>(configure: options =>
         {
             options.ConnectionName = ConnectionName;
             options.ConfigurationAssembly = AssemblyReference.Assembly;
             options.DomainEventAssemblies = [DomainAssemblyReference.Assembly];
             options.MigrationsAssembly = AssemblyReference.Assembly;
             options.ApplyMigrationsOnStartup =
-                bool.TryParse(builder.Configuration["Persistence:ApplyMigrationsOnStartup"], out bool applyOnStartup)
+                bool.TryParse(value: builder.Configuration["Persistence:ApplyMigrationsOnStartup"], result: out bool applyOnStartup)
                     && applyOnStartup;
         });
 
@@ -54,14 +54,14 @@ public static class InfrastructurePersistenceExtensions
 
     private static void AddQueries(this IServiceCollection services)
     {
-        services.Scan(s => s.FromAssemblies(AssemblyReference.Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
-                .As(implementationType => ScanExtensions.ClosedInterfacesOf(implementationType, typeof(IQueryHandler<,>))).WithScopedLifetime());
+        services.Scan(action: s => s.FromAssemblies(assemblies: AssemblyReference.Assembly)
+            .AddClasses(action: c => c.AssignableTo(type: typeof(IQueryHandler<,>)), publicOnly: false)
+                .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(IQueryHandler<,>))).WithScopedLifetime());
 
         // Queries — innermost first.
-        services.TryDecorate(typeof(IQueryHandler<,>), typeof(RetryDecorator.QueryHandler<,>));
-        services.TryDecorate(typeof(IQueryHandler<,>), typeof(CacheableDecorator.QueryHandler<,>));
-        services.TryDecorate(typeof(IQueryHandler<,>), typeof(ExceptionDecorator.QueryHandler<,>));
-        services.TryDecorate(typeof(IQueryHandler<,>), typeof(LoggingDecorator.QueryHandler<,>));
+        services.TryDecorate(serviceType: typeof(IQueryHandler<,>), decoratorType: typeof(RetryDecorator.QueryHandler<,>));
+        services.TryDecorate(serviceType: typeof(IQueryHandler<,>), decoratorType: typeof(CacheableDecorator.QueryHandler<,>));
+        services.TryDecorate(serviceType: typeof(IQueryHandler<,>), decoratorType: typeof(ExceptionDecorator.QueryHandler<,>));
+        services.TryDecorate(serviceType: typeof(IQueryHandler<,>), decoratorType: typeof(LoggingDecorator.QueryHandler<,>));
     }
 }

@@ -39,16 +39,16 @@ public sealed class DatabaseMigrationHostedService<TContext>(
         using IServiceScope scope = scopeFactory.CreateScope();
         TContext context = scope.ServiceProvider.GetRequiredService<TContext>();
 
-        await context.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_lock({AdvisoryLockKey})", cancellationToken);
+        await context.Database.ExecuteSqlInterpolatedAsync(sql: $"SELECT pg_advisory_lock({AdvisoryLockKey})", cancellationToken: cancellationToken);
 
         try
         {
-            logger.LogInformation("Applying pending migrations for {ContextType}.", typeof(TContext).Name);
-            await context.Database.MigrateAsync(cancellationToken);
+            logger.LogInformation(message: "Applying pending migrations for {ContextType}.", args: typeof(TContext).Name);
+            await context.Database.MigrateAsync(cancellationToken: cancellationToken);
         }
         finally
         {
-            await context.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_unlock({AdvisoryLockKey})", cancellationToken);
+            await context.Database.ExecuteSqlInterpolatedAsync(sql: $"SELECT pg_advisory_unlock({AdvisoryLockKey})", cancellationToken: cancellationToken);
         }
     }
 

@@ -30,7 +30,7 @@ internal static class HandlerMetadata
     /// <returns>The resolved attribute, or <see langword="null"/> if none is declared.</returns>
     public static TAttribute? Find<TAttribute>(object handler, Type messageType)
         where TAttribute : Attribute =>
-        Unwrap(handler).GetCustomAttribute<TAttribute>() ?? messageType.GetCustomAttribute<TAttribute>();
+        Unwrap(handler: handler).GetCustomAttribute<TAttribute>() ?? messageType.GetCustomAttribute<TAttribute>();
 
     /// <summary>
     /// Finds every <typeparamref name="TAttribute"/> declared on the unwrapped handler type,
@@ -43,7 +43,7 @@ internal static class HandlerMetadata
     public static TAttribute[] FindAll<TAttribute>(object handler, Type messageType)
         where TAttribute : Attribute
     {
-        TAttribute[] handlerAttributes = [.. Unwrap(handler).GetCustomAttributes<TAttribute>()];
+        TAttribute[] handlerAttributes = [.. Unwrap(handler: handler).GetCustomAttributes<TAttribute>()];
 
         return handlerAttributes.Length > 0
             ? handlerAttributes
@@ -57,7 +57,7 @@ internal static class HandlerMetadata
     /// <param name="handler">The (possibly decorated) handler instance.</param>
     /// <returns>The concrete, unwrapped handler type.</returns>
     private static Type Unwrap(object handler) =>
-        UnwrappedTypeCache.GetOrAdd(handler.GetType(), _ =>
+        UnwrappedTypeCache.GetOrAdd(key: handler.GetType(), valueFactory: _ =>
         {
             object current = handler;
 

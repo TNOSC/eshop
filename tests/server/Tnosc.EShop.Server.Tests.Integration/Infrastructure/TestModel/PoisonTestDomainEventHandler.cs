@@ -19,5 +19,5 @@ internal sealed class PoisonTestDomainEventHandler : IDomainEventHandler<PoisonT
 {
     /// <inheritdoc />
     public ValueTask HandleAsync(PoisonTestDomainEvent @event, CancellationToken cancellationToken = default) =>
-        throw new InvalidOperationException($"Poison message {@event.Id} always fails.");
+        throw new InvalidOperationException(message: $"Poison message {@event.Id} always fails.");
 }

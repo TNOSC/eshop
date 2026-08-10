@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -41,17 +41,17 @@ public static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            logger.LogInformation(message: "Processing command {Command}", args: commandName);
 
-            Result<TResponse> result = await innerHandler.HandleAsync(command, cancellationToken);
+            Result<TResponse> result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                logger.LogInformation(message: "Completed command {Command}", args: commandName);
             }
             else
             {
-                logger.LogError("Completed command {Command} with errors {@Errors}", commandName, result.Errors);
+                logger.LogError(message: "Completed command {Command} with errors {@Errors}", commandName, result.Errors);
             }
 
             return result;
@@ -81,17 +81,17 @@ public static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            logger.LogInformation(message: "Processing command {Command}", args: commandName);
 
-            Result result = await innerHandler.HandleAsync(command, cancellationToken);
+            Result result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                logger.LogInformation(message: "Completed command {Command}", args: commandName);
             }
             else
             {
-                logger.LogError("Completed command {Command} with errors {@Errors}", commandName, result.Errors);
+                logger.LogError(message: "Completed command {Command} with errors {@Errors}", commandName, result.Errors);
             }
 
             return result;
@@ -121,17 +121,17 @@ public static class LoggingDecorator
         {
             string queryName = typeof(TQuery).Name;
 
-            logger.LogInformation("Processing query {Query}", queryName);
+            logger.LogInformation(message: "Processing query {Query}", args: queryName);
 
-            Result<TResponse> result = await innerHandler.HandleAsync(query, cancellationToken);
+            Result<TResponse> result = await innerHandler.HandleAsync(query: query, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed query {Query}", queryName);
+                logger.LogInformation(message: "Completed query {Query}", args: queryName);
             }
             else
             {
-                logger.LogError("Completed query {Query} with errors {@Errors}", queryName, result.Errors);
+                logger.LogError(message: "Completed query {Query} with errors {@Errors}", queryName, result.Errors);
             }
 
             return result;

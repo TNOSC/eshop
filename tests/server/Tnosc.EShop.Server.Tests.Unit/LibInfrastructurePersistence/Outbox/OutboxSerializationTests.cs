@@ -30,32 +30,32 @@ public sealed class OutboxSerializationTests
     [Fact]
     public void Serialize_Should_LoseDerivedProperties_When_SerializedAgainstTheDeclaredIDomainEventType()
     {
-        IDomainEvent domainEvent = new ProductCreatedTestDomainEvent(Guid.NewGuid(), DateTime.UtcNow, "SKU-1", 9.99m);
+        IDomainEvent domainEvent = new ProductCreatedTestDomainEvent(Id: Guid.NewGuid(), OccurredOnUtc: DateTime.UtcNow, Sku: "SKU-1", Price: 9.99m);
 
-        string json = JsonSerializer.Serialize(domainEvent, SerializerOptions);
+        string json = JsonSerializer.Serialize(value: domainEvent, options: SerializerOptions);
 
-        json.ShouldNotContain("SKU-1");
-        json.ShouldNotContain("9.99");
+        json.ShouldNotContain(expected: "SKU-1");
+        json.ShouldNotContain(expected: "9.99");
     }
 
     [Fact]
     public void Serialize_Should_RoundTripDerivedProperties_When_SerializedAgainstTheRuntimeType()
     {
-        IDomainEvent domainEvent = new ProductCreatedTestDomainEvent(Guid.NewGuid(), DateTime.UtcNow, "SKU-1", 9.99m);
-        var registry = new DomainEventTypeRegistry(typeof(ProductCreatedTestDomainEvent).Assembly);
+        IDomainEvent domainEvent = new ProductCreatedTestDomainEvent(Id: Guid.NewGuid(), OccurredOnUtc: DateTime.UtcNow, Sku: "SKU-1", Price: 9.99m);
+        var registry = new DomainEventTypeRegistry(assemblies: typeof(ProductCreatedTestDomainEvent).Assembly);
 
         // Mirrors UnitOfWork.ConvertDomainEventsToOutboxMessage: serialize against the runtime type
         // and store the registry's durable contract name, not domainEvent.GetType().Name.
-        string typeName = registry.GetName(domainEvent.GetType());
-        string content = JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), SerializerOptions);
+        string typeName = registry.GetName(domainEventType: domainEvent.GetType());
+        string content = JsonSerializer.Serialize(value: domainEvent, inputType: domainEvent.GetType(), options: SerializerOptions);
 
-        var outboxMessage = new OutboxMessage(typeName, content);
+        var outboxMessage = new OutboxMessage(type: typeName, content: content);
 
-        registry.TryResolve(outboxMessage.Type, out Type? resolvedType).ShouldBeTrue();
-        var deserialized = (ProductCreatedTestDomainEvent?)JsonSerializer.Deserialize(outboxMessage.Content, resolvedType, SerializerOptions);
+        registry.TryResolve(name: outboxMessage.Type, domainEventType: out Type? resolvedType).ShouldBeTrue();
+        var deserialized = (ProductCreatedTestDomainEvent?)JsonSerializer.Deserialize(json: outboxMessage.Content, returnType: resolvedType, options: SerializerOptions);
 
         deserialized.ShouldNotBeNull();
-        deserialized.Sku.ShouldBe("SKU-1");
-        deserialized.Price.ShouldBe(9.99m);
+        deserialized.Sku.ShouldBe(expected: "SKU-1");
+        deserialized.Price.ShouldBe(expected: 9.99m);
     }
 }

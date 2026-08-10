@@ -46,15 +46,15 @@ public abstract class ReadDbContextBase : DbContext
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ModelComposition.ApplyReadModel(modelBuilder, ConfigurationAssembly);
-        base.OnModelCreating(modelBuilder);
+        ModelComposition.ApplyReadModel(modelBuilder: modelBuilder, assembly: ConfigurationAssembly);
+        base.OnModelCreating(modelBuilder: modelBuilder);
     }
 
     /// <inheritdoc />
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        ModelComposition.ApplySharedConventions(configurationBuilder, ConfigurationAssembly);
-        base.ConfigureConventions(configurationBuilder);
+        ModelComposition.ApplySharedConventions(configurationBuilder: configurationBuilder, assembly: ConfigurationAssembly);
+        base.ConfigureConventions(configurationBuilder: configurationBuilder);
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -38,7 +38,7 @@ public abstract class RepositoryBase<TAggregateRoot, TEntityId>(DbContext contex
     /// <returns>A task that represents the asynchronous operation. The task result contains the aggregate root entity if found;
     /// otherwise, <see langword="null"/>.</returns>
     public async ValueTask<TAggregateRoot?> GetByIdAsync(TEntityId id, CancellationToken cancellationToken = default) =>
-        await _dbSet.FindAsync([id], cancellationToken);
+        await _dbSet.FindAsync(keyValues: [id], cancellationToken: cancellationToken);
 
     /// <summary>
     /// Asynchronously adds the specified aggregate root entity to the context.
@@ -47,14 +47,14 @@ public abstract class RepositoryBase<TAggregateRoot, TEntityId>(DbContext contex
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A ValueTask that represents the asynchronous add operation.</returns>
     public async ValueTask AddAsync(TAggregateRoot aggregate, CancellationToken cancellationToken = default) =>
-        await _dbSet.AddAsync(aggregate, cancellationToken);
+        await _dbSet.AddAsync(entity: aggregate, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Updates the specified aggregate root entity in the underlying data store.
     /// </summary>
     /// <param name="aggregate">The aggregate root entity to update. Cannot be null.</param>
     public void Update(TAggregateRoot aggregate) =>
-        _dbSet.Update(aggregate);
+        _dbSet.Update(entity: aggregate);
 
     /// <summary>
     /// Removes the specified aggregate root entity from the context, marking it for deletion in the underlying data
@@ -64,5 +64,5 @@ public abstract class RepositoryBase<TAggregateRoot, TEntityId>(DbContext contex
     /// entity is not being tracked, this method has no effect.</remarks>
     /// <param name="aggregate">The aggregate root entity to remove. Cannot be null.</param>
     public void Remove(TAggregateRoot aggregate) =>
-        _dbSet.Remove(aggregate);
+        _dbSet.Remove(entity: aggregate);
 }

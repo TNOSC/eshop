@@ -22,7 +22,7 @@ public sealed class OutboxOptions
     /// <summary>
     /// Gets or sets the interval between polling ticks. Defaults to 5 seconds.
     /// </summary>
-    public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(5);
+    public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(seconds: 5);
 
     /// <summary>
     /// Gets or sets the number of attempts after which a message is no longer claimed — dead-lettered
@@ -34,5 +34,5 @@ public sealed class OutboxOptions
     /// Gets or sets the base duration used by the exponential backoff applied after a failed attempt.
     /// Defaults to 10 seconds.
     /// </summary>
-    public TimeSpan BaseBackoff { get; set; } = TimeSpan.FromSeconds(10);
+    public TimeSpan BaseBackoff { get; set; } = TimeSpan.FromSeconds(seconds: 10);
 }

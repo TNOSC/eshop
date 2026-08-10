@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -35,9 +35,9 @@ public class RequestContextMiddleware(
     /// <returns>A task that represents the completion of request processing.</returns>
     public async Task InvokeAsync(HttpContext context, IUserContext userContext)
     {
-        string correlationId = GetCorrelationId(context);
+        string correlationId = GetCorrelationId(context: context);
 
-        var scopeState = new Dictionary<string, object>(System.StringComparer.Ordinal)
+        var scopeState = new Dictionary<string, object>(comparer: System.StringComparer.Ordinal)
         {
             ["CorrelationId"] = correlationId,
         };
@@ -50,9 +50,9 @@ public class RequestContextMiddleware(
         CorrelationIdContext.Current = correlationId;
         try
         {
-            using (logger.BeginScope(scopeState))
+            using (logger.BeginScope(state: scopeState))
             {
-                await next.Invoke(context);
+                await next.Invoke(context: context);
             }
         }
         finally
@@ -64,8 +64,8 @@ public class RequestContextMiddleware(
     private static string GetCorrelationId(HttpContext context)
     {
         context.Request.Headers.TryGetValue(
-            CorrelationIdHeaderName,
-            out StringValues correlationId);
+            key: CorrelationIdHeaderName,
+            value: out StringValues correlationId);
 
         return correlationId.FirstOrDefault() ?? context.TraceIdentifier;
     }

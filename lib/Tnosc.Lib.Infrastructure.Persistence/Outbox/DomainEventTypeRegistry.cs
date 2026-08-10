@@ -35,45 +35,45 @@ internal sealed class DomainEventTypeRegistry : IDomainEventTypeRegistry
     /// </exception>
     public DomainEventTypeRegistry(params Assembly[] assemblies)
     {
-        ArgumentNullException.ThrowIfNull(assemblies);
+        ArgumentNullException.ThrowIfNull(argument: assemblies);
 
         IEnumerable<Type> domainEventTypes = assemblies
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type is { IsClass: true, IsAbstract: false } && typeof(IDomainEvent).IsAssignableFrom(type));
+            .SelectMany(selector: assembly => assembly.GetTypes())
+            .Where(predicate: type => type is { IsClass: true, IsAbstract: false } && typeof(IDomainEvent).IsAssignableFrom(c: type));
 
         var namesByType = new Dictionary<Type, string>();
-        var typesByName = new Dictionary<string, Type>(StringComparer.Ordinal);
+        var typesByName = new Dictionary<string, Type>(comparer: StringComparer.Ordinal);
 
         foreach (Type domainEventType in domainEventTypes)
         {
             string name = domainEventType.GetCustomAttribute<DomainEventNameAttribute>()?.Name ?? domainEventType.Name;
 
-            if (typesByName.TryGetValue(name, out Type? existing))
+            if (typesByName.TryGetValue(key: name, value: out Type? existing))
             {
                 throw new InvalidOperationException(
-                    $"Domain event contract name '{name}' is registered by both '{existing}' and '{domainEventType}'. " +
+                    message: $"Domain event contract name '{name}' is registered by both '{existing}' and '{domainEventType}'. " +
                     "Give one of them a distinct [DomainEventName].");
             }
 
-            namesByType.Add(domainEventType, name);
-            typesByName.Add(name, domainEventType);
+            namesByType.Add(key: domainEventType, value: name);
+            typesByName.Add(key: name, value: domainEventType);
         }
 
         _namesByType = namesByType.ToFrozenDictionary();
-        _typesByName = typesByName.ToFrozenDictionary(StringComparer.Ordinal);
+        _typesByName = typesByName.ToFrozenDictionary(comparer: StringComparer.Ordinal);
     }
 
     /// <inheritdoc />
     public string GetName(Type domainEventType)
     {
-        ArgumentNullException.ThrowIfNull(domainEventType);
+        ArgumentNullException.ThrowIfNull(argument: domainEventType);
 
-        return _namesByType.TryGetValue(domainEventType, out string? name)
+        return _namesByType.TryGetValue(key: domainEventType, value: out string? name)
             ? name
-            : throw new InvalidOperationException($"Domain event type '{domainEventType}' is not registered.");
+            : throw new InvalidOperationException(message: $"Domain event type '{domainEventType}' is not registered.");
     }
 
     /// <inheritdoc />
     public bool TryResolve(string name, [NotNullWhen(true)] out Type? domainEventType) =>
-        _typesByName.TryGetValue(name, out domainEventType);
+        _typesByName.TryGetValue(key: name, value: out domainEventType);
 }

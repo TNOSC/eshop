@@ -26,7 +26,7 @@ internal sealed class TestModelCustomizer(ModelCustomizerDependencies dependenci
     /// <inheritdoc />
     public override void Customize(ModelBuilder modelBuilder, DbContext context)
     {
-        base.Customize(modelBuilder, context);
-        modelBuilder.ApplyConfiguration(new TestAggregateConfiguration());
+        base.Customize(modelBuilder: modelBuilder, context: context);
+        modelBuilder.ApplyConfiguration(configuration: new TestAggregateConfiguration());
     }
 }

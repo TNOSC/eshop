@@ -51,42 +51,42 @@ public static class CacheableDecorator
         public async ValueTask<Result<TResponse>> HandleAsync(TQuery query, CancellationToken cancellationToken = default)
         {
             CacheableAttribute? attribute = CacheableCache.GetOrAdd(
-                GetType(),
-                _ => HandlerMetadata.Find<CacheableAttribute>(this, typeof(TQuery)));
+                key: GetType(),
+                valueFactory: _ => HandlerMetadata.Find<CacheableAttribute>(handler: this, messageType: typeof(TQuery)));
 
             if (attribute is null)
             {
-                return await innerHandler.HandleAsync(query, cancellationToken);
+                return await innerHandler.HandleAsync(query: query, cancellationToken: cancellationToken);
             }
 
-            string cacheKey = BuildCacheKey(query);
+            string cacheKey = BuildCacheKey(query: query);
 
             string[] tags = TagsCache.GetOrAdd(
-                GetType(),
-                _ => [.. HandlerMetadata.FindAll<CacheTagAttribute>(this, typeof(TQuery)).Select(a => a.Tag)]);
+                key: GetType(),
+                valueFactory: _ => [.. HandlerMetadata.FindAll<CacheTagAttribute>(handler: this, messageType: typeof(TQuery)).Select(selector: a => a.Tag)]);
 
             HybridCacheEntryOptions options = new()
             {
-                Expiration = TimeSpan.FromSeconds(attribute.DurationSeconds),
-                LocalCacheExpiration = TimeSpan.FromSeconds(attribute.DurationSeconds),
+                Expiration = TimeSpan.FromSeconds(seconds: attribute.DurationSeconds),
+                LocalCacheExpiration = TimeSpan.FromSeconds(seconds: attribute.DurationSeconds),
             };
 
             try
             {
                 TResponse value = await cache.GetOrCreateAsync(
-                    cacheKey,
-                    async ct =>
+                    key: cacheKey,
+                    factory: async ct =>
                     {
-                        Result<TResponse> result = await innerHandler.HandleAsync(query, ct);
+                        Result<TResponse> result = await innerHandler.HandleAsync(query: query, cancellationToken: ct);
 
                         if (result.IsError)
                         {
-                            throw new QueryResultErrorException([.. result.Errors]);
+                            throw new QueryResultErrorException(errors: [.. result.Errors]);
                         }
 
                         return result.Value;
                     },
-                    options,
+                    options: options,
                     tags: tags,
                     cancellationToken: cancellationToken);
 
@@ -101,15 +101,15 @@ public static class CacheableDecorator
         private static string BuildCacheKey(TQuery query)
         {
             PropertyInfo[] properties = CacheKeyPropertiesCache.GetOrAdd(
-                typeof(TQuery),
-                static t => [.. t.GetProperties().Where(p => p.IsDefined(typeof(CacheKeyAttribute)))]);
+                key: typeof(TQuery),
+                valueFactory: static t => [.. t.GetProperties().Where(predicate: p => p.IsDefined(attributeType: typeof(CacheKeyAttribute)))]);
 
             if (properties.Length == 0)
             {
                 return typeof(TQuery).FullName!;
             }
 
-            return $"{typeof(TQuery).FullName}:{string.Join('|', properties.Select(p => $"{p.Name}={p.GetValue(query)}"))}";
+            return $"{typeof(TQuery).FullName}:{string.Join(separator: '|', values: properties.Select(selector: p => $"{p.Name}={p.GetValue(obj: query)}"))}";
         }
     }
 

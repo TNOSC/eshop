@@ -25,8 +25,8 @@ public sealed class EndpointResultExtensionsTests
 
         IResult httpResult = result.ToHttp();
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status204NoContent);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status204NoContent);
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public sealed class EndpointResultExtensionsTests
 
         IResult httpResult = result.ToHttp(successStatusCode: StatusCodes.Status200OK);
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status200OK);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status200OK);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public sealed class EndpointResultExtensionsTests
 
         IResult httpResult = result.ToHttp();
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status404NotFound);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status404NotFound);
     }
 
     [Fact]
@@ -56,10 +56,10 @@ public sealed class EndpointResultExtensionsTests
     {
         Result<int> result = 42;
 
-        IResult httpResult = result.ToHttp(onSuccess: static value => Results.Ok(value));
+        IResult httpResult = result.ToHttp(onSuccess: static value => Results.Ok(value: value));
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status200OK);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status200OK);
     }
 
     [Fact]
@@ -67,10 +67,10 @@ public sealed class EndpointResultExtensionsTests
     {
         Result<int> result = Error.Conflict(code: "Test.Conflict", description: "conflict");
 
-        IResult httpResult = result.ToHttp(onSuccess: static value => Results.Ok(value));
+        IResult httpResult = result.ToHttp(onSuccess: static value => Results.Ok(value: value));
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status409Conflict);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status409Conflict);
     }
 
     [Fact]
@@ -85,10 +85,10 @@ public sealed class EndpointResultExtensionsTests
             RequestServices = new ServiceCollection().AddLogging().BuildServiceProvider(),
             Response = { Body = new MemoryStream() },
         };
-        await httpResult.ExecuteAsync(httpContext);
+        await httpResult.ExecuteAsync(httpContext: httpContext);
 
-        httpContext.Response.StatusCode.ShouldBe(StatusCodes.Status201Created);
-        httpContext.Response.Headers.Location.ToString().ShouldBe("/items/42");
+        httpContext.Response.StatusCode.ShouldBe(expected: StatusCodes.Status201Created);
+        httpContext.Response.Headers.Location.ToString().ShouldBe(expected: "/items/42");
     }
 
     [Fact]
@@ -98,8 +98,8 @@ public sealed class EndpointResultExtensionsTests
 
         IResult httpResult = result.ToCreated(location: static value => $"/items/{value}");
 
-        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult);
-        statusCode.ShouldBe(StatusCodes.Status400BadRequest);
+        int statusCode = await ExecuteAndGetStatusCodeAsync(httpResult: httpResult);
+        statusCode.ShouldBe(expected: StatusCodes.Status400BadRequest);
     }
 
     private static async Task<int> ExecuteAndGetStatusCodeAsync(IResult httpResult)
@@ -110,7 +110,7 @@ public sealed class EndpointResultExtensionsTests
             Response = { Body = new MemoryStream() },
         };
 
-        await httpResult.ExecuteAsync(httpContext);
+        await httpResult.ExecuteAsync(httpContext: httpContext);
 
         return httpContext.Response.StatusCode;
     }

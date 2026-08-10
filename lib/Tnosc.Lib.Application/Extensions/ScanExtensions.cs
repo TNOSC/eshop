@@ -36,5 +36,5 @@ public static class ScanExtensions
     /// </returns>
     public static IEnumerable<Type> ClosedInterfacesOf(Type implementationType, Type openGenericInterface) =>
         implementationType.GetInterfaces()
-            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface);
+            .Where(predicate: i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface);
 }

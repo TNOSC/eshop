@@ -29,7 +29,7 @@ public static class TransactionDecorator
     /// <param name="handler">The decorator instance wrapping the handler.</param>
     /// <param name="messageType">The command type the handler processes.</param>
     private static bool IsTransactional(object handler, Type messageType) =>
-        TransactionalCache.GetOrAdd(handler.GetType(), _ => HandlerMetadata.Find<TransactionalAttribute>(handler, messageType) is not null);
+        TransactionalCache.GetOrAdd(key: handler.GetType(), valueFactory: _ => HandlerMetadata.Find<TransactionalAttribute>(handler: handler, messageType: messageType) is not null);
 
     /// <summary>
     /// Transaction decorator for command handlers that return a response.
@@ -55,31 +55,31 @@ public static class TransactionDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            if (!IsTransactional(this, typeof(TCommand)))
+            if (!IsTransactional(handler: this, messageType: typeof(TCommand)))
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
 
-            await unitOfWork.BeginTransactionAsync(cancellationToken);
+            await unitOfWork.BeginTransactionAsync(cancellationToken: cancellationToken);
 
             try
             {
-                Result<TResponse> result = await innerHandler.HandleAsync(command, cancellationToken);
+                Result<TResponse> result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
                 if (result.IsSuccess)
                 {
-                    await unitOfWork.CommitTransactionAsync(cancellationToken);
+                    await unitOfWork.CommitTransactionAsync(cancellationToken: cancellationToken);
                 }
                 else
                 {
-                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken: cancellationToken);
                 }
 
                 return result;
             }
             catch
             {
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                await unitOfWork.RollbackTransactionAsync(cancellationToken: cancellationToken);
                 throw;
             }
         }
@@ -108,31 +108,31 @@ public static class TransactionDecorator
         /// <param name="cancellationToken">The cancellation token.</param>
         public async ValueTask<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
         {
-            if (!IsTransactional(this, typeof(TCommand)))
+            if (!IsTransactional(handler: this, messageType: typeof(TCommand)))
             {
-                return await innerHandler.HandleAsync(command, cancellationToken);
+                return await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
             }
 
-            await unitOfWork.BeginTransactionAsync(cancellationToken);
+            await unitOfWork.BeginTransactionAsync(cancellationToken: cancellationToken);
 
             try
             {
-                Result result = await innerHandler.HandleAsync(command, cancellationToken);
+                Result result = await innerHandler.HandleAsync(command: command, cancellationToken: cancellationToken);
 
                 if (result.IsSuccess)
                 {
-                    await unitOfWork.CommitTransactionAsync(cancellationToken);
+                    await unitOfWork.CommitTransactionAsync(cancellationToken: cancellationToken);
                 }
                 else
                 {
-                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken: cancellationToken);
                 }
 
                 return result;
             }
             catch
             {
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                await unitOfWork.RollbackTransactionAsync(cancellationToken: cancellationToken);
                 throw;
             }
         }

@@ -25,11 +25,11 @@ public sealed class EntityIdConverter<TId, TValue> : ValueConverter<TId, TValue>
     /// <summary>
     /// Initializes a new instance of the <see cref="EntityIdConverter{TId, TValue}"/> class.
     /// </summary>
-    public EntityIdConverter() : base(id => id.Value, value => FromValue(value))
+    public EntityIdConverter() : base(id => id.Value, value => FromValue(value: value))
     {
     }
 
     // Expression trees cannot reference a static abstract interface member directly (CS8927);
     // routing the call through an ordinary static method sidesteps that restriction.
-    private static TId FromValue(TValue value) => TId.From(value);
+    private static TId FromValue(TValue value) => TId.From(value: value);
 }

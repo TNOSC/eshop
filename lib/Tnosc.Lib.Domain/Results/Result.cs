@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 // Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
@@ -90,11 +90,11 @@ public class Result<TValue> : Result, IResult<TValue>
 
     private Result(IEnumerable<Error> errors)
     {
-        ArgumentNullException.ThrowIfNull(errors);
+        ArgumentNullException.ThrowIfNull(argument: errors);
 
         if (!errors.Any())
         {
-            throw new ArgumentException("Cannot create an Result<TValue> from an empty collection of errors. Provide at least one error.", nameof(errors));
+            throw new ArgumentException(message: "Cannot create an Result<TValue> from an empty collection of errors. Provide at least one error.", paramName: nameof(errors));
         }
 
         Errors = errors;
@@ -110,7 +110,7 @@ public class Result<TValue> : Result, IResult<TValue>
         {
             if (IsError)
             {
-                throw new InvalidOperationException("The Value property cannot be accessed when Errors property is not empty. Check IsSuccess or IsError before accessing the Value.");
+                throw new InvalidOperationException(message: "The Value property cannot be accessed when Errors property is not empty. Check IsSuccess or IsError before accessing the Value.");
             }
 
             return _value!;

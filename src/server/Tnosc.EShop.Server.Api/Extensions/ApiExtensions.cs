@@ -20,5 +20,5 @@ public static class ApiExtensions
     /// <param name="services"> The service collection to register the API endpoints with.</param>
     /// <returns> The updated service collection. </returns>
     public static IServiceCollection AddApiEndpoints(this IServiceCollection services) =>
-        services.AddApiEndpoints(AssemblyReference.Assembly);
+        services.AddApiEndpoints(assembly: AssemblyReference.Assembly);
 }

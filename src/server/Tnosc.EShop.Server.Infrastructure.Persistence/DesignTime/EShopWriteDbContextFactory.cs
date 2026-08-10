@@ -29,11 +29,11 @@ internal sealed class EShopWriteDbContextFactory : IDesignTimeDbContextFactory<E
     public EShopWriteDbContext CreateDbContext(string[] args)
     {
         string connectionString =
-            Environment.GetEnvironmentVariable("ConnectionStrings__eshopdb") ?? FallbackConnectionString;
+            Environment.GetEnvironmentVariable(variable: "ConnectionStrings__eshopdb") ?? FallbackConnectionString;
 
         DbContextOptionsBuilder<EShopWriteDbContext> optionsBuilder = new();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseNpgsql(connectionString: connectionString);
 
-        return new EShopWriteDbContext(optionsBuilder.Options);
+        return new EShopWriteDbContext(options: optionsBuilder.Options);
     }
 }

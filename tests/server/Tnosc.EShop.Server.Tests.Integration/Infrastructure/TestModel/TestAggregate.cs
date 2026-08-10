@@ -50,11 +50,11 @@ internal sealed class TestAggregate : AggregateRoot<TestAggregateId>
     /// <param name="amount">An arbitrary amount.</param>
     /// <param name="tags">An arbitrary tag collection.</param>
     public void RaiseCreatedEvent(string note, int amount, IReadOnlyCollection<string> tags) =>
-        AddDomainEvent(new TestAggregateCreatedDomainEvent(Guid.NewGuid(), DateTime.UtcNow, Id.Value, Name, note, amount, tags));
+        AddDomainEvent(domainEvent: new TestAggregateCreatedDomainEvent(Id: Guid.NewGuid(), OccurredOnUtc: DateTime.UtcNow, AggregateId: Id.Value, Name: Name, Note: note, Amount: amount, Tags: tags));
 
     /// <summary>
     /// Raises a <see cref="PoisonTestDomainEvent"/> whose registered handler always throws.
     /// </summary>
     public void RaisePoisonEvent() =>
-        AddDomainEvent(new PoisonTestDomainEvent(Guid.NewGuid(), DateTime.UtcNow, Id.Value));
+        AddDomainEvent(domainEvent: new PoisonTestDomainEvent(Id: Guid.NewGuid(), OccurredOnUtc: DateTime.UtcNow, AggregateId: Id.Value));
 }

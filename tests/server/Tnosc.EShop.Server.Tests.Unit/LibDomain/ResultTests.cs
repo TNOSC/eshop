@@ -29,7 +29,7 @@ public sealed class ResultTests
         Result result = error;
 
         result.IsError.ShouldBeTrue();
-        result.FirstError.ShouldBe(error);
+        result.FirstError.ShouldBe(expected: error);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class ResultTests
         Result<int> result = 42;
 
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldBe(42);
+        result.Value.ShouldBe(expected: 42);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class ResultTests
         Result<int> result = error;
 
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(error);
+        result.Errors.ShouldContain(expected: error);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public sealed class ResultTests
     {
         var result = Result.Success();
 
-        Should.Throw<InvalidOperationException>(() => result.FirstError);
+        Should.Throw<InvalidOperationException>(actual: () => result.FirstError);
     }
 
     [Fact]
@@ -65,6 +65,6 @@ public sealed class ResultTests
     {
         Result<int> result = Error.Failure(code: "Test.Failure", description: "failed");
 
-        Should.Throw<InvalidOperationException>(() => result.Value);
+        Should.Throw<InvalidOperationException>(actual: () => result.Value);
     }
 }

@@ -23,18 +23,18 @@ public sealed class ReadDbContextTests(PostgresFixture fixture) : IntegrationTes
 {
     [Fact]
     public void SaveChanges_Should_Throw_When_Called() =>
-        Should.Throw<NotSupportedException>(() => ReadContext.SaveChanges());
+        Should.Throw<NotSupportedException>(actual: () => ReadContext.SaveChanges());
 
     [Fact]
     public void SaveChanges_Should_Throw_When_CalledWithAcceptAllChangesOnSuccess() =>
-        Should.Throw<NotSupportedException>(() => ReadContext.SaveChanges(acceptAllChangesOnSuccess: true));
+        Should.Throw<NotSupportedException>(actual: () => ReadContext.SaveChanges(acceptAllChangesOnSuccess: true));
 
     [Fact]
     public async Task SaveChangesAsync_Should_Throw_When_Called() =>
-        await Should.ThrowAsync<NotSupportedException>(() => ReadContext.SaveChangesAsync(CancellationToken.None));
+        await Should.ThrowAsync<NotSupportedException>(actual: () => ReadContext.SaveChangesAsync(cancellationToken: CancellationToken.None));
 
     [Fact]
     public async Task SaveChangesAsync_Should_Throw_When_CalledWithAcceptAllChangesOnSuccess() =>
         await Should.ThrowAsync<NotSupportedException>(
-            () => ReadContext.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken: CancellationToken.None));
+            actual: () => ReadContext.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken: CancellationToken.None));
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -30,7 +30,7 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_outbox_messages", x => x.id);
+                    table.PrimaryKey(name: "PK_outbox_messages", columns: x => x.id);
                 });
 
             migrationBuilder.CreateIndex(

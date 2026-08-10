@@ -21,7 +21,7 @@ internal sealed class TestDomainEventHandler(TestDomainEventSpy spy) : IDomainEv
     /// <inheritdoc />
     public ValueTask HandleAsync(TestAggregateCreatedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        spy.RecordDelivery(@event.AggregateId);
+        spy.RecordDelivery(aggregateId: @event.AggregateId);
         return ValueTask.CompletedTask;
     }
 }
