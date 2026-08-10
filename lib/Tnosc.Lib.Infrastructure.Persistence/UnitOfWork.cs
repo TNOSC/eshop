@@ -150,12 +150,12 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
 
     private void ConvertDomainEventsToOutboxMessage()
     {
-        IEnumerable<OutboxMessage> outboxMessages = _context.ChangeTracker
+        var outboxMessages = _context.ChangeTracker
             .Entries<IHasDomainEvent>()
             .Select(x => x.Entity)
             .SelectMany(aggregateRoot =>
             {
-                IReadOnlyCollection<IDomainEvent> events = aggregateRoot.DomainEvents;
+                List<IDomainEvent> events = [.. aggregateRoot.DomainEvents];
                 aggregateRoot.ClearDomainEvents();
 
                 return events;
@@ -164,7 +164,8 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
             .Select(domainEvent => new OutboxMessage(
                 _domainEventTypeRegistry.GetName(domainEvent.GetType()),
                 JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), OutboxSerialization.Options)
-            ));
+            ))
+            .ToList();
 
         _context.Set<OutboxMessage>().AddRange(outboxMessages);
     }

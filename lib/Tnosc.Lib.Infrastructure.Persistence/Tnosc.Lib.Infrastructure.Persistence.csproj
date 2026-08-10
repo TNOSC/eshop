@@ -14,5 +14,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Tnosc.EShop.Server.Tests.Unit" />
+		<InternalsVisibleTo Include="Tnosc.EShop.Server.Tests.Integration" />
 	</ItemGroup>
 </Project>
