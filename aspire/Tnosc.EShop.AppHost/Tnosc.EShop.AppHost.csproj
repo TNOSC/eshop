@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+  </ItemGroup>
+
 </Project>

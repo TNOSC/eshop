@@ -7,6 +7,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tnosc.EShop.Server.Api.Extensions;
+using Tnosc.EShop.Server.Application.Extensions;
+using Tnosc.EShop.Server.Infrastructure.Persistence.Extensions;
+using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Host.Extensions;
 using Tnosc.Lib.Host.Middleware;
 
@@ -16,6 +20,12 @@ builder.AddServiceDefaults();
 
 builder.Services.AddUserContext();
 builder.Services.AddGlobalExceptionHandling();
+builder.Services.AddHybridCache();
+
+builder.Services.AddApiEndpoints();
+builder.Services.AddApplication();
+builder.AddInfrastructurePersistence();
+
 
 WebApplication app = builder.Build();
 
@@ -25,5 +35,6 @@ app.UseHttpsRedirection();
 
 app.UseExceptionHandler();
 app.UseMiddleware<RequestContextMiddleware>();
+app.MapEndpoints();
 
 await app.RunAsync();

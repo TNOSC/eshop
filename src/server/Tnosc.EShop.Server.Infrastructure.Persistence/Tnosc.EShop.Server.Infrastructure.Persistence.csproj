@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Tnosc.EShop.Server.Application\Tnosc.EShop.Server.Application.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Application\Tnosc.Lib.Application.csproj" />
     <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Infrastructure.Persistence\Tnosc.Lib.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 

@@ -32,13 +32,14 @@ public sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outbox
 
         builder.ToTable(TableName, SchemaName);
         builder.HasKey(m => m.Id);
-        builder.Property(m => m.Id).ValueGeneratedNever();
-        builder.Property(m => m.Type).HasMaxLength(256).IsRequired();
-        builder.Property(m => m.Content).HasColumnType("jsonb").IsRequired();
-        builder.Property(m => m.OccurredOnUtc).HasColumnType("timestamp with time zone");
-        builder.Property(m => m.ProcessedOnUtc).HasColumnType("timestamp with time zone");
-        builder.Property(m => m.NextAttemptOnUtc).HasColumnType("timestamp with time zone");
-        builder.Property(m => m.Error).HasMaxLength(4000);
+        builder.Property(m => m.Id).HasColumnName("id").ValueGeneratedNever();
+        builder.Property(m => m.Type).HasColumnName("type").HasMaxLength(256).IsRequired();
+        builder.Property(m => m.Content).HasColumnName("content").HasColumnType("jsonb").IsRequired();
+        builder.Property(m => m.OccurredOnUtc).HasColumnName("occurred_on_utc").HasColumnType("timestamp with time zone");
+        builder.Property(m => m.ProcessedOnUtc).HasColumnName("processed_on_utc").HasColumnType("timestamp with time zone");
+        builder.Property(m => m.Attempts).HasColumnName("attempts");
+        builder.Property(m => m.NextAttemptOnUtc).HasColumnName("next_attempt_on_utc").HasColumnType("timestamp with time zone");
+        builder.Property(m => m.Error).HasColumnName("error").HasMaxLength(4000);
 
         builder.HasIndex(m => new { m.NextAttemptOnUtc, m.OccurredOnUtc })
                .HasFilter("processed_on_utc IS NULL")

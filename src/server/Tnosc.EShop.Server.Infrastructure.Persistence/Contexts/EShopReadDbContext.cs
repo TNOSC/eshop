@@ -4,9 +4,14 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
-namespace Tnosc.EShop.Server.Tests.Unit.LibApplication.Fakes;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Tnosc.Lib.Infrastructure.Persistence.Contexts;
 
-internal sealed class CallCounter
+namespace Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
+
+public sealed class EShopReadDbContext(DbContextOptions<EShopReadDbContext> options)
+    : ReadDbContextBase(options)
 {
-    public int Count { get; set; }
+    protected override Assembly ConfigurationAssembly => AssemblyReference.Assembly;
 }

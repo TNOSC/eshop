@@ -34,38 +34,38 @@ public sealed class PersistenceOptions
     }
 
     /// <summary>
-    /// Gets the Aspire connection resource name used to resolve the Postgres connection string
+    /// Gets or sets the Aspire connection resource name used to resolve the Postgres connection string
     /// (for example, <c>"eshopdb"</c>).
     /// </summary>
-    public required string ConnectionName { get; init; }
+    public required string ConnectionName { get; set; }
 
     /// <summary>
-    /// Gets the assembly scanned for <c>IEntityTypeConfiguration&lt;T&gt;</c> classes on both the
+    /// Gets or sets the assembly scanned for <c>IEntityTypeConfiguration&lt;T&gt;</c> classes on both the
     /// write and read models.
     /// </summary>
-    public required Assembly ConfigurationAssembly { get; init; }
+    public required Assembly ConfigurationAssembly { get; set; }
 
     /// <summary>
-    /// Gets the assemblies scanned for concrete domain event types, used to build the
+    /// Gets or sets the assemblies scanned for concrete domain event types, used to build the
     /// <see cref="IDomainEventTypeRegistry"/>.
     /// </summary>
-    public required Assembly[] DomainEventAssemblies { get; init; }
+    public required Assembly[] DomainEventAssemblies { get; set; }
 
     /// <summary>
-    /// Gets the assembly containing EF Core migrations, if different from <see cref="ConfigurationAssembly"/>.
+    /// Gets or sets the assembly containing EF Core migrations, if different from <see cref="ConfigurationAssembly"/>.
     /// </summary>
-    public Assembly? MigrationsAssembly { get; init; }
+    public Assembly? MigrationsAssembly { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether pending migrations are applied automatically on startup.
+    /// Gets or sets a value indicating whether pending migrations are applied automatically on startup.
     /// Intended for Development only.
     /// </summary>
-    public bool ApplyMigrationsOnStartup { get; init; }
+    public bool ApplyMigrationsOnStartup { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether the outbox background processor is registered. Defaults to <see langword="true"/>.
+    /// Gets or sets a value indicating whether the outbox background processor is registered. Defaults to <see langword="true"/>.
     /// </summary>
-    public bool EnableOutboxProcessing { get; init; } = true;
+    public bool EnableOutboxProcessing { get; set; } = true;
 
     /// <summary>
     /// Gets the outbox processor's batching, polling, and retry settings.
