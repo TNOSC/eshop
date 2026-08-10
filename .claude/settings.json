@@ -1,0 +1,18 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash(dotnet build:*)",
+            "Bash(dotnet test:*)",
+            "Bash(dotnet format:*)",
+            "Bash(git status)",
+            "Bash(git diff:*)",
+            "Bash(git log:*)"
+        ],
+        "deny": [
+            "Bash(git push:*)",
+            "Read(.env)",
+            "Read(.env.local)",
+            "Read(./**/*.pfx)"
+        ]
+    }
+}

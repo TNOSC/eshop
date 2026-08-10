@@ -7,6 +7,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scalar.AspNetCore;
 using Tnosc.EShop.Server.Api.Extensions;
 using Tnosc.EShop.Server.Application.Extensions;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Extensions;
@@ -21,6 +22,7 @@ builder.AddServiceDefaults();
 builder.Services.AddUserContext();
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddHybridCache();
+builder.Services.AddOpenApi();
 
 builder.Services.AddApiEndpoints();
 builder.Services.AddApplication();
@@ -36,5 +38,11 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseMiddleware<RequestContextMiddleware>();
 app.MapEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(configureOptions: options => options.WithTitle(title: "Tnosc EShop API"));
+}
 
 await app.RunAsync();

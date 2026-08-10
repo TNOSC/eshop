@@ -1,0 +1,11 @@
+# Test-project overrides. Layered on top of the repository-root .editorconfig.
+
+[*.cs]
+
+# CA2012: ValueTask instances should be consumed directly.
+#
+# NSubstitute arranges a ValueTask-returning member as `substitute.MethodAsync(...).Returns(...)`,
+# which necessarily uses the returned ValueTask as a receiver rather than awaiting it. That is the
+# library's only arrangement syntax, and the instance is never consumed twice, so the rule reports
+# nothing actionable here. Production code keeps the rule at its default severity.
+dotnet_diagnostic.CA2012.severity = none

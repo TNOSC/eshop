@@ -1,0 +1,134 @@
+@Tnosc.EShop.Server.Host_HostAddress = http://localhost:5053
+
+### Create a product
+# @name createProduct
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "SKU-0001",
+  "name": "Wireless Mouse",
+  "description": "A comfortable wireless mouse.",
+  "priceAmount": 29.99,
+  "priceCurrency": "USD",
+  "stockQuantity": 100,
+  "brandId": "00000000-0000-0000-0000-000000000001",
+  "categoryId": "00000000-0000-0000-0000-000000000002"
+}
+
+### Create a product — validation failure (missing name, invalid currency)
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "SKU-0002",
+  "name": "",
+  "description": null,
+  "priceAmount": 9.99,
+  "priceCurrency": "US",
+  "stockQuantity": 10,
+  "brandId": "00000000-0000-0000-0000-000000000001",
+  "categoryId": "00000000-0000-0000-0000-000000000002"
+}
+
+### Create a product — conflict (duplicate SKU, run after createProduct above)
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "SKU-0001",
+  "name": "Another Wireless Mouse",
+  "description": null,
+  "priceAmount": 19.99,
+  "priceCurrency": "USD",
+  "stockQuantity": 5,
+  "brandId": "00000000-0000-0000-0000-000000000001",
+  "categoryId": "00000000-0000-0000-0000-000000000002"
+}
+
+### Search products
+GET {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products?search=mouse&page=1&pageSize=20
+Accept: application/json
+
+### Get product by id
+GET {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}
+Accept: application/json
+
+### Get product by id — not found
+GET {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/00000000-0000-0000-0000-000000000099
+Accept: application/json
+
+### Update product price
+PUT {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}/price
+Content-Type: application/json
+Accept: application/json
+
+{
+  "amount": 24.99,
+  "currency": "USD"
+}
+
+### Update product price — validation failure (invalid currency)
+PUT {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}/price
+Content-Type: application/json
+Accept: application/json
+
+{
+  "amount": 24.99,
+  "currency": "usd"
+}
+
+### Update product price — not found
+PUT {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/00000000-0000-0000-0000-000000000099/price
+Content-Type: application/json
+Accept: application/json
+
+{
+  "amount": 24.99,
+  "currency": "USD"
+}
+
+### Adjust stock (increase)
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 25
+}
+
+### Adjust stock (decrease)
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": -10
+}
+
+### Adjust stock — validation failure (zero delta)
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/{{createProduct.response.body.$}}/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 0
+}
+
+### Adjust stock — not found
+POST {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/products/00000000-0000-0000-0000-000000000099/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 5
+}
+
+### List categories
+GET {{Tnosc.EShop.Server.Host_HostAddress}}/api/catalog/categories
+Accept: application/json
+
+###

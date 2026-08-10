@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <!-- Command handlers and validators are internal by design; the unit suite tests them directly. -->
+    <InternalsVisibleTo Include="Tnosc.EShop.Server.Tests.Unit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Tnosc.EShop.Server.Domain\Tnosc.EShop.Server.Domain.csproj" />
     <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Application\Tnosc.Lib.Application.csproj" />
   </ItemGroup>

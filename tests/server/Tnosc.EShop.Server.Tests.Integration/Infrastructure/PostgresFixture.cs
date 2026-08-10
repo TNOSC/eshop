@@ -115,6 +115,11 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
         builder.Services.AddScoped<IDomainEventHandler<PoisonTestDomainEvent>, PoisonTestDomainEventHandler>();
 
         builder.Services.AddUserContext();
+
+        // The query pipeline's CacheableDecorator takes a HybridCache, so resolving any
+        // IQueryHandler<,> needs one registered — exactly as Program.cs does for the real host.
+        builder.Services.AddHybridCache();
+
         builder.Services.AddApplication();
         builder.AddInfrastructurePersistence();
 

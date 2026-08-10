@@ -63,6 +63,12 @@ public class Result : IResult
     /// </summary>
     public static implicit operator Result(Error[] errors)
         => new Result() { Errors = errors};
+
+    /// <summary>
+    /// Provides implicit conversion operators for the <see cref="Result"/> type.
+    /// </summary>
+    public static implicit operator Result(List<Error> errors)
+        => new Result() { Errors = errors };
 }
 
 /// <summary>

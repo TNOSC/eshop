@@ -12,6 +12,7 @@ using Tnosc.Lib.Application.Decorators;
 using Tnosc.Lib.Application.DomainEvents;
 using Tnosc.Lib.Application.Extensions;
 using Tnosc.Lib.Application.Queries;
+using Tnosc.Lib.Domain.Repositories;
 using Tnosc.Lib.Infrastructure.Persistence.Extensions;
 using DomainAssemblyReference = Tnosc.EShop.Server.Domain.AssemblyReference;
 
@@ -47,9 +48,20 @@ public static class InfrastructurePersistenceExtensions
                     && applyOnStartup;
         });
 
+        builder.Services.AddRepositories();
         builder.Services.AddQueries();
 
         return builder;
+    }
+
+    private static void AddRepositories(this IServiceCollection services)
+    {
+        // Registered as their own domain-facing interface (IProductRepository, …) as well as the
+        // closed IRepository<,>, so a domain factory can take the specific contract it needs.
+        services.Scan(action: s => s.FromAssemblies(assemblies: AssemblyReference.Assembly)
+            .AddClasses(action: c => c.AssignableTo(type: typeof(IRepository<,>)), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
     }
 
     private static void AddQueries(this IServiceCollection services)

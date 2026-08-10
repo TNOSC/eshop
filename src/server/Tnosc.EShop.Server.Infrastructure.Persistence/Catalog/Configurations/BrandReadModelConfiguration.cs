@@ -1,0 +1,30 @@
+// ----------------------------------------------------------------------------------
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// This code is provided by TNOSC and is freely available under the MIT License.
+// Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
+// ----------------------------------------------------------------------------------
+
+using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.ReadModels;
+
+namespace Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.Configurations;
+
+/// <summary>
+/// Maps <see cref="BrandReadModel"/> onto <c>catalog.brands</c>.
+/// </summary>
+internal sealed class BrandReadModelConfiguration : IEntityTypeConfiguration<BrandReadModel>
+{
+    /// <inheritdoc />
+    public void Configure(EntityTypeBuilder<BrandReadModel> builder)
+    {
+        ArgumentNullException.ThrowIfNull(argument: builder);
+
+        builder.ToTable(name: CatalogSchema.BrandsTable, schema: CatalogSchema.Name);
+        builder.HasKey(keyExpression: brand => brand.Id);
+
+        builder.Property(propertyExpression: brand => brand.Id).HasColumnName(name: "id");
+        builder.Property(propertyExpression: brand => brand.Name).HasColumnName(name: "name");
+    }
+}
