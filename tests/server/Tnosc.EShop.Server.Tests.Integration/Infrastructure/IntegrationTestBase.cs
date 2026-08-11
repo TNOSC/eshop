@@ -71,6 +71,12 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
     /// </summary>
     protected TestDomainEventSpy Spy => Scope.ServiceProvider.GetRequiredService<TestDomainEventSpy>();
 
+    /// <summary>
+    /// Gets the process-wide plan controlling how many times <see cref="TestModel.FlakyTestDomainEventHandler"/>
+    /// fails before succeeding, reset before every test.
+    /// </summary>
+    protected FlakyTestDomainEventPlan FlakyPlan => Scope.ServiceProvider.GetRequiredService<FlakyTestDomainEventPlan>();
+
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
@@ -80,6 +86,7 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
         // and IServiceScope.Dispose() throws for a scoped service that has no synchronous Dispose.
         _scope = fixture.Services.CreateAsyncScope();
         Spy.Clear();
+        FlakyPlan.Reset();
         TimeProvider.SetUtcNow(utcNow: DateTimeOffset.UtcNow);
 
         // The key is ambient and async-flowing, so production clears it per request in

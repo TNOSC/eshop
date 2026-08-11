@@ -10,8 +10,14 @@ pipeline:
 
 ```
 Commands:  Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Idempotency → Handler
-Events:    Idempotency → Handler
+Events:    Retry → Idempotency → Handler
 ```
+
+`Retry` is outside `Idempotency` on both pipelines, and must stay there: each attempt needs its own
+transaction, and a retry *inside* the claim would run on a transaction Postgres has already aborted
+(`25P02`). From outside, a failed attempt discards the claim along with the handler's partial work,
+so the next attempt re-claims and re-runs cleanly — a retried `[Idempotent]` handler still produces
+exactly one effect.
 
 ## Why
 

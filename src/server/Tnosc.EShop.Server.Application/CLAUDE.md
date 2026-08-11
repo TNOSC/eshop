@@ -58,7 +58,7 @@ last call becomes outermost. **The order is load-bearing:**
 ```
 Commands:  Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Idempotency → Handler
 Queries:   Logging → Exception → Cacheable → Retry → Handler
-Events:    Idempotency → Handler
+Events:    Retry → Idempotency → Handler
 ```
 
 `Retry` inside `Exception` (it only catches `BaseException`) · `Transaction` inside `Retry` (an
@@ -66,6 +66,11 @@ aborted Postgres transaction fails every later statement, `25P02`) · `CacheInva
 `Transaction` (invalidating pre-commit lets a reader repopulate from the stale snapshot) ·
 `Idempotency` innermost (its claim must commit in the handler's own transaction) ·
 `Logging` outermost so exception-mapped failures still log.
+
+On the event pipeline `Retry` sits **outside** `Idempotency` for the same `25P02` reason: the
+idempotency decorator opens a transaction per invocation, so a retry inside it would run on a
+transaction Postgres has already aborted. From outside, a failed attempt rolls the claim back with
+the handler's partial work and the next attempt starts clean.
 
 Opt-in attributes go **on the handler class**: `[Transactional]`, `[Retry(n)]`, `[Idempotent]`,
 `[Cacheable(seconds)]`, `[CacheTag(CacheTags.X)]`; `[CacheKey]` goes on query properties.

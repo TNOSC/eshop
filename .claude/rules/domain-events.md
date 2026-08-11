@@ -70,6 +70,30 @@ Do not remove it, and keep `BaseBackoff` comfortably longer than a batch takes t
 A handler that throws leaves the row unprocessed for retry — do not swallow exceptions to make a
 poison message disappear; that silently drops the event.
 
+## Two retries, and they are not the same retry
+
+| | Where | Trigger | Delay | Survives a restart |
+|---|---|---|---|---|
+| `[Retry(n)]` | in-process, around the handler | retriable `BaseException` only | `200ms · 2^(attempt-1)` | no |
+| Outbox | the row itself | any exception reaching `OutboxProcessor` | `BaseBackoff · 2^(attempts-1)` | yes |
+
+`[Retry(n)]` is the **fast** retry for a blip that clears in milliseconds; the outbox is the durable
+one and remains the actual guarantee. They compose — an exhausted in-process retry still propagates,
+fails the row, and hands over. Three rules:
+
+- **It is opt-in on this pipeline.** No `[Retry]` means one attempt, unlike commands and queries
+  where three is the default. The outbox is already retrying; a second invisible layer on every
+  handler is not a default worth having.
+- **Keep `n` small — 6 or less at the default `BaseBackoff`.** Total in-process delay is
+  `200ms · (2^(n-1) − 1)`, which passes the 10s claim lease at `n = 7`. A handler that retries past
+  its lease lets another processor claim the same message while it is still working.
+- **Pair it with `[Idempotent]` when the handler writes anything.** Retrying a handler that already
+  committed part of its work on attempt 1 re-applies it on attempt 2. Nothing enforces the pairing.
+
+Note that today nothing in this solution throws a retriable `BaseException` from the persistence
+path — a Postgres deadlock arrives as `NpgsqlException`, which does not qualify. So `[Retry]` here is
+correct but inert until those are wrapped into `TransientFailureException`.
+
 ## Cross-context integration
 
 Context B reacts to context A's event in **B's** `EventHandlers/` folder, against B's own types. B

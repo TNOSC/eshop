@@ -108,11 +108,15 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
         builder.Services.AddSingleton<TimeProvider>(implementationFactory: sp => sp.GetRequiredService<TestTimeProvider>());
 
         builder.Services.AddSingleton<TestDomainEventSpy>();
+        builder.Services.AddSingleton<FlakyTestDomainEventPlan>();
 
         // AddApplication only scans the Server.Application assembly for IDomainEventHandler<>
-        // implementors, so the test-only handlers need registering by hand.
+        // implementors, so the test-only handlers need registering by hand. Registered before
+        // AddApplication so its TryDecorate calls wrap these too — which is the point: the test
+        // handlers must run through the same decorator chain production uses.
         builder.Services.AddScoped<IDomainEventHandler<TestAggregateCreatedDomainEvent>, TestDomainEventHandler>();
         builder.Services.AddScoped<IDomainEventHandler<PoisonTestDomainEvent>, PoisonTestDomainEventHandler>();
+        builder.Services.AddScoped<IDomainEventHandler<FlakyTestDomainEvent>, FlakyTestDomainEventHandler>();
 
         builder.Services.AddUserContext();
 

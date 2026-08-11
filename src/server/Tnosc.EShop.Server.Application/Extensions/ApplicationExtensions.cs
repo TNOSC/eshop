@@ -42,10 +42,6 @@ public static class ApplicationExtensions
             .AddClasses(action: c => c.AssignableTo(type: typeof(IDomainEventHandler<>)), publicOnly: false)
                 .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(IDomainEventHandler<>))).WithScopedLifetime());
 
-        // Commands (with response) — innermost first, the last TryDecorate call becomes outermost.
-        // Idempotency sits innermost, wrapping the handler directly: the claim it writes has to
-        // commit in the same transaction as the handler's own writes, so it must be inside
-        // TransactionDecorator rather than outside it.
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(IdempotencyDecorator.CommandHandler<,>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(TransactionDecorator.CommandHandler<,>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(CacheInvalidationDecorator.CommandHandler<,>));
@@ -66,18 +62,10 @@ public static class ApplicationExtensions
         return services;
     }
 
-    /// <summary>
-    /// Decorates the domain event handlers registered by <see cref="AddCommands"/> with the inbox.
-    /// </summary>
-    /// <remarks>
-    /// The only decorator on this pipeline. Outbox delivery is at-least-once, so a handler marked
-    /// <c>[Idempotent]</c> needs its event id claimed in the same transaction as its own writes;
-    /// every other handler is passed straight through.
-    /// </remarks>
-    /// <param name="services">The service collection to decorate.</param>
     private static IServiceCollection AddDomainEvents(this IServiceCollection services)
     {
         services.TryDecorate(serviceType: typeof(IDomainEventHandler<>), decoratorType: typeof(IdempotencyDecorator.DomainEventHandler<>));
+        services.TryDecorate(serviceType: typeof(IDomainEventHandler<>), decoratorType: typeof(RetryDecorator.DomainEventHandler<>));
 
         return services;
     }
