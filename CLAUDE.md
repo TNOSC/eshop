@@ -63,7 +63,7 @@ namespace**. One public type per file, named after the file.
 
 ```csharp
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
