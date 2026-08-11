@@ -416,3 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Claude Code — personal overrides (hooks and shared permissions live in settings.json)
+.claude/settings.local.json

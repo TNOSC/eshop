@@ -6,7 +6,7 @@ Clean Architecture / DDD / CQRS eShop built on the in-repo `lib/` framework. Aut
 
 **Scoped rules live in nested `CLAUDE.md` files — read the one for the tree you are editing:**
 `lib/` · `src/server/Tnosc.EShop.Server.Domain/` · `…Server.Application/` ·
-`…Server.Infrastructure.Persistence/` · `…Server.Api/` · `tests/`
+`…Server.Infrastructure.Persistence/` · `…Server.Api/` · `…Server.Shared/` · `tests/`
 
 ## Tech stack
 

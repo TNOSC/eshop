@@ -66,14 +66,16 @@ aborted Postgres transaction fails every later statement, `25P02`) · `CacheInva
 `Logging` outermost so exception-mapped failures still log.
 
 Opt-in attributes go **on the handler class**: `[Transactional]`, `[Retry(n)]`,
-`[Cacheable(seconds)]`, `[CacheTag("…")]`; `[CacheKey]` goes on query properties.
+`[Cacheable(seconds)]`, `[CacheTag(CacheTags.X)]`; `[CacheKey]` goes on query properties.
+Cache tags are **constants** from `Server.Shared/<Context>/CacheTags.cs`, never string literals —
+see `Tnosc.EShop.Server.Shared/CLAUDE.md`.
 **`[Transactional]` is the exception, not the rule** — only for a handler spanning several
 aggregates/repositories, or one that calls `SaveChangesAsync` more than once.
 
 ## Canonical handler
 
 ```csharp
-[CacheTag("catalog")]
+[CacheTag(CacheTags.Catalog)]
 internal sealed class CreateProductCommandHandler(
     IProductRepository repository,
     IUnitOfWork unitOfWork)

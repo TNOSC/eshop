@@ -58,8 +58,11 @@ Read the root `CLAUDE.md` and the scoped `CLAUDE.md` in each project you touch b
   uniqueness belong to value objects, entities and factories — never duplicate them.
 - **`[Transactional]` is opt-in**, only for multi-aggregate work or a second `SaveChangesAsync`.
   A single-aggregate, single-commit handler does not take it.
-- **Cache attributes go on the handler class**: `[CacheTag("<context>")]` on commands that mutate
-  cached data, `[Cacheable(seconds)]` on queries; `[CacheKey]` on query properties.
+- **Cache attributes go on the handler class**: `[CacheTag(CacheTags.X)]` on commands that mutate
+  cached data, `[Cacheable(seconds)]` on queries; `[CacheKey]` on query properties. **Tags are
+  constants from `Server.Shared/<Context>/CacheTags.cs`, never string literals** — the invalidating
+  and populating handlers sit in different projects and a literal drifts silently
+  (`.claude/rules/cache-tags.md`).
 - Auth is **not wired yet** (Identity is task T11 in `PLAN.md`) — do not add `.RequireAuthorization()`
   or permission checks until it lands.
 

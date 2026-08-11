@@ -86,7 +86,7 @@ Shape: **load → guard → delegate → persist → return unreinterpreted.**
 ### Creating an aggregate (uniqueness rule ⇒ go through the factory)
 
 ```csharp
-[CacheTag("catalog")]
+[CacheTag(CacheTags.Catalog)]
 internal sealed class CreateProductCommandHandler(
     IProductRepository repository,
     IUnitOfWork unitOfWork)
@@ -135,7 +135,7 @@ internal sealed class CreateProductCommandHandler(
 ### Mutating an existing aggregate
 
 ```csharp
-[CacheTag("catalog")]
+[CacheTag(CacheTags.Catalog)]
 internal sealed class UpdateProductPriceCommandHandler(
     IProductRepository repository,
     IUnitOfWork unitOfWork)
@@ -201,9 +201,32 @@ Logging → Exception → Validation → Retry → CacheInvalidation → Transac
 
 | Attribute | When |
 |---|---|
-| `[CacheTag("catalog")]` | The command mutates data that a `[Cacheable]` query caches. Evicts that tag after commit. |
+| `[CacheTag(CacheTags.Catalog)]` | The command mutates data that a `[Cacheable]` query caches. Evicts that tag after commit. |
 | `[Retry(3)]` | The work is idempotent and can hit a transient failure. |
 | `[Transactional]` | **Only** for multi-aggregate/multi-repository workflows, or a handler that calls `SaveChangesAsync` more than once. Not for the single-commit case above. |
+
+**Cache tags are always constants, never string literals.** They live in
+`Server.Shared/<Context>/CacheTags.cs` — add `using Tnosc.EShop.Server.Shared.Catalog;` to use them.
+The handler that *invalidates* a tag lives in `Server.Application` and the handler that *populates*
+it lives in `Server.Infrastructure.Persistence`; two literals in two projects drift silently, because
+a mistyped tag doesn't fail the build, it just stops invalidating. `Server.Shared` is referenced by
+both, which is exactly why the constant belongs there. See `.claude/rules/cache-tags.md`.
+
+```csharp
+namespace Tnosc.EShop.Server.Shared.Catalog;
+
+/// <summary>
+/// Cache tags shared by the Catalog bounded context's <c>[CacheTag]</c> handlers, so the write
+/// handlers that invalidate and the query handlers that populate the cache cannot drift apart.
+/// </summary>
+public static class CacheTags
+{
+    /// <summary>
+    /// Tag covering every cached Catalog query — invalidated by every Catalog write handler.
+    /// </summary>
+    public const string Catalog = "catalog";
+}
+```
 
 ## Domain events
 

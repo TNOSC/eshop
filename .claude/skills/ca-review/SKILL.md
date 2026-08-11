@@ -69,6 +69,9 @@ first** and report failures as blockers. Then review what the tests cannot see.
 
 ### Caching and the outbox
 - Every `[Cacheable]` query has matching `[CacheTag(...)]` on every command that mutates its data.
+- **Cache tags are constants from `Server.Shared/<Context>/CacheTags.cs`.** Any string literal in a
+  `[CacheTag(...)]` is a violation — the invalidating and populating handlers live in different
+  projects, so a literal drifts without failing the build (`.claude/rules/cache-tags.md`).
 - Domain events are raised by the aggregate (not the handler), carry flat primitives and ids, and have
   a unique `[DomainEventName("context.event-name.vN")]`.
 

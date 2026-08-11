@@ -4,6 +4,7 @@
             "Bash(dotnet build:*)",
             "Bash(dotnet test:*)",
             "Bash(dotnet format:*)",
+            "Bash(dotnet ef migrations list:*)",
             "Bash(git status)",
             "Bash(git diff:*)",
             "Bash(git log:*)"
@@ -13,6 +14,31 @@
             "Read(.env)",
             "Read(.env.local)",
             "Read(./**/*.pfx)"
+        ]
+    },
+    "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/posttooluse-csharp-conventions.sh",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ],
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/stop-build-reminder.sh",
+                        "timeout": 10
+                    }
+                ]
+            }
         ]
     }
 }

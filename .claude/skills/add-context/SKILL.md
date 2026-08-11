@@ -53,15 +53,33 @@ tests/…Tests.Integration/<Context>/{Context}IntegrationTestBase.cs
    ```
 
 2. **Route constants** — `internal static class {Context}Routes` with `Tag` and one route template per
-   endpoint, paths under `/api/<context>/…`.
+   endpoint, paths under `/api/<context>/…`. These stay in `Server.Api` — it does not reference
+   `Server.Shared`.
 
-3. **First aggregate** — use the `add-entity` skill. Start with the root that gives the context its
+3. **Cache tags** — `Server.Shared/<Context>/CacheTags.cs`, a `public static class CacheTags` with one
+   `public const string` per tag. Required because the command handler that invalidates a tag lives in
+   `Server.Application` and the query handler that populates it lives in
+   `Server.Infrastructure.Persistence`; both reference `Server.Shared`, so the constant is the only
+   thing keeping them in step. Never a string literal (`.claude/rules/cache-tags.md`).
+
+   ```csharp
+   namespace Tnosc.EShop.Server.Shared.Basket;
+
+   /// <summary>Cache tags shared by the Basket bounded context's <c>[CacheTag]</c> handlers.</summary>
+   public static class CacheTags
+   {
+       /// <summary>Tag covering every cached Basket query.</summary>
+       public const string Basket = "basket";
+   }
+   ```
+
+4. **First aggregate** — use the `add-entity` skill. Start with the root that gives the context its
    name; resist modelling the whole context up front.
 
-4. **First slice** — use the `add-feature` skill. A create command plus a get-by-id query proves the
+5. **First slice** — use the `add-feature` skill. A create command plus a get-by-id query proves the
    rails end to end: DI scanning, EF configuration, the read model, the outbox, and the decorators.
 
-5. **Migration** — one per context, named `{Context}_Initial`:
+6. **Migration** — one per context, named `{Context}_Initial`:
 
    ```bash
    dotnet ef migrations add Basket_Initial --context EShopWriteDbContext \
@@ -72,11 +90,11 @@ tests/…Tests.Integration/<Context>/{Context}IntegrationTestBase.cs
    Confirm the generated migration creates the schema (`basket`) before its tables, and touches no
    other context's objects.
 
-6. **Test scaffolding** — a `{Context}Faker` (Bogus extensions for that context's data) and a
+7. **Test scaffolding** — a `{Context}Faker` (Bogus extensions for that context's data) and a
    `{Context}IntegrationTestBase : IntegrationTestBase` with the seed helpers the context's query
    tests need. Mirror `CatalogFaker` and `CatalogIntegrationTestBase`.
 
-7. **Verify** — `dotnet build Tnosc.EShop.slnx`, then `dotnet test Tnosc.EShop.slnx`. Watch
+8. **Verify** — `dotnet build Tnosc.EShop.slnx`, then `dotnet test Tnosc.EShop.slnx`. Watch
    `Tests.Architecture` specifically: it will catch a cross-context reference or a misplaced handler
    immediately.
 

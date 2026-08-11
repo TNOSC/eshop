@@ -160,9 +160,24 @@ private static NpgsqlParameter Parameter(string name, NpgsqlDbType type, object?
 ## Caching
 
 `[Cacheable(seconds)]` on the handler class, with `[CacheKey]` on the query properties that vary the
-result. Every command that mutates the cached data carries the matching `[CacheTag("<context>")]`, or
-the cache goes stale. `CacheInvalidationDecorator` sits outside `Transaction`, so eviction happens
-after commit.
+result. Every command that mutates the cached data carries the matching `[CacheTag(...)]`, or the
+cache goes stale. `CacheInvalidationDecorator` sits outside `Transaction`, so eviction happens after
+commit.
+
+**Both sides must resolve the same constant** — `Server.Shared/<Context>/CacheTags.cs`, never a
+string literal on either side. The populating query handler lives here in
+`Server.Infrastructure.Persistence`; the invalidating command handler lives in `Server.Application`.
+A literal mistyped in one of them doesn't fail the build, it just silently stops invalidating.
+See `.claude/rules/cache-tags.md`.
+
+```csharp
+using Tnosc.EShop.Server.Shared.Catalog;
+
+[Cacheable(300)]
+[CacheTag(CacheTags.Catalog)]
+internal sealed class GetCategoriesQueryHandler(EShopReadDbContext context)
+    : IQueryHandler<GetCategoriesQuery, IReadOnlyCollection<CategoryDto>>
+```
 
 ## Banned in a query handler
 
