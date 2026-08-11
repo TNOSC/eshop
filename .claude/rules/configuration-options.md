@@ -7,6 +7,13 @@ constructor parameter, where `TOptions` is a POCO scoped to exactly the keys tha
 extension method, at composition-root binding time — and `IOptions<TOptions>` is touched only
 inside that same method, to validate the bound value before the app finishes starting.
 
+**Mechanised, not just documented.** `ConfigurationTests.No_Constructor_Should_Inject_IConfiguration`
+and `.No_Constructor_Should_Inject_IOptions` in `Tests.Architecture` scan every constructor across
+Domain, Application, Api, Infrastructure.*, Shared and Host with Mono.Cecil — a violation fails the
+build. `AddXxx` extension methods are static methods on static classes, not constructors, so the one
+sanctioned binding site is untouched by the scan; anything else that takes `IConfiguration` or an
+`IOptions<T>`/`IOptionsSnapshot<T>`/`IOptionsMonitor<T>` as a constructor parameter fails immediately.
+
 ## Why
 
 A class holding `IConfiguration` has three problems that only surface later, never at the call site:
@@ -129,15 +136,16 @@ this rule's validation clause is used; `Microsoft.Extensions.Options.Configurati
 or Host** — the layers that already own an `AddXxx` composition-root extension method and already may
 depend on `Microsoft.Extensions.Options`/`Configuration`. They do not belong in Domain or Application:
 Domain has no framework dependency at all, and Application's `AddApplication()` has never needed
-config (see `LayerDependencyTests`). **There is currently no architecture test enforcing this** —
+config (see `LayerDependencyTests`). `ConfigurationTests` (above) already stops the most likely form
+of a violation — Domain or Application code cannot constructor-inject `IConfiguration`/`IOptions<T>`
+anywhere, because that scan covers every assembly including those two. What is **not** mechanised is
+a settings class merely *living* in Domain or Application without being injected anywhere yet —
 `LayerDependencyTests.Domain_Should_Not_Depend_On_OuterLayers` and
 `Application_Should_Not_Depend_On_Infrastructure_Api_Host_Or_Web_Frameworks` forbid EF Core, ASP.NET
 Core, Npgsql and the outer-layer assemblies, but neither list mentions
-`Microsoft.Extensions.Configuration` or `Microsoft.Extensions.Options`. Until a class actually violates
-this, treat it as a documented convention rather than a mechanised one — but the first time a settings
-class or an `IConfiguration` injection appears in Domain or Application during review, add
-`Microsoft.Extensions.Configuration` to both forbidden-dependency lists in `LayerDependencyTests.cs`
-rather than special-casing the one offending class.
+`Microsoft.Extensions.Configuration` or `Microsoft.Extensions.Options`. If that gap is ever hit in
+review, add `Microsoft.Extensions.Configuration` to both forbidden-dependency lists in
+`LayerDependencyTests.cs` rather than special-casing the one offending class.
 
 ## Relationship to lib/'s delegate-populated Options (OutboxOptions, IdempotencyOptions, PersistenceOptions)
 
@@ -177,6 +185,5 @@ than one related key to keep together.
       `.ValidateDataAnnotations().ValidateOnStart()`, so a bad value fails the host at startup.
 - [ ] The class lives in Infrastructure, Api, or Host — never Domain or Application.
 
-Verify the second-to-last item with `grep -rn "IConfiguration\|IOptions<" --include=*.cs src lib`
-outside an `AddXxx`/`Extensions` file — any hit is a class that should have taken the plain
-`TOptions` class instead.
+The second-to-last item is enforced by `ConfigurationTests` in `Tests.Architecture` — a violation
+fails `dotnet test tests/server/Tnosc.EShop.Server.Tests.Architecture`, no manual grep needed.

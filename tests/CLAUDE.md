@@ -55,8 +55,9 @@ exactly what the test is usually there to prove.
 Treat a failure here as a design error, not a test to relax. They enforce layer dependencies,
 context isolation, EF Core staying behind repositories, handler naming/sealing/placement, no
 `DbContext` in command handlers, no `I*Repository` in query handlers, endpoint shape, aggregate
-setters, typed-id and value-object shape, unique domain-event names, and the Roslyn no-business-
-branching scan. Add a test here whenever you add a rule.
+setters, typed-id and value-object shape, unique domain-event names, no constructor-injected
+`IConfiguration`/`IOptions<T>` (`.claude/rules/configuration-options.md`), and the Roslyn
+no-business-branching scan. Add a test here whenever you add a rule.
 
 ```bash
 dotnet test tests/server/Tnosc.EShop.Server.Tests.Unit
