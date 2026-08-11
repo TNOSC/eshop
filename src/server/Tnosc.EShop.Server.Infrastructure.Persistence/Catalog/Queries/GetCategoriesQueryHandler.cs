@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Tnosc.EShop.Server.Application.Catalog.Queries.GetCategories;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.ReadModels;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
+using Tnosc.EShop.Server.Shared.Catalog;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Queries;
 using Tnosc.Lib.Domain.Results;
@@ -24,7 +25,7 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.Queries;
 /// </summary>
 /// <param name="context">The read context.</param>
 [Cacheable(300)]
-[CacheTag("catalog")]
+[CacheTag(CacheTags.Catalog)]
 internal sealed class GetCategoriesQueryHandler(EShopReadDbContext context)
     : IQueryHandler<GetCategoriesQuery, CategoryDto[]>
 {

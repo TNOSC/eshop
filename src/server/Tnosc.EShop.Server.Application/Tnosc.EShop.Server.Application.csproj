@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tnosc.EShop.Server.Domain\Tnosc.EShop.Server.Domain.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
     <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Application\Tnosc.Lib.Application.csproj" />
   </ItemGroup>
 </Project>

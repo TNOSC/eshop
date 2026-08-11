@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Tnosc.EShop.Server.Domain.Catalog.Brands;
 using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
+using Tnosc.EShop.Server.Shared.Catalog;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
@@ -24,7 +25,7 @@ namespace Tnosc.EShop.Server.Application.Catalog.Commands.CreateProduct;
 /// </summary>
 /// <param name="repository">The product repository.</param>
 /// <param name="unitOfWork">The unit of work this handler commits through.</param>
-[CacheTag("catalog")]
+[CacheTag(CacheTags.Catalog)]
 internal sealed class CreateProductCommandHandler(
     IProductRepository repository,
     IUnitOfWork unitOfWork)
