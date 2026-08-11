@@ -58,6 +58,11 @@ Catalog is the reference implementation — copy its slice layout.
 
 ## Universal conventions
 
+**Configuration and options:** See [`.claude/rules/configuration-options.md`](./.claude/rules/configuration-options.md) — any
+settings read from `appsettings.json` go through a narrow, type-safe `<Feature>Options` class, never
+`IConfiguration` in a consumer's constructor. `IConfiguration` is touched exactly once, in the owning
+`AddXxx` extension method, to bind and validate.
+
 Every `.cs` file opens with this header, then explicit `using`s (System first), then a **file-scoped
 namespace**. One public type per file, named after the file.
 

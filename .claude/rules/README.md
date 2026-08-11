@@ -15,6 +15,7 @@ links to the relevant one rather than restating it.
 | [`migrations.md`](migrations.md) | Two-context `dotnet ef` mechanics, reviewing the generated file, destructive changes, never editing an applied migration |
 | [`domain-events.md`](domain-events.md) | `[DomainEventName]` as an immutable wire contract, event payload shape, at-least-once delivery and idempotency |
 | [`dependencies.md`](dependencies.md) | Central Package Management, justifying a new package, layer discipline for package references |
+| [`configuration-options.md`](configuration-options.md) | `IConfiguration`/`IOptions<T>` are touched once per settings class, in its own `AddXxx` extension method; every consumer takes the plain `TOptions` class directly, validated at startup |
 
 ## Adding a rule
 

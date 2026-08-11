@@ -7,6 +7,7 @@ Minimal APIs only — no MVC controllers. **Must not reference Infrastructure.**
 ```
 <Context>/CatalogRoutes.cs                          route templates + OpenAPI tag, spelled once
 <Context>/<Feature>/{CreateProductEndpoint,CreateProductRequest}.cs
+<Context>/<Feature>/<FeatureName>Options.cs         settings classes bound from appsettings.json (see rules/configuration-options.md)
 Extensions/ApiExtensions.cs                         AddApiEndpoints(AssemblyReference.Assembly)
 ```
 

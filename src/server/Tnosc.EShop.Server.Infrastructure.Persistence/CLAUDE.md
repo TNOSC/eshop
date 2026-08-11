@@ -90,4 +90,10 @@ repositories (`AsImplementedInterfaces`, so both `IProductRepository` and the cl
 resolve) and query handlers, and applies the query decorator chain — innermost first:
 `Retry` → `Cacheable` → `Exception` → `Logging`.
 
+**Settings from `appsettings.json`** — if this layer needs configuration bound from JSON (e.g., a
+batch size, a timeout, a feature flag), define a `<Feature>Options` class here and bind it in the
+`AddXxx` extension method. See [`.claude/rules/configuration-options.md`](../../.claude/rules/configuration-options.md)
+for the pattern: the class never leaves the `AddXxx` method, consumers inject the plain `TOptions` class directly,
+and validation happens at app startup.
+
 Query handlers are covered by integration tests against real Postgres — see `tests/CLAUDE.md`.
