@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
@@ -77,6 +77,16 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
     /// </summary>
     protected FlakyTestDomainEventPlan FlakyPlan => Scope.ServiceProvider.GetRequiredService<FlakyTestDomainEventPlan>();
 
+    /// <summary>
+    /// Gets the process-wide plan controlling the fan-out handler pair, reset before every test.
+    /// </summary>
+    protected FanOutTestPlan FanOutPlan => Scope.ServiceProvider.GetRequiredService<FanOutTestPlan>();
+
+    /// <summary>
+    /// Gets the scoped dead-letter queue for this test.
+    /// </summary>
+    protected IDeadLetterQueue DeadLetterQueue => Scope.ServiceProvider.GetRequiredService<IDeadLetterQueue>();
+
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
@@ -87,6 +97,7 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
         _scope = fixture.Services.CreateAsyncScope();
         Spy.Clear();
         FlakyPlan.Reset();
+        FanOutPlan.Reset();
         TimeProvider.SetUtcNow(utcNow: DateTimeOffset.UtcNow);
 
         // The key is ambient and async-flowing, so production clears it per request in

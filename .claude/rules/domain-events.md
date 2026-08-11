@@ -94,6 +94,48 @@ Note that today nothing in this solution throws a retriable `BaseException` from
 path — a Postgres deadlock arrives as `NpgsqlException`, which does not qualify. So `[Retry]` here is
 correct but inert until those are wrapped into `TransientFailureException`.
 
+## One event, many handlers — they are isolated
+
+`DomainEventsPublisher` runs each handler in its own `try`/`catch` and returns a
+`DomainEventDeliveryReport` naming the ones that threw. A failing handler **never** stops the
+handlers after it: one context's broken subscriber is not a reason to withhold the event from
+another's.
+
+Two consequences worth holding on to:
+
+- **Successful siblings only stay successful if they are `[Idempotent]`.** A broken handler forces
+  the message to be redelivered, and on redelivery a non-idempotent sibling runs again. The attribute
+  is what makes its inbox claim skip it.
+- **Anything memoised per handler must be keyed on the unwrapped handler type**, never on the closed
+  decorator type. Sibling handlers of one event share
+  `IdempotencyDecorator.DomainEventHandler<TEvent>`, so keying on that hands every sibling the first
+  one's name and attributes — they end up sharing a single inbox claim and only one ever runs.
+  `HandlerChain.Unwrap` therefore does not cache; its callers key their own caches on what it returns.
+
+## Dead letters
+
+When a message runs out of outbox attempts it is **moved** to `outbox.dead_letters` and deleted from
+`outbox_messages` — one row per **(event, handler)** — in the same transaction, so it can never be
+both queued and dead-lettered. A failure that never reached a handler (unresolvable contract name,
+unreadable payload) lands there too, with a null `handler`.
+
+```csharp
+IDeadLetterQueue queue;                      // scoped, registered by AddPersistence
+await queue.ListAsync(skip: 0, take: 50, cancellationToken: ct);   // pending rows, newest first
+await queue.ReplayAsync(deadLetterId: id, cancellationToken: ct);  // re-invokes ONLY that handler
+await queue.DiscardAsync(deadLetterId: id, cancellationToken: ct);
+```
+
+- **Replay is handler-scoped, never a re-publish.** The siblings usually succeeded already, and
+  re-publishing would re-run any of them that is not `[Idempotent]`. The failed handler's own claim
+  rolled back with its work, so nothing blocks it from being retried.
+- A replay that fails again is an outcome, not an exception: `replay_count` goes up, the newer error
+  is recorded, and the row stays.
+- A recovered row is **kept**, stamped `replayed_on_utc`, and drops out of listings. The queue is an
+  audit trail as much as a work list.
+- **There is no HTTP surface.** Nothing wires authentication yet, and replay and discard are not
+  operations to leave reachable. Endpoints are a small follow-up once Identity exists.
+
 ## Cross-context integration
 
 Context B reacts to context A's event in **B's** `EventHandlers/` folder, against B's own types. B

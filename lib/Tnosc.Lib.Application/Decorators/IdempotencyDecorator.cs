@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
@@ -312,25 +312,26 @@ public static class IdempotencyDecorator
 
     /// <summary>
     /// Determines whether the unwrapped handler type is marked <see cref="IdempotentAttribute"/>,
-    /// caching the result per outermost decorator type to avoid repeated attribute lookups.
+    /// caching the result per <b>unwrapped handler</b> type to avoid repeated attribute lookups.
     /// </summary>
+    /// <remarks>
+    /// Keyed on the unwrapped type, not the decorator's: several domain event handlers subscribe to
+    /// one event and therefore share a closed decorator type, so keying on that would give every
+    /// sibling the first handler's answer.
+    /// </remarks>
     /// <param name="handler">The decorator instance wrapping the handler.</param>
     /// <param name="messageType">The command or event type the handler processes.</param>
     private static bool IsIdempotent(object handler, Type messageType) =>
-        IdempotentCache.GetOrAdd(key: handler.GetType(), valueFactory: _ => HandlerMetadata.Find<IdempotentAttribute>(handler: handler, messageType: messageType) is not null);
+        IdempotentCache.GetOrAdd(key: HandlerChain.Unwrap(handler: handler), valueFactory: _ => HandlerMetadata.Find<IdempotentAttribute>(handler: handler, messageType: messageType) is not null);
 
     /// <summary>
-    /// Resolves the durable name a key is scoped to: the unwrapped handler's full type name, so two
-    /// handlers can never collide on one caller-supplied key.
+    /// Resolves the durable name a key is scoped to, so two handlers can never collide on one
+    /// caller-supplied key — and, for an event, so a dead-lettered handler can be matched back to
+    /// the inbox claim it never made.
     /// </summary>
     /// <param name="handler">The decorator instance wrapping the handler.</param>
     private static string HandlerName(object handler) =>
-        HandlerNameCache.GetOrAdd(key: handler.GetType(), valueFactory: _ =>
-        {
-            Type unwrapped = HandlerMetadata.Unwrap(handler: handler);
-
-            return unwrapped.FullName ?? unwrapped.Name;
-        });
+        HandlerNameCache.GetOrAdd(key: HandlerChain.Unwrap(handler: handler), valueFactory: static unwrapped => unwrapped.FullName ?? unwrapped.Name);
 
     /// <summary>
     /// Hashes the request payload so a key replayed with different content can be told apart from a

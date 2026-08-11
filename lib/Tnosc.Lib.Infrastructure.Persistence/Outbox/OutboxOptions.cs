@@ -25,9 +25,15 @@ public sealed class OutboxOptions
     public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(seconds: 5);
 
     /// <summary>
-    /// Gets or sets the number of attempts after which a message is no longer claimed — dead-lettered
-    /// by exclusion from the claim query. Defaults to 5.
+    /// Gets or sets the number of attempts after which a message is moved to
+    /// <c>outbox.dead_letters</c> — one row per failed handler — and deleted from the outbox.
+    /// Defaults to 5.
     /// </summary>
+    /// <remarks>
+    /// Attempts advance by <b>two</b> per failed pass: the claim statement increments the counter,
+    /// and recording the failure increments it again. The default therefore gives roughly three
+    /// delivery passes before a message is dead-lettered.
+    /// </remarks>
     public int MaxAttempts { get; set; } = 5;
 
     /// <summary>

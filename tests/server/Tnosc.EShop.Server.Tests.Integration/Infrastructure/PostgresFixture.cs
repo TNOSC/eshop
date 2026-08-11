@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
@@ -109,6 +109,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
 
         builder.Services.AddSingleton<TestDomainEventSpy>();
         builder.Services.AddSingleton<FlakyTestDomainEventPlan>();
+        builder.Services.AddSingleton<FanOutTestPlan>();
 
         // AddApplication only scans the Server.Application assembly for IDomainEventHandler<>
         // implementors, so the test-only handlers need registering by hand. Registered before
@@ -117,6 +118,11 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
         builder.Services.AddScoped<IDomainEventHandler<TestAggregateCreatedDomainEvent>, TestDomainEventHandler>();
         builder.Services.AddScoped<IDomainEventHandler<PoisonTestDomainEvent>, PoisonTestDomainEventHandler>();
         builder.Services.AddScoped<IDomainEventHandler<FlakyTestDomainEvent>, FlakyTestDomainEventHandler>();
+
+        // Order matters: the failing handler is registered first, so a publisher that stopped at the
+        // first throw would never reach the succeeding one. That is what DeadLetterTests asserts on.
+        builder.Services.AddScoped<IDomainEventHandler<FanOutTestDomainEvent>, FanOutFailingHandler>();
+        builder.Services.AddScoped<IDomainEventHandler<FanOutTestDomainEvent>, FanOutSucceedingHandler>();
 
         builder.Services.AddUserContext();
 

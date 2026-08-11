@@ -1,11 +1,12 @@
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Tnosc.Lib.Infrastructure.Persistence.DeadLetters;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 
@@ -36,10 +37,11 @@ public abstract class WriteDbContextBase(DbContextOptions options) : DbContext(o
         ModelComposition.ApplyWriteModel(modelBuilder: modelBuilder, assembly: ConfigurationAssembly);
 
         // Applied explicitly, not by the scan: ApplyWriteModel only picks up configurations whose
-        // entity implements IAggregateRoot, and none of these three is a domain aggregate.
+        // entity implements IAggregateRoot, and none of these four is a domain aggregate.
         modelBuilder.ApplyConfiguration(configuration: new OutboxMessageConfiguration());
         modelBuilder.ApplyConfiguration(configuration: new IdempotencyRequestConfiguration());
         modelBuilder.ApplyConfiguration(configuration: new ProcessedEventConfiguration());
+        modelBuilder.ApplyConfiguration(configuration: new DeadLetterMessageConfiguration());
         base.OnModelCreating(modelBuilder: modelBuilder);
     }
 

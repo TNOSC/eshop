@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC). All rights reserved.
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
 // This code is provided by TNOSC and is freely available under the MIT License.
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Infrastructure.Persistence.Contexts;
+using Tnosc.Lib.Infrastructure.Persistence.DeadLetters;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Migrations;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
@@ -93,6 +94,7 @@ public static class PersistenceExtensions
         // whichever transaction the handler is already in rather than opening its own.
         builder.Services.AddScoped<IIdempotencyStore, IdempotencyStore<TWriteContext>>();
         builder.Services.AddScoped<IInboxStore, InboxStore<TWriteContext>>();
+        builder.Services.AddScoped<IDeadLetterQueue, DeadLetterQueue<TWriteContext>>();
 
         if (options.EnableIdempotencyCleanup)
         {

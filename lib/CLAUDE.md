@@ -40,6 +40,12 @@ is the house style.
 - The outbox is the framework's correctness centrepiece: events serialize through their **concrete**
   type (never the static `IDomainEvent`, which would flatten the payload), each type is resolved by
   its `[DomainEventName]` via `DomainEventTypeRegistry`, and claiming uses `FOR UPDATE SKIP LOCKED`.
+- **Handlers of one event are isolated.** `DomainEventsPublisher` catches per handler and returns a
+  `DomainEventDeliveryReport`, so one throwing subscriber never stops the others. A message that runs
+  out of attempts is **moved** to `outbox.dead_letters` — one row per (event, handler), the outbox row
+  deleted in the same transaction — and `IDeadLetterQueue` lists, replays (that handler alone) or
+  discards it. Anything memoised per handler must key on `HandlerChain.Unwrap(...)`, never on the
+  decorator's closed type, which siblings of one event share.
 - The inbox closes the outbox's at-least-once window: `IdempotencyDecorator` claims the key —
   `Idempotency-Key` for a command, `IDomainEvent.Id` for an event — **in the handler's own
   transaction**, so a key is never burned without its effect. It is registered innermost for that

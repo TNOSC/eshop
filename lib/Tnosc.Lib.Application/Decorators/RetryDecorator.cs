@@ -200,10 +200,12 @@ public static class RetryDecorator
     /// <param name="defaultAttempts">The attempt count to use when the handler declares no attribute.</param>
     /// <remarks>
     /// The default is applied <b>after</b> the cache lookup, so one cache serves pipelines whose
-    /// unmarked defaults differ.
+    /// unmarked defaults differ. Keyed on the <b>unwrapped handler</b> type, not the decorator's:
+    /// several domain event handlers subscribe to one event and therefore share a closed decorator
+    /// type, so keying on that would give every sibling the first handler's <c>[Retry]</c>.
     /// </remarks>
     private static int GetMaxAttempts(object handler, Type messageType, int defaultAttempts) =>
-        RetryCache.GetOrAdd(key: handler.GetType(), valueFactory: _ => HandlerMetadata.Find<RetryAttribute>(handler: handler, messageType: messageType))?.MaxRetries ?? defaultAttempts;
+        RetryCache.GetOrAdd(key: HandlerChain.Unwrap(handler: handler), valueFactory: _ => HandlerMetadata.Find<RetryAttribute>(handler: handler, messageType: messageType))?.MaxRetries ?? defaultAttempts;
 
     /// <summary>
     /// Executes <paramref name="action"/>, retrying with exponential backoff when it throws a
