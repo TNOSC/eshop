@@ -63,26 +63,9 @@ settings read from `appsettings.json` go through a narrow, type-safe `<Feature>O
 `IConfiguration` in a consumer's constructor. `IConfiguration` is touched exactly once, in the owning
 `AddXxx` extension method, to bind and validate.
 
-Every `.cs` file opens with this header, then explicit `using`s (System first), then a **file-scoped
-namespace**. One public type per file, named after the file.
-
-```csharp
-// ----------------------------------------------------------------------------------
-// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
-// This code is provided by TNOSC and is freely available under the MIT License.
-// Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
-// ----------------------------------------------------------------------------------
-```
-
-- **Explicit types, not `var`** — except where the type is apparent (`new Product { … }`, `new()`).
-- **Name every argument at every call site** — each parameter's name is written out on every method,
-  constructor and factory call. No positional arguments, tests included; only `params` arrays are
-  exempt: `Money.Create(amount: x, currency: y)`, `ShouldBe(expected: "Product.NotFound")`.
-- Braces always, even one-line `if`. `static` lambdas where nothing is captured. CRLF, 4 spaces.
-- Expression-bodied properties/accessors/operators/lambdas yes; multi-statement methods use blocks.
-- Error codes are `Aggregate.Reason`: `Product.NotFound`, `Sku.InvalidFormat`.
-- `ErrorType` → HTTP: `Validation` 400 · `Unauthorized` 401 · `Forbidden` 403 · `NotFound` 404 ·
-  `Conflict` 409 · `Failure`/`Unexpected` 500 · `Custom` → its `NumericType`.
+**Code style:** See [`.claude/rules/code-style.md`](./.claude/rules/code-style.md) — file header and
+layout, primary constructors, named arguments, one parameter per line past two, `Async` naming, and
+error-code/`ErrorType` conventions.
 
 ## Commands
 
