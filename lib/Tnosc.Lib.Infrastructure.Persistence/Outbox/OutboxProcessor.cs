@@ -36,8 +36,11 @@ internal sealed class OutboxProcessor<TContext>(
         OutboxOptions outboxOptions = options.Value;
         DateTime claimedAt = timeProvider.GetUtcNow().UtcDateTime;
 
+        // The fourth parameter leases the claimed rows: they stay invisible to any other processor
+        // until this batch could plausibly have failed. See OutboxClaimSql for why SKIP LOCKED alone
+        // does not cover the window between claiming a row and finishing with it.
         List<OutboxMessage> claimed = await context.Set<OutboxMessage>()
-            .FromSqlRaw(sql: OutboxClaimSql.Text, outboxOptions.MaxAttempts, claimedAt, outboxOptions.BatchSize)
+            .FromSqlRaw(sql: OutboxClaimSql.Text, outboxOptions.MaxAttempts, claimedAt, outboxOptions.BatchSize, claimedAt + outboxOptions.BaseBackoff)
             .ToListAsync(cancellationToken: cancellationToken);
 
         foreach (OutboxMessage message in claimed)

@@ -6,6 +6,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 
 namespace Tnosc.Lib.Infrastructure.Persistence.Extensions;
@@ -71,4 +72,15 @@ public sealed class PersistenceOptions
     /// Gets the outbox processor's batching, polling, and retry settings.
     /// </summary>
     public OutboxOptions Outbox { get; } = new();
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the idempotency cleanup service is registered.
+    /// Defaults to <see langword="true"/>.
+    /// </summary>
+    public bool EnableIdempotencyCleanup { get; set; } = true;
+
+    /// <summary>
+    /// Gets the retention, interval, and batching settings for idempotency keys and inbox claims.
+    /// </summary>
+    public IdempotencyOptions Idempotency { get; } = new();
 }

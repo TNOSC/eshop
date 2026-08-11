@@ -18,6 +18,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
+using Tnosc.Lib.Application.Observabilities;
 using Tnosc.Lib.Domain.Results;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Xunit;
@@ -126,8 +127,13 @@ public sealed class CreateProductOutboxTests(PostgresFixture fixture) : CatalogI
         string? name = null,
         decimal? amount = null,
         string? currency = null,
-        int? stock = null) =>
-        Scope.ServiceProvider.GetRequiredService<ICommandHandler<CreateProductCommand, ProductId>>()
+        int? stock = null)
+    {
+        // CreateProductCommandHandler is [Idempotent], so each call needs its own key — exactly as
+        // each HTTP request would carry its own.
+        IdempotencyKeyContext.Current = Guid.CreateVersion7().ToString();
+
+        return Scope.ServiceProvider.GetRequiredService<ICommandHandler<CreateProductCommand, ProductId>>()
             .HandleAsync(
                 command: new CreateProductCommand(
                     Sku: sku,
@@ -139,4 +145,5 @@ public sealed class CreateProductOutboxTests(PostgresFixture fixture) : CatalogI
                     BrandId: brand.Id.Value,
                     CategoryId: category.Id.Value),
                 cancellationToken: CancellationToken.None);
+    }
 }

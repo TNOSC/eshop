@@ -8,7 +8,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tnosc.EShop.Server.Domain.Catalog.Categories;
-using Tnosc.EShop.Server.Infrastructure.Persistence.Common;
+using Tnosc.Lib.Infrastructure.Persistence.Extensions;
 
 namespace Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.Configurations;
 

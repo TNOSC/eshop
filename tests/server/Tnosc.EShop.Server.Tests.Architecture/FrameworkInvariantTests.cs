@@ -26,6 +26,7 @@ public sealed class FrameworkInvariantTests
     private const string CommandHandlerVoid = "Tnosc.Lib.Application.Commands.ICommandHandler`1";
     private const string CommandHandlerResult = "Tnosc.Lib.Application.Commands.ICommandHandler`2";
     private const string QueryHandler = "Tnosc.Lib.Application.Queries.IQueryHandler`2";
+    private const string DomainEventHandler = "Tnosc.Lib.Application.DomainEvents.IDomainEventHandler`1";
 
     private static readonly Assembly[] AllAssemblies =
     [
@@ -60,7 +61,8 @@ public sealed class FrameworkInvariantTests
             {
                 bool isHandler = nested.ImplementsInterface(interfaceFullName: CommandHandlerVoid) ||
                                   nested.ImplementsInterface(interfaceFullName: CommandHandlerResult) ||
-                                  nested.ImplementsInterface(interfaceFullName: QueryHandler);
+                                  nested.ImplementsInterface(interfaceFullName: QueryHandler) ||
+                                  nested.ImplementsInterface(interfaceFullName: DomainEventHandler);
 
                 if (!isHandler)
                 {

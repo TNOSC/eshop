@@ -6,6 +6,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.DomainEvents;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure.TestModel;
@@ -15,7 +16,14 @@ namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure.TestModel;
 /// into <see cref="TestDomainEventSpy"/> so outbox-processor tests can observe which events were
 /// actually published, including across two concurrently running processors.
 /// </summary>
+/// <remarks>
+/// <c>[Idempotent]</c> so <c>InboxIdempotencyTests</c> can drive a real redelivery through it. This
+/// changes nothing for the other outbox tests: each of their events carries its own
+/// <c>IDomainEvent.Id</c> and is delivered once, so every claim is distinct and every delivery still
+/// happens.
+/// </remarks>
 /// <param name="spy">The process-wide delivery recorder.</param>
+[Idempotent]
 internal sealed class TestDomainEventHandler(TestDomainEventSpy spy) : IDomainEventHandler<TestAggregateCreatedDomainEvent>
 {
     /// <inheritdoc />

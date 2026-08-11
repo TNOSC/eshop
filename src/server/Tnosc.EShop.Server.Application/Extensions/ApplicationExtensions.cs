@@ -26,7 +26,8 @@ public static class ApplicationExtensions
     /// <param name="services"> The service collection to register the application services with.</param>
     /// <returns> The updated service collection. </returns>
     public static IServiceCollection AddApplication(this IServiceCollection services) =>
-        services.AddCommands();
+        services.AddCommands()
+                .AddDomainEvents();
 
 
     private static IServiceCollection AddCommands(this IServiceCollection services)
@@ -42,6 +43,10 @@ public static class ApplicationExtensions
                 .As(selector: implementationType => ScanExtensions.ClosedInterfacesOf(implementationType: implementationType, openGenericInterface: typeof(IDomainEventHandler<>))).WithScopedLifetime());
 
         // Commands (with response) — innermost first, the last TryDecorate call becomes outermost.
+        // Idempotency sits innermost, wrapping the handler directly: the claim it writes has to
+        // commit in the same transaction as the handler's own writes, so it must be inside
+        // TransactionDecorator rather than outside it.
+        services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(IdempotencyDecorator.CommandHandler<,>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(TransactionDecorator.CommandHandler<,>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(CacheInvalidationDecorator.CommandHandler<,>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(RetryDecorator.CommandHandler<,>));
@@ -50,12 +55,29 @@ public static class ApplicationExtensions
         services.TryDecorate(serviceType: typeof(ICommandHandler<,>), decoratorType: typeof(LoggingDecorator.CommandHandler<,>));
 
         // Commands (no response) — identical sequence using the *.CommandBaseHandler<> variants.
+        services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(IdempotencyDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(TransactionDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(CacheInvalidationDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(RetryDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(ValidationDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(ExceptionDecorator.CommandBaseHandler<>));
         services.TryDecorate(serviceType: typeof(ICommandHandler<>), decoratorType: typeof(LoggingDecorator.CommandBaseHandler<>));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Decorates the domain event handlers registered by <see cref="AddCommands"/> with the inbox.
+    /// </summary>
+    /// <remarks>
+    /// The only decorator on this pipeline. Outbox delivery is at-least-once, so a handler marked
+    /// <c>[Idempotent]</c> needs its event id claimed in the same transaction as its own writes;
+    /// every other handler is passed straight through.
+    /// </remarks>
+    /// <param name="services">The service collection to decorate.</param>
+    private static IServiceCollection AddDomainEvents(this IServiceCollection services)
+    {
+        services.TryDecorate(serviceType: typeof(IDomainEventHandler<>), decoratorType: typeof(IdempotencyDecorator.DomainEventHandler<>));
 
         return services;
     }

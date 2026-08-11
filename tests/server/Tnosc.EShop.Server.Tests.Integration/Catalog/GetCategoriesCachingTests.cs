@@ -20,6 +20,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.Queries;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
+using Tnosc.Lib.Application.Observabilities;
 using Tnosc.Lib.Domain.Results;
 using Xunit;
 
@@ -128,8 +129,13 @@ public sealed class GetCategoriesCachingTests(PostgresFixture fixture) : Catalog
             query: new GetCategoriesQuery(),
             cancellationToken: CancellationToken.None);
 
-    private ValueTask<Result<ProductId>> CreateProductAsync(BrandId brandId, CategoryId categoryId) =>
-        Scope.ServiceProvider.GetRequiredService<ICommandHandler<CreateProductCommand, ProductId>>()
+    private ValueTask<Result<ProductId>> CreateProductAsync(BrandId brandId, CategoryId categoryId)
+    {
+        // CreateProductCommandHandler is [Idempotent], so the call needs a key — exactly as the HTTP
+        // request it stands in for would carry one.
+        IdempotencyKeyContext.Current = Guid.CreateVersion7().ToString();
+
+        return Scope.ServiceProvider.GetRequiredService<ICommandHandler<CreateProductCommand, ProductId>>()
             .HandleAsync(
                 command: new CreateProductCommand(
                     Sku: _faker.Sku(),
@@ -141,4 +147,5 @@ public sealed class GetCategoriesCachingTests(PostgresFixture fixture) : Catalog
                     BrandId: brandId.Value,
                     CategoryId: categoryId.Value),
                 cancellationToken: CancellationToken.None);
+    }
 }

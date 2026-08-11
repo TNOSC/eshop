@@ -23,6 +23,12 @@ namespace Tnosc.EShop.Server.Api.Catalog.CreateProduct;
 /// <summary>
 /// <c>POST /api/catalog/products</c> — adds a product to the catalogue.
 /// </summary>
+/// <remarks>
+/// The <c>Idempotency-Key</c> header is required: the handler is <c>[Idempotent]</c>, so
+/// <c>RequestContextMiddleware</c> lifts the header into the ambient key context and the decorator
+/// pipeline rejects a request that arrives without one. The key is not a parameter here — no
+/// endpoint reads headers directly, and the value never reaches the command.
+/// </remarks>
 internal sealed class CreateProductEndpoint : IApiEndpoint
 {
     /// <inheritdoc />
@@ -33,7 +39,11 @@ internal sealed class CreateProductEndpoint : IApiEndpoint
            .WithSummary(summary: "Create a product")
            .WithDescription(
                description: "Adds a new product to the catalogue. The SKU must be unique across the " +
-                             "whole catalogue; creation fails with a conflict if it is already taken.")
+                             "whole catalogue; creation fails with a conflict if it is already taken. " +
+                             "Requires an Idempotency-Key header: retrying with the same key and the " +
+                             "same body replays the original 201 and its product id instead of " +
+                             "creating a second product, reusing a key with a different body returns " +
+                             "409, and omitting it returns 400.")
            .Produces<Guid>(statusCode: StatusCodes.Status201Created)
            .ProducesValidationProblem(statusCode: StatusCodes.Status400BadRequest)
            .Produces<ProblemDetails>(statusCode: StatusCodes.Status409Conflict);

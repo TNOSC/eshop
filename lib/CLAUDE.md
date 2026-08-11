@@ -40,6 +40,13 @@ is the house style.
 - The outbox is the framework's correctness centrepiece: events serialize through their **concrete**
   type (never the static `IDomainEvent`, which would flatten the payload), each type is resolved by
   its `[DomainEventName]` via `DomainEventTypeRegistry`, and claiming uses `FOR UPDATE SKIP LOCKED`.
+- The inbox closes the outbox's at-least-once window: `IdempotencyDecorator` claims the key —
+  `Idempotency-Key` for a command, `IDomainEvent.Id` for an event — **in the handler's own
+  transaction**, so a key is never burned without its effect. It is registered innermost for that
+  reason. Two things it depends on: the write context must not use a retrying execution strategy (EF
+  refuses user-initiated transactions under one), and any scope a handler runs in must be created
+  with `CreateAsyncScope()` because `IUnitOfWork` is `IAsyncDisposable`-only. See
+  `.claude/rules/idempotency.md`.
 - `ReadDbContextBase` seals its `SaveChanges`/`SaveChangesAsync` overrides to throw — keep it that way.
 - Framework behaviour is covered by `Tests.Unit/Lib*` and `Tests.Integration`; changes here need
   tests in both where they touch persistence.

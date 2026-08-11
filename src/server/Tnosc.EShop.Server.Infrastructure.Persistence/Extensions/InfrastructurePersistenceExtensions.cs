@@ -34,7 +34,16 @@ public static class InfrastructurePersistenceExtensions
     /// <returns>The same <paramref name="builder"/> instance, for chaining.</returns>
     public static IHostApplicationBuilder AddInfrastructurePersistence(this IHostApplicationBuilder builder)
     {
-        builder.AddNpgsqlDbContext<EShopWriteDbContext>(connectionName: ConnectionName);
+        // The write context opts out of Npgsql's retrying execution strategy. EF Core refuses a
+        // user-initiated transaction while one is configured — "does not support user-initiated
+        // transactions" — and explicit transactions are load-bearing on this side: TransactionDecorator
+        // needs one for [Transactional], and IdempotencyDecorator needs one to commit its claim with
+        // the handler's writes. Retry policy is not lost, it is just owned explicitly instead of
+        // invisibly: RetryDecorator and [Retry(n)] sit in the command pipeline and can see the
+        // Result. The read context keeps the strategy — it never opens a transaction.
+        builder.AddNpgsqlDbContext<EShopWriteDbContext>(
+            connectionName: ConnectionName,
+            configureSettings: static settings => settings.DisableRetry = true);
         builder.AddNpgsqlDbContext<EShopReadDbContext>(connectionName: ConnectionName);
 
         builder.AddPersistence<EShopWriteDbContext, EShopReadDbContext>(configure: options =>

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure.TestModel;
 using Tnosc.Lib.Application.Abstractions.Persistence;
+using Tnosc.Lib.Application.Observabilities;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Xunit;
 
@@ -80,6 +81,12 @@ public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifet
         _scope = fixture.Services.CreateAsyncScope();
         Spy.Clear();
         TimeProvider.SetUtcNow(utcNow: DateTimeOffset.UtcNow);
+
+        // The key is ambient and async-flowing, so production clears it per request in
+        // RequestContextMiddleware. Nothing does that here, so a key one test set could otherwise
+        // still be current in the next — clearing makes "no key supplied" the default a test starts
+        // from, and any test that needs one sets it explicitly.
+        IdempotencyKeyContext.Current = null;
     }
 
     /// <inheritdoc />

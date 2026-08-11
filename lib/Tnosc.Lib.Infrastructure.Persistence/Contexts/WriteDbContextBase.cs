@@ -6,6 +6,7 @@
 
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 
 namespace Tnosc.Lib.Infrastructure.Persistence.Contexts;
@@ -33,7 +34,12 @@ public abstract class WriteDbContextBase(DbContextOptions options) : DbContext(o
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ModelComposition.ApplyWriteModel(modelBuilder: modelBuilder, assembly: ConfigurationAssembly);
+
+        // Applied explicitly, not by the scan: ApplyWriteModel only picks up configurations whose
+        // entity implements IAggregateRoot, and none of these three is a domain aggregate.
         modelBuilder.ApplyConfiguration(configuration: new OutboxMessageConfiguration());
+        modelBuilder.ApplyConfiguration(configuration: new IdempotencyRequestConfiguration());
+        modelBuilder.ApplyConfiguration(configuration: new ProcessedEventConfiguration());
         base.OnModelCreating(modelBuilder: modelBuilder);
     }
 

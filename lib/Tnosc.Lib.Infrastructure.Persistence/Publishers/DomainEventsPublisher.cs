@@ -25,7 +25,11 @@ internal sealed class DomainEventsPublisher(IServiceProvider serviceProvider)
     {
         foreach (IDomainEvent domainEvent in domainEvents)
         {
-            using IServiceScope scope = serviceProvider.CreateScope();
+            // CreateAsyncScope, not CreateScope: a handler's scope can hold services that implement
+            // only IAsyncDisposable — IUnitOfWork does, and the inbox decorator resolves it — and
+            // IServiceScope.Dispose() throws for those. Disposing synchronously would surface as the
+            // event failing *after* its handler already succeeded, which the outbox would then retry.
+            await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
 
             Type domainEventType = domainEvent.GetType();
             Type handlerType = HandlerTypeDictionary.GetOrAdd(

@@ -68,14 +68,15 @@ public sealed class OutboxMessage
     public DateTime? NextAttemptOnUtc { get; private set; }
 
     /// <summary>
-    /// Marks the item as processed at the specified UTC date and time, and clears any existing error state.
+    /// Marks the item as processed at the specified UTC date and time, and clears any existing error
+    /// state along with the claim lease the message was picked up under.
     /// </summary>
     /// <param name="processedOnUtc">The date and time, in UTC, when the item was processed.</param>
     public void MarkProcessed(DateTime processedOnUtc)
     {
-
         ProcessedOnUtc = processedOnUtc;
         Error = null;
+        NextAttemptOnUtc = null;
     }
 
     /// <summary>

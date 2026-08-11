@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Infrastructure.Persistence.Contexts;
+using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Migrations;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Tnosc.Lib.Infrastructure.Persistence.Publishers;
@@ -80,6 +81,23 @@ public static class PersistenceExtensions
         });
 
         builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor<TWriteContext>>();
+
+        builder.Services.Configure<IdempotencyOptions>(configureOptions: o =>
+        {
+            o.Retention = options.Idempotency.Retention;
+            o.CleanupInterval = options.Idempotency.CleanupInterval;
+            o.BatchSize = options.Idempotency.BatchSize;
+        });
+
+        // Scoped, and over the same TWriteContext the handler writes through, so a claim joins
+        // whichever transaction the handler is already in rather than opening its own.
+        builder.Services.AddScoped<IIdempotencyStore, IdempotencyStore<TWriteContext>>();
+        builder.Services.AddScoped<IInboxStore, InboxStore<TWriteContext>>();
+
+        if (options.EnableIdempotencyCleanup)
+        {
+            builder.Services.AddHostedService<IdempotencyCleanupBackgroundService<TWriteContext>>();
+        }
 
         if (options.ApplyMigrationsOnStartup)
         {

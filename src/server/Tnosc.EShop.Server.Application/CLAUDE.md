@@ -56,17 +56,23 @@ Registered in `Extensions/ApplicationExtensions.cs` via `Scrutor.TryDecorate`, i
 last call becomes outermost. **The order is load-bearing:**
 
 ```
-Commands:  Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Handler
+Commands:  Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Idempotency → Handler
 Queries:   Logging → Exception → Cacheable → Retry → Handler
+Events:    Idempotency → Handler
 ```
 
 `Retry` inside `Exception` (it only catches `BaseException`) · `Transaction` inside `Retry` (an
 aborted Postgres transaction fails every later statement, `25P02`) · `CacheInvalidation` outside
 `Transaction` (invalidating pre-commit lets a reader repopulate from the stale snapshot) ·
+`Idempotency` innermost (its claim must commit in the handler's own transaction) ·
 `Logging` outermost so exception-mapped failures still log.
 
-Opt-in attributes go **on the handler class**: `[Transactional]`, `[Retry(n)]`,
+Opt-in attributes go **on the handler class**: `[Transactional]`, `[Retry(n)]`, `[Idempotent]`,
 `[Cacheable(seconds)]`, `[CacheTag(CacheTags.X)]`; `[CacheKey]` goes on query properties.
+**`[Idempotent]`** makes the effect happen at most once per key — the caller's `Idempotency-Key` for
+a command, `IDomainEvent.Id` for a domain event — and a duplicate command replays the recorded
+response. The handler stays unaware: no key parameter, no dedupe branch. See
+`.claude/rules/idempotency.md`.
 Cache tags are **constants** from `Server.Shared/<Context>/CacheTags.cs`, never string literals —
 see `Tnosc.EShop.Server.Shared/CLAUDE.md`.
 **`[Transactional]` is the exception, not the rule** — only for a handler spanning several

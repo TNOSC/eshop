@@ -56,7 +56,7 @@ internal static class HandlerMetadata
     /// </summary>
     /// <param name="handler">The (possibly decorated) handler instance.</param>
     /// <returns>The concrete, unwrapped handler type.</returns>
-    private static Type Unwrap(object handler) =>
+    public static Type Unwrap(object handler) =>
         UnwrappedTypeCache.GetOrAdd(key: handler.GetType(), valueFactory: _ =>
         {
             object current = handler;

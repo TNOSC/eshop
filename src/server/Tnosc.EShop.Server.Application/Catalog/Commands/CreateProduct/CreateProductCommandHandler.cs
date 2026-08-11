@@ -23,8 +23,17 @@ namespace Tnosc.EShop.Server.Application.Catalog.Commands.CreateProduct;
 /// owns the SKU-uniqueness rule — and commits. Single aggregate, single commit, so no
 /// <c>[Transactional]</c>.
 /// </summary>
+/// <remarks>
+/// <c>[Idempotent]</c> because this is a create: a client whose connection drops has no way to know
+/// whether the product exists, and without a key its only safe options are to give up or risk a
+/// duplicate. With one, the retry replays the original <see cref="ProductId"/>. The SKU-uniqueness
+/// rule catches a duplicate <em>SKU</em>, but not the same request sent twice before the first
+/// committed, and it answers a retry with a conflict rather than the id the caller asked for.
+/// The key is therefore required — a request without one is rejected, not run unguarded.
+/// </remarks>
 /// <param name="repository">The product repository.</param>
 /// <param name="unitOfWork">The unit of work this handler commits through.</param>
+[Idempotent]
 [CacheTag(CacheTags.Catalog)]
 internal sealed class CreateProductCommandHandler(
     IProductRepository repository,

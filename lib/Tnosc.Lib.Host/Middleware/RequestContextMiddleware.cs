@@ -16,8 +16,14 @@ using Tnosc.Lib.Application.Observabilities;
 namespace Tnosc.Lib.Host.Middleware;
 
 /// <summary>
-/// Middleware that adds a CorrelationId value to the logging scope for each request.
+/// Middleware that lifts the per-request header context — correlation id and idempotency key —
+/// out of HTTP and into the ambient contexts the inner layers read.
 /// </summary>
+/// <remarks>
+/// This is the only place either header is read. Both are exposed as async-flowing ambient state
+/// rather than threaded through command and handler signatures, and both are cleared in a
+/// <c>finally</c> so a pooled request thread never carries one request's values into the next.
+/// </remarks>
 /// <param name="next">The request delegate to invoke the next middleware in the pipeline.</param>
 /// <param name="logger">The logger used to create the scoped logging context.</param>
 public class RequestContextMiddleware(
@@ -25,10 +31,12 @@ public class RequestContextMiddleware(
     ILogger<RequestContextMiddleware> logger)
 {
     private const string CorrelationIdHeaderName = "Correlation-Id";
+    private const string IdempotencyKeyHeaderName = "Idempotency-Key";
 
     /// <summary>
-    /// Processes the HTTP request within a logging scope that includes a correlation id,
-    /// and makes that correlation id the default for any exception thrown while handling the request.
+    /// Processes the HTTP request within a logging scope that includes a correlation id, makes that
+    /// correlation id the default for any exception thrown while handling the request, and publishes
+    /// the caller's idempotency key for handlers marked <c>[Idempotent]</c>.
     /// </summary>
     /// <param name="context">The current HTTP context.</param>
     /// <param name="userContext">Provides information about the current caller.</param>
@@ -48,6 +56,10 @@ public class RequestContextMiddleware(
         }
 
         CorrelationIdContext.Current = correlationId;
+
+        // Left null when the header is absent: an [Idempotent] handler must be able to tell "no key
+        // supplied" apart from any key value, because it rejects the request rather than degrading.
+        IdempotencyKeyContext.Current = GetIdempotencyKey(context: context);
         try
         {
             using (logger.BeginScope(state: scopeState))
@@ -58,6 +70,7 @@ public class RequestContextMiddleware(
         finally
         {
             CorrelationIdContext.Current = null;
+            IdempotencyKeyContext.Current = null;
         }
     }
 
@@ -68,5 +81,14 @@ public class RequestContextMiddleware(
             value: out StringValues correlationId);
 
         return correlationId.FirstOrDefault() ?? context.TraceIdentifier;
+    }
+
+    private static string? GetIdempotencyKey(HttpContext context)
+    {
+        context.Request.Headers.TryGetValue(
+            key: IdempotencyKeyHeaderName,
+            value: out StringValues idempotencyKey);
+
+        return idempotencyKey.FirstOrDefault();
     }
 }

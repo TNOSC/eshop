@@ -57,6 +57,9 @@ public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
         _timeProvider = timeProvider ?? throw new ArgumentNullException(paramName: nameof(timeProvider));
     }
 
+    /// <inheritdoc />
+    public bool HasActiveTransaction => _currentTransaction is not null;
+
     /// <summary>
     /// Persists all changes made in the current context to the underlying database.
     /// </summary>

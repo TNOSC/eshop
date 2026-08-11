@@ -10,6 +10,7 @@ links to the relevant one rather than restating it.
 | Rule | Covers |
 |---|---|
 | [`cache-tags.md`](cache-tags.md) | `[CacheTag]` values are constants in `Server.Shared`, never literals — and the silent failure that follows if they aren't |
+| [`idempotency.md`](idempotency.md) | `[Idempotent]` claims its key in the handler's own transaction; ambient `Idempotency-Key`, replay semantics, and the two constraints that make it work |
 | [`analyzer-suppressions.md`](analyzer-suppressions.md) | When a `#pragma` or `.editorconfig` entry is acceptable; which suppressions are settled; what may never be suppressed |
 | [`migrations.md`](migrations.md) | Two-context `dotnet ef` mechanics, reviewing the generated file, destructive changes, never editing an applied migration |
 | [`domain-events.md`](domain-events.md) | `[DomainEventName]` as an immutable wire contract, event payload shape, at-least-once delivery and idempotency |

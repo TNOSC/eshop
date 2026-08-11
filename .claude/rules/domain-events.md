@@ -57,6 +57,16 @@ handler returns. A crash between the two redelivers the event. So a domain event
 to run twice: check-then-act on its own state, upsert rather than insert, and never assume "first
 time".
 
+**Or mark it `[Idempotent]`** and let the inbox do it — `IdempotencyDecorator` claims
+`IDomainEvent.Id` for that handler in the same transaction as the handler's own writes, so a
+redelivery is skipped rather than applied twice. See `.claude/rules/idempotency.md`. Hand-written
+idempotency is still fine where it is natural; the attribute is for handlers where it is not.
+
+The claim also takes a **lease** (`next_attempt_on_utc` pushed out by `BaseBackoff`). `SKIP LOCKED`
+only holds the row until the claim statement commits, and processing happens after that — without
+the lease a second processor polling mid-batch would re-claim the same still-unprocessed rows.
+Do not remove it, and keep `BaseBackoff` comfortably longer than a batch takes to process.
+
 A handler that throws leaves the row unprocessed for retry — do not swallow exceptions to make a
 poison message disappear; that silently drops the event.
 

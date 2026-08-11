@@ -16,13 +16,22 @@ namespace Tnosc.Lib.Application.DomainEvents;
 /// </summary>
 /// <typeparam name="TEvent">The type of domain event to handle</typeparam>
 /// <remarks>
+/// <para>
 /// Outbox delivery is <b>at-least-once</b>: a crash between publishing and marking the outbox
 /// message processed replays it, so implementations must be idempotent. Dedupe on
 /// <see cref="IDomainEvent.Id"/> — a stable <see cref="System.Guid"/> assigned at construction and
 /// serialized into the outbox payload, so it survives the replay and identifies the message
-/// uniquely. A dedicated inbox table (tracking which handler has processed which event id) is the
-/// planned upgrade for handlers that cannot otherwise be made idempotent; because <see cref="IDomainEvent.Id"/>
-/// is already durable and stable, adding that table later requires no change to this contract.
+/// uniquely.
+/// </para>
+/// <para>
+/// A handler that cannot reasonably be made idempotent by hand marks itself
+/// <see cref="Attributes.IdempotentAttribute"/> instead. That is the inbox this contract was
+/// designed for and it needed no change here, exactly because <see cref="IDomainEvent.Id"/> was
+/// already durable and stable: <c>IdempotencyDecorator</c> claims the id for the handler in the same
+/// transaction as the handler's own writes, so a redelivered event is skipped rather than applied
+/// twice — and a handler that crashed part-way rolls the claim back with its work and is retried
+/// properly.
+/// </para>
 /// </remarks>
 public interface IDomainEventHandler<in TEvent>
     where TEvent : IDomainEvent

@@ -43,7 +43,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
 {
     private const string ConnectionStringConfigurationKey = "ConnectionStrings:eshopdb";
 
-    private static readonly string[] SchemasToReset = ["catalog", "identity", "basket", "ordering", "payment", "outbox"];
+    private static readonly string[] SchemasToReset = ["catalog", "identity", "basket", "ordering", "payment", "outbox", "idempotency"];
 
     private PostgreSqlContainer? _container;
     private IHost? _host;
