@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Tnosc.EShop.Server.Host.Authentication;
+using Tnosc.EShop.Server.Host.OpenApi;
 using Tnosc.EShop.Server.Host.Options;
 using Tnosc.Lib.Host.Extensions;
 
@@ -20,7 +21,7 @@ namespace Tnosc.EShop.Server.Host.Extensions;
 /// <summary>
 /// Wires Keycloak bearer authentication and permission-based authorization into the host.
 /// </summary>
-public static class AuthenticationExtensions
+internal static class AuthenticationExtensions
 {
     private const string KeycloakServiceName = "keycloak";
 
@@ -49,7 +50,7 @@ public static class AuthenticationExtensions
     /// </remarks>
     /// <param name="builder">The host application builder to register services on.</param>
     /// <returns>The same <paramref name="builder"/> instance, for chaining.</returns>
-    public static IHostApplicationBuilder AddKeycloakAuthentication(this IHostApplicationBuilder builder)
+    internal static IHostApplicationBuilder AddKeycloakAuthentication(this IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(argument: builder);
 
@@ -79,6 +80,12 @@ public static class AuthenticationExtensions
 
         builder.Services.AddSingleton<IClaimsTransformation, KeycloakClaimsTransformation>();
         builder.Services.AddPermissionAuthorization();
+
+        builder.Services.AddOpenApi(configureOptions: options =>
+        {
+            options.AddDocumentTransformer<KeycloakOAuthSecuritySchemeTransformer>();
+            options.AddOperationTransformer<AuthorizedOperationTransformer>();
+        });
 
         return builder;
     }
