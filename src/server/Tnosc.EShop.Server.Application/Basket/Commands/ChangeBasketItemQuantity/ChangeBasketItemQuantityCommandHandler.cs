@@ -23,7 +23,6 @@ namespace Tnosc.EShop.Server.Application.Basket.Commands.ChangeBasketItemQuantit
 /// <c>[Transactional]</c>, no <c>[Idempotent]</c> — see <see cref="Tnosc.EShop.Server.Application.Basket.Commands.AddItemToBasket.AddItemToBasketCommandHandler"/>'s remarks.
 /// </summary>
 /// <param name="repository">The basket repository.</param>
-[CacheTag(CacheTags.Basket)]
 internal sealed class ChangeBasketItemQuantityCommandHandler(IBasketRepository repository)
     : ICommandHandler<ChangeBasketItemQuantityCommand, BasketDto>
 {

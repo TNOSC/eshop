@@ -22,7 +22,6 @@ namespace Tnosc.EShop.Server.Application.Basket.Commands.ClearBasket;
 /// see <see cref="Tnosc.EShop.Server.Application.Basket.Commands.AddItemToBasket.AddItemToBasketCommandHandler"/>'s remarks.
 /// </summary>
 /// <param name="repository">The basket repository.</param>
-[CacheTag(CacheTags.Basket)]
 internal sealed class ClearBasketCommandHandler(IBasketRepository repository)
     : ICommandHandler<ClearBasketCommand>
 {

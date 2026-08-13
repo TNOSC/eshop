@@ -21,7 +21,7 @@ using IResult = Microsoft.AspNetCore.Http.IResult;
 namespace Tnosc.EShop.Server.Api.Basket.GetBasket;
 
 /// <summary>
-/// <c>GET /api/basket</c> — reads the caller's own basket. Served from cache between writes.
+/// <c>GET /api/basket</c> — reads the caller's own basket.
 /// </summary>
 internal sealed class GetBasketEndpoint : IApiEndpoint
 {

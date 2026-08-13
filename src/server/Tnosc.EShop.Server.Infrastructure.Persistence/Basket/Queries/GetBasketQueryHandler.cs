@@ -23,8 +23,6 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Basket.Queries;
 /// gets back an empty one rather than a <c>NotFound</c>: the basket is created lazily on first add.
 /// </summary>
 /// <param name="reader">The basket read port.</param>
-[Cacheable(60)]
-[CacheTag(CacheTags.Basket)]
 internal sealed class GetBasketQueryHandler(IBasketReader reader)
     : IQueryHandler<GetBasketQuery, BasketDto>
 {

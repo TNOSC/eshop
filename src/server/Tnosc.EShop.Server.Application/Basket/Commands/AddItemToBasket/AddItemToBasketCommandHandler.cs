@@ -32,7 +32,6 @@ namespace Tnosc.EShop.Server.Application.Basket.Commands.AddItemToBasket;
 /// </remarks>
 /// <param name="repository">The basket repository.</param>
 /// <param name="productLookup">The port used to snapshot the product's current catalogue data.</param>
-[CacheTag(CacheTags.Basket)]
 internal sealed class AddItemToBasketCommandHandler(
     IBasketRepository repository,
     IProductLookup productLookup)

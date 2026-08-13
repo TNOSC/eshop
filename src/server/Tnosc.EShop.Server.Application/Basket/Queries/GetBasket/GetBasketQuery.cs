@@ -11,8 +11,7 @@ using Tnosc.Lib.Application.Queries;
 namespace Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 
 /// <summary>
-/// Reads the caller's own basket. Cached for a minute, keyed by <see cref="CustomerId"/>, and
-/// invalidated by every Basket write handler under the <c>basket</c> cache tag.
+/// Reads the caller's own basket.
 /// </summary>
 /// <param name="CustomerId">The identifier of the customer whose basket to read.</param>
-public sealed record GetBasketQuery([property: CacheKey] Guid CustomerId) : IQuery<BasketDto>;
+public sealed record GetBasketQuery(Guid CustomerId) : IQuery<BasketDto>;
