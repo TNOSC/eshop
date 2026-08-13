@@ -39,6 +39,8 @@ public static class RolePermissions
                 Permissions.Identity.Write,
                 Permissions.Ordering.Read,
                 Permissions.Ordering.Ship,
+                Permissions.Payment.Read,
+                Permissions.Payment.Write,
             ],
             [Roles.Customer] =
             [

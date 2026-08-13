@@ -30,11 +30,9 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Ordering.Queries;
 /// as an <see cref="NpgsqlParameter"/>; nothing is interpolated into the SQL text.
 /// </para>
 /// <para>
-/// <strong>The payment join is a T14 addition.</strong> The plan has this joining
-/// order × line × payment; the Payment context does not exist yet, so there is no
-/// <c>payment.payments</c> to <c>LEFT JOIN</c>. The order × line half below is complete and covered by
-/// <c>GetOrderSummaryQueryHandlerTests</c>; adding payment is one more join and a few more columns on
-/// <see cref="OrderSummaryReportDto"/>, additive to both.
+/// <strong>The payment join, added in T14.</strong> <c>payment.payments</c> carries a unique index
+/// over <c>order_id</c>, so the <c>LEFT JOIN</c> below never fans a row out — one order still
+/// produces one summary row, whether or not a payment has been initiated for it yet.
 /// </para>
 /// </remarks>
 /// <param name="context">The read context.</param>
@@ -51,12 +49,16 @@ internal sealed class GetOrderSummaryQueryHandler(EShopReadDbContext context)
                o.total_currency                              AS "TotalCurrency",
                COALESCE(SUM(l.unit_price_amount * l.quantity), 0) AS "SubtotalAmount",
                COUNT(l.id)                                   AS "LineCount",
-               COALESCE(SUM(l.quantity), 0)                  AS "TotalUnits"
+               COALESCE(SUM(l.quantity), 0)                  AS "TotalUnits",
+               p.status                                      AS "PaymentStatus",
+               p.method                                      AS "PaymentMethod"
         FROM ordering.orders o
         LEFT JOIN ordering.order_lines l ON l.order_id = o.id
+        LEFT JOIN payment.payments p ON p.order_id = o.id
         WHERE o.id = @order_id
         GROUP BY o.id, o.order_number, o.customer_id, o.status,
-                 o.placed_on_utc, o.total_amount, o.total_currency
+                 o.placed_on_utc, o.total_amount, o.total_currency,
+                 p.status, p.method
         """;
 
     /// <inheritdoc />
@@ -86,6 +88,8 @@ internal sealed class GetOrderSummaryQueryHandler(EShopReadDbContext context)
             SubtotalAmount: row.SubtotalAmount,
             DiscountAmount: row.SubtotalAmount - row.TotalAmount,
             LineCount: Convert.ToInt32(value: row.LineCount),
-            TotalUnits: Convert.ToInt32(value: row.TotalUnits));
+            TotalUnits: Convert.ToInt32(value: row.TotalUnits),
+            PaymentStatus: row.PaymentStatus,
+            PaymentMethod: row.PaymentMethod);
     }
 }

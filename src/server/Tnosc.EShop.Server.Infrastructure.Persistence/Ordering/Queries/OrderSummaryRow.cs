@@ -68,4 +68,16 @@ internal sealed class OrderSummaryRow
     /// Gets or sets how many units the order covers across every line.
     /// </summary>
     public long TotalUnits { get; set; }
+
+    /// <summary>
+    /// Gets or sets the order's payment's status, as its name, or <see langword="null"/> when none has
+    /// been initiated.
+    /// </summary>
+    public string? PaymentStatus { get; set; }
+
+    /// <summary>
+    /// Gets or sets the order's payment's method, as its name, or <see langword="null"/> when none has
+    /// been initiated.
+    /// </summary>
+    public string? PaymentMethod { get; set; }
 }

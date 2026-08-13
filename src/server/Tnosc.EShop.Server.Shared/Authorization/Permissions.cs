@@ -83,4 +83,26 @@ public static class Permissions
         /// </summary>
         public const string Ship = "ordering:ship";
     }
+
+    /// <summary>
+    /// Permissions over the Payment bounded context.
+    /// </summary>
+    /// <remarks>
+    /// Unlike Ordering, a payment carries no customer identifier of its own — only an order id — so
+    /// there is no structural way to scope a payment endpoint to "the caller's own". Every Payment
+    /// write and read is therefore back-office shaped and gated by a permission rather than resolved
+    /// from the caller's token, unlike Ordering's customer-facing endpoints.
+    /// </remarks>
+    public static class Payment
+    {
+        /// <summary>
+        /// Reading a payment.
+        /// </summary>
+        public const string Read = "payment:read";
+
+        /// <summary>
+        /// Initiating, capturing or refunding a payment.
+        /// </summary>
+        public const string Write = "payment:write";
+    }
 }

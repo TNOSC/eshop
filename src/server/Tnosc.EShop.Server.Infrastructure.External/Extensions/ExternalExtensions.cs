@@ -6,9 +6,12 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
 using Tnosc.EShop.Server.Application.Basket.Ports;
 using Tnosc.EShop.Server.Application.Ordering.Ports;
+using Tnosc.EShop.Server.Application.Payment.Ports;
+using Tnosc.EShop.Server.Infrastructure.External.Payment;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Ordering;
 using BasketRepositoryContract = Tnosc.EShop.Server.Domain.Basket.Baskets.IBasketRepository;
@@ -51,6 +54,12 @@ public static class ExternalExtensions
         // Ordering's view of the same store. An adapter over IBasketReader rather than a second Redis
         // client, so the key format and document schema stay defined once — see RedisOrderBasketReader.
         services.AddScoped<IOrderBasketReader, RedisOrderBasketReader>();
+
+        // Payment's external boundary. Registered as a typed HttpClient with the standard resilience
+        // handler (retry, circuit breaker, timeout) per plan/15-t14-payment.md — see FakePaymentGateway
+        // for why nothing here issues a real call yet.
+        services.AddHttpClient<IPaymentGateway, FakePaymentGateway>()
+            .AddStandardResilienceHandler();
 
         return services;
     }

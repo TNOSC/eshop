@@ -195,6 +195,8 @@ public sealed class OrderQueryHandlerTests(PostgresFixture fixture) : OrderingIn
         summary.Value.DiscountAmount.ShouldBe(expected: 8.00m);
         summary.Value.LineCount.ShouldBe(expected: 2);
         summary.Value.TotalUnits.ShouldBe(expected: 5);
+        summary.Value.PaymentStatus.ShouldBeNull(customMessage: "no payment has been initiated for this order");
+        summary.Value.PaymentMethod.ShouldBeNull();
     }
 
     [Fact]

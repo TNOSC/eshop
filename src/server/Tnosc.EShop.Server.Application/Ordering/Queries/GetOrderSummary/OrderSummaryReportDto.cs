@@ -18,11 +18,10 @@ namespace Tnosc.EShop.Server.Application.Ordering.Queries.GetOrderSummary;
 /// a join and an aggregation, and no storefront page should be reaching for it.
 /// </para>
 /// <para>
-/// <strong>Payment columns are not here yet.</strong> The plan has this query joining
-/// order × line × payment; the Payment bounded context arrives in T14, so the join it needs has no
-/// table to point at today. The order × line half is real and exercised; the payment columns are an
-/// additive change to this record and one more <c>LEFT JOIN</c> in the handler when T14 lands, with
-/// no consumer of the existing fields affected.
+/// <strong>Payment columns, added in T14.</strong> <c>payment.payments</c> now exists, carries a
+/// unique index over its order id, and the handler's join reflects that — a <c>LEFT JOIN</c> so an
+/// order with no payment yet still returns a row, with <see cref="PaymentStatus"/> and
+/// <see cref="PaymentMethod"/> both <see langword="null"/>.
 /// </para>
 /// </remarks>
 /// <param name="OrderId">The order's identifier.</param>
@@ -36,6 +35,8 @@ namespace Tnosc.EShop.Server.Application.Ordering.Queries.GetOrderSummary;
 /// <param name="DiscountAmount">What the discount took off — the subtotal less the total.</param>
 /// <param name="LineCount">How many distinct lines the order has.</param>
 /// <param name="TotalUnits">How many units the order covers across every line.</param>
+/// <param name="PaymentStatus">The order's payment's status, as its name, or <see langword="null"/> when none has been initiated.</param>
+/// <param name="PaymentMethod">The order's payment's method, as its name, or <see langword="null"/> when none has been initiated.</param>
 public sealed record OrderSummaryReportDto(
     Guid OrderId,
     string OrderNumber,
@@ -47,4 +48,6 @@ public sealed record OrderSummaryReportDto(
     decimal SubtotalAmount,
     decimal DiscountAmount,
     int LineCount,
-    int TotalUnits);
+    int TotalUnits,
+    string? PaymentStatus,
+    string? PaymentMethod);

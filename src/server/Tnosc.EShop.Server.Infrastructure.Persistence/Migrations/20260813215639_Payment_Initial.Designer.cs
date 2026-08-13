@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
@@ -11,9 +12,11 @@ using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 namespace Tnosc.EShop.Server.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EShopWriteDbContext))]
-    partial class EShopWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260813215639_Payment_Initial")]
+    partial class Payment_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
