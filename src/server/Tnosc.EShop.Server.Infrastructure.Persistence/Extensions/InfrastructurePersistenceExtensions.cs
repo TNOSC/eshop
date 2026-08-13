@@ -8,8 +8,10 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tnosc.EShop.Server.Application.Basket.Ports;
+using Tnosc.EShop.Server.Application.Ordering.Ports;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Basket.Queries;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
+using Tnosc.EShop.Server.Infrastructure.Persistence.Ordering.Queries;
 using Tnosc.Lib.Application.Decorators;
 using Tnosc.Lib.Application.DomainEvents;
 using Tnosc.Lib.Application.Extensions;
@@ -67,6 +69,13 @@ public static class InfrastructurePersistenceExtensions
         // than in Server.Infrastructure.External because its implementation queries EShopReadDbContext,
         // a genuine Postgres read; see plan/13-t12-basket.md.
         builder.Services.AddScoped<IProductLookup, ProductLookup>();
+
+        // Ordering's two read ports, registered for the same reason and in the same way: neither
+        // implements IQueryHandler<,>, so neither is picked up by AddQueries' scan. Both are genuine
+        // Postgres reads — one over Identity's customer read model, one over Catalog's product read
+        // model — which is why they live here rather than in Server.Infrastructure.External.
+        builder.Services.AddScoped<ICustomerProfileReader, CustomerProfileReader>();
+        builder.Services.AddScoped<IStockAvailabilityReader, StockAvailabilityReader>();
 
         return builder;
     }

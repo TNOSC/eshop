@@ -8,7 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Tnosc.EShop.Server.Application.Basket.Ports;
+using Tnosc.EShop.Server.Application.Ordering.Ports;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
+using Tnosc.EShop.Server.Infrastructure.External.Redis.Ordering;
 using BasketRepositoryContract = Tnosc.EShop.Server.Domain.Basket.Baskets.IBasketRepository;
 
 namespace Tnosc.EShop.Server.Infrastructure.External.Extensions;
@@ -45,6 +47,10 @@ public static class ExternalExtensions
 
         services.AddScoped<BasketRepositoryContract, RedisBasketRepository>();
         services.AddScoped<IBasketReader, RedisBasketReader>();
+
+        // Ordering's view of the same store. An adapter over IBasketReader rather than a second Redis
+        // client, so the key format and document schema stay defined once — see RedisOrderBasketReader.
+        services.AddScoped<IOrderBasketReader, RedisOrderBasketReader>();
 
         return services;
     }

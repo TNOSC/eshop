@@ -59,4 +59,28 @@ public static class Permissions
         /// </summary>
         public const string Write = "identity:write";
     }
+
+    /// <summary>
+    /// Permissions over the Ordering bounded context.
+    /// </summary>
+    /// <remarks>
+    /// A customer needs none of these to order. Placing, reading, confirming and cancelling all resolve
+    /// the caller from their token and scope the query or the repository lookup to them, so those
+    /// endpoints carry a plain <c>RequireAuthorization()</c> and a customer structurally cannot reach
+    /// another customer's order. What is left here is the back office.
+    /// </remarks>
+    public static class Ordering
+    {
+        /// <summary>
+        /// Reading any customer's order, including the rolled-up back-office summary. The caller's own
+        /// orders need no permission — they are reached through the <c>me</c>-shaped endpoints.
+        /// </summary>
+        public const string Read = "ordering:read";
+
+        /// <summary>
+        /// Despatching an order. A warehouse operation over any customer's order, which is why it is a
+        /// permission rather than something scoped to the caller.
+        /// </summary>
+        public const string Ship = "ordering:ship";
+    }
 }

@@ -92,6 +92,28 @@ public sealed record Money : ValueObject
         new(amount: Amount * factor, currency: Currency);
 
     /// <summary>
+    /// Scales this amount by a non-negative decimal factor, rounding the result to two decimal places.
+    /// </summary>
+    /// <remarks>
+    /// The counterpart to <see cref="Multiply(int)"/> for the fractional factors a discount produces.
+    /// Returns <see cref="Money"/> rather than <c>Result&lt;Money&gt;</c> because a non-negative amount
+    /// scaled by a non-negative factor cannot break the "never negative" invariant, so there is no
+    /// failure for a caller to handle. Rounding is banker's rounding, matching the <c>numeric(18,2)</c>
+    /// column the amount is stored in.
+    /// </remarks>
+    /// <param name="factor">The non-negative factor to scale by — <c>0.9m</c> for a 10% discount.</param>
+    /// <returns>The scaled <see cref="Money"/>.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException"><paramref name="factor"/> is negative.</exception>
+    public Money Scale(decimal factor)
+    {
+        System.ArgumentOutOfRangeException.ThrowIfNegative(value: factor);
+
+        return new Money(
+            amount: decimal.Round(d: Amount * factor, decimals: 2, mode: System.MidpointRounding.ToEven),
+            currency: Currency);
+    }
+
+    /// <summary>
     /// Returns the amount and currency in a human-readable form.
     /// </summary>
     /// <returns>The amount followed by the currency code.</returns>
