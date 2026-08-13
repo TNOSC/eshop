@@ -166,6 +166,49 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Migrations
                     b.ToTable("products", "catalog");
                 });
 
+            modelBuilder.Entity("Tnosc.EShop.Server.Domain.Identity.Customers.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<Guid?>("DefaultAddressId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("default_address_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("customers", "identity");
+                });
+
             modelBuilder.Entity("Tnosc.Lib.Infrastructure.Persistence.DeadLetters.DeadLetterMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -432,6 +475,156 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Stock")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Tnosc.EShop.Server.Domain.Identity.Customers.Customer", b =>
+                {
+                    b.OwnsOne("Tnosc.EShop.Server.Domain.Identity.Customers.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(320)
+                                .HasColumnType("character varying(320)")
+                                .HasColumnName("email");
+
+                            b1.HasKey("CustomerId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique()
+                                .HasDatabaseName("ux_customers_email");
+
+                            b1.ToTable("customers", "identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerId");
+                        });
+
+                    b.OwnsOne("Tnosc.EShop.Server.Domain.Identity.Customers.ExternalUserId", "ExternalUserId", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("external_user_id");
+
+                            b1.HasKey("CustomerId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique()
+                                .HasDatabaseName("ux_customers_external_user_id");
+
+                            b1.ToTable("customers", "identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerId");
+                        });
+
+                    b.OwnsOne("Tnosc.EShop.Server.Domain.Identity.Customers.PersonName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("first_name");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("last_name");
+
+                            b1.HasKey("CustomerId");
+
+                            b1.ToTable("customers", "identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerId");
+                        });
+
+                    b.OwnsOne("Tnosc.EShop.Server.Domain.Identity.Customers.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("character varying(16)")
+                                .HasColumnName("phone_number");
+
+                            b1.HasKey("CustomerId");
+
+                            b1.ToTable("customers", "identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerId");
+                        });
+
+                    b.OwnsMany("Tnosc.EShop.Server.Domain.Identity.Customers.Address", "Addresses", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("character(2)")
+                                .HasColumnName("country")
+                                .IsFixedLength();
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("postal_code");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("street");
+
+                            b1.Property<Guid>("customer_id")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("customer_id");
+
+                            b1.ToTable("customer_addresses", "identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("customer_id");
+                        });
+
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("ExternalUserId")
+                        .IsRequired();
+
+                    b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("PhoneNumber");
                 });
 #pragma warning restore 612, 618
         }

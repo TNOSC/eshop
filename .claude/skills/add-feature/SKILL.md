@@ -63,8 +63,13 @@ Read the root `CLAUDE.md` and the scoped `CLAUDE.md` in each project you touch b
   constants from `Server.Shared/<Context>/CacheTags.cs`, never string literals** — the invalidating
   and populating handlers sit in different projects and a literal drifts silently
   (`.claude/rules/cache-tags.md`).
-- Auth is **not wired yet** (Identity is task T11 in `PLAN.md`) — do not add `.RequireAuthorization()`
-  or permission checks until it lands.
+- Auth is **wired** (Keycloak, T11). Guard a write endpoint with
+  `.HasPermission(Permissions.<Context>.Write)` — a constant from
+  `Server.Shared/Authorization/Permissions.cs`, never a string literal, for the same reason cache tags
+  are constants. Use `.RequireAuthorization()` when any authenticated caller suffices, and leave
+  storefront reads anonymous. Never write an ownership check in a handler: a `me` endpoint resolves
+  the caller from `IUserContext` so it structurally cannot reach another user's data
+  (`.claude/rules/authorization.md`).
 
 ## Naming reference
 

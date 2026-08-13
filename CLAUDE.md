@@ -14,6 +14,7 @@ Clean Architecture / DDD / CQRS eShop built on the in-repo `lib/` framework. Aut
 |---|---|---|---|
 | TFM / SDK | `net10.0` / 10.0.400-preview (no `global.json`) | Aspire | 13.4.6 (+ Hosting.PostgreSQL, Npgsql.EFCore) |
 | ASP.NET Core | 10.0.10 — Minimal APIs only, no MVC | Scrutor | 7.0.0 (`Scan` + `TryDecorate`) |
+| Keycloak | 26.6 — the only identity provider; owns users, credentials and realm roles | Aspire Keycloak | `Hosting.Keycloak` + `Keycloak.Authentication`, `13.4.6-preview.1.26319.6` (no stable build exists) |
 | EF Core | 10.0.10 (+ `.Relational`, `.Design`) | HybridCache | 10.8.0 |
 | Npgsql EFCore | 10.0.3 — Postgres is the only database | OpenAPI | AspNetCore.OpenApi 10.0.10, Scalar 2.10.0 |
 | xUnit / Shouldly | 2.9.3 / 4.3.0 | OpenTelemetry | 1.17.0 (via `ServiceDefaults`) |
@@ -38,7 +39,7 @@ Clean Architecture / DDD / CQRS eShop built on the in-repo `lib/` framework. Aut
 ```
 lib/                     Reusable framework: Domain · Application · Api · Infrastructure.Persistence · Host
 src/server/              Domain · Application · Infrastructure.{Persistence,External,Job} · Api · Shared · Host
-aspire/                  AppHost (Postgres + pgAdmin resources) · ServiceDefaults (OTel, health, resilience)
+aspire/                  AppHost (Postgres + pgAdmin + Keycloak resources) · ServiceDefaults (OTel, health, resilience)
 tests/server/            Tests.{Unit,Integration,Architecture,Acceptance}
 ```
 
@@ -67,13 +68,20 @@ settings read from `appsettings.json` go through a narrow, type-safe `<Feature>O
 layout, primary constructors, named arguments, one parameter per line past two, `Async` naming, and
 error-code/`ErrorType` conventions.
 
+**Authorization:** See [`.claude/rules/authorization.md`](./.claude/rules/authorization.md) — Keycloak
+owns the coarse realm roles (`admin`, `customer`) and who holds them; this codebase owns the
+permission vocabulary as constants in `Server.Shared/Authorization/` and the role → permission map.
+Endpoints name a permission via `.HasPermission(Permissions.X.Write)`, never a role and never a
+literal. `me` endpoints resolve the caller from `IUserContext`, so no handler contains an ownership
+check.
+
 ## Commands
 
 ```bash
 dotnet build Tnosc.EShop.slnx                          # warnings are errors; clean build = done
 dotnet test  Tnosc.EShop.slnx                          # integration suite needs Docker running
 dotnet test  tests/server/Tnosc.EShop.Server.Tests.Unit --filter "FullyQualifiedName~ProductTests"
-dotnet run --project aspire/Tnosc.EShop.AppHost        # Postgres + pgAdmin + host
+dotnet run --project aspire/Tnosc.EShop.AppHost        # Postgres + pgAdmin + Keycloak + host
 dotnet run --project src/server/Tnosc.EShop.Server.Host  # API alone; needs ConnectionStrings__eshopdb
 
 # EF — two contexts exist, so --context is always required (only the write context has migrations)

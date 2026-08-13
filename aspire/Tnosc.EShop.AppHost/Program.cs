@@ -4,6 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
@@ -17,8 +18,44 @@ IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres(name: "p
 
 IResourceBuilder<PostgresDatabaseResource> db = postgres.AddDatabase(name: "eshopdb");
 
+// Keycloak gets its OWN database on this same Postgres server rather than a schema inside eshopdb.
+// Same server, same volume, same credentials — but its ~90 Liquibase-managed tables never appear in
+// eshopdb, so EF migrations, Respawn's schema reset and the outbox are all unaffected by them.
+IResourceBuilder<PostgresDatabaseResource> keycloakDb = postgres.AddDatabase(name: "keycloakdb");
+
+// WithRealmImport seeds the eshop realm — but --import-realm is a NO-OP once that realm already
+// exists in the persisted keycloakdb. Editing Realms/eshop-realm.json after the first successful run
+// therefore changes nothing until the realm is deleted in the admin console or the Postgres data
+// volume is dropped. Same gotcha as the schema-change comment above, for the same reason.
+// AddPostgres always provisions a password parameter, generating one when the caller supplies none.
+// The property is typed nullable for the general case; failing loudly here beats a null-forgiving
+// operator, because a null would otherwise surface as Keycloak failing to authenticate to Postgres.
+ParameterResource postgresPassword = postgres.Resource.PasswordParameter
+    ?? throw new InvalidOperationException(message: "AddPostgres did not provision a password parameter.");
+
+// Keycloak dials Postgres container-to-container, so KC_DB_URL must resolve to the container-network
+// address rather than localhost. PrimaryEndpoint.Property(HostAndPort) is what yields the former; a
+// plain endpoint URL taken from the dashboard would yield the latter and Keycloak would fail to boot.
+// The fixed host port is for humans — curl, the admin console, the hosted login page. The API itself
+// never uses it: service discovery resolves Keycloak over the container network.
+// If port 8080 is already taken on the host, DCP cannot allocate it and the Keycloak resource simply
+// never starts — no error is logged, the container just never appears. Symptom: everything else comes
+// up and Keycloak is missing. Fix: free the port, or change the number here.
+IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloak", port: 8080)
+    .WithRealmImport(import: "./Realms")
+    .WithEnvironment(name: "KC_DB", value: "postgres")
+    .WithEnvironment(
+        name: "KC_DB_URL",
+        value: ReferenceExpression.Create(
+            $"jdbc:postgresql://{postgres.Resource.PrimaryEndpoint.Property(property: EndpointProperty.HostAndPort)}/keycloakdb"))
+    .WithEnvironment(name: "KC_DB_USERNAME", value: postgres.Resource.UserNameReference)
+    .WithEnvironment(name: "KC_DB_PASSWORD", value: ReferenceExpression.Create($"{postgresPassword}"))
+    .WaitFor(dependency: keycloakDb);
+
 builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
     .WithReference(source: db)
-    .WaitFor(dependency: db);
+    .WithReference(source: keycloak)
+    .WaitFor(dependency: db)
+    .WaitFor(dependency: keycloak);
 
 await builder.Build().RunAsync();

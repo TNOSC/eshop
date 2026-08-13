@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tnosc.EShop.Server.Application.Catalog.Commands.AdjustStock;
+using Tnosc.EShop.Server.Shared.Authorization;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Application.Commands;
@@ -35,7 +36,10 @@ internal sealed class AdjustStockEndpoint : IApiEndpoint
                              "The delta must be non-zero and the resulting stock level cannot go below zero.")
            .Produces(statusCode: StatusCodes.Status204NoContent)
            .ProducesValidationProblem(statusCode: StatusCodes.Status400BadRequest)
-           .Produces<ProblemDetails>(statusCode: StatusCodes.Status404NotFound);
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status401Unauthorized)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status403Forbidden)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status404NotFound)
+           .HasPermission(permission: Permissions.Catalog.Write);
 
     private static async Task<IResult> HandleAsync(
         Guid id,

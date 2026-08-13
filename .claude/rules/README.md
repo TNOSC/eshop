@@ -17,6 +17,7 @@ links to the relevant one rather than restating it.
 | [`dependencies.md`](dependencies.md) | Central Package Management, justifying a new package, layer discipline for package references |
 | [`configuration-options.md`](configuration-options.md) | `IConfiguration`/`IOptions<T>` are touched once per settings class, in its own `AddXxx` extension method; every consumer takes the plain `TOptions` class directly, validated at startup |
 | [`code-style.md`](code-style.md) | File header/layout, primary constructors, named arguments, one parameter per line past two, `Async` naming, error-code and `ErrorType` conventions |
+| [`authorization.md`](authorization.md) | Coarse roles in Keycloak, fine-grained permissions as constants in code; the policy-provider chain behind `HasPermission`, and why ownership is structural rather than a check |
 
 ## Adding a rule
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tnosc.EShop.Server.Application.Catalog.Commands.CreateProduct;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
+using Tnosc.EShop.Server.Shared.Authorization;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Application.Commands;
@@ -46,7 +47,10 @@ internal sealed class CreateProductEndpoint : IApiEndpoint
                              "409, and omitting it returns 400.")
            .Produces<Guid>(statusCode: StatusCodes.Status201Created)
            .ProducesValidationProblem(statusCode: StatusCodes.Status400BadRequest)
-           .Produces<ProblemDetails>(statusCode: StatusCodes.Status409Conflict);
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status401Unauthorized)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status403Forbidden)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status409Conflict)
+           .HasPermission(permission: Permissions.Catalog.Write);
 
     private static async Task<IResult> HandleAsync(
         CreateProductRequest request,

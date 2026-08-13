@@ -32,9 +32,29 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.4.6" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6" />
+    <!--
+      The two Keycloak integrations ship no stable build on any Aspire train — every published
+      version carries a -preview suffix — so they cannot be pinned to a bare "13.4.6" the way the
+      Postgres integrations above are. These are the 13.4.6 builds, same release, same day.
+    -->
+    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.4.6-preview.1.26319.6" />
+    <PackageVersion Include="Aspire.Keycloak.Authentication" Version="13.4.6-preview.1.26319.6" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
+    <!--
+      No PackageVersion for Microsoft.Extensions.Options.DataAnnotations: on net10.0 it ships in the
+      shared framework, and referencing it explicitly fails restore with NU1510 (warnings are errors).
+      .ValidateDataAnnotations() is available without it.
+    -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.10" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.12.0" />
+    <!--
+      Transitive pin, not a package this solution uses directly. Testcontainers 4.12.0 pulls SSH.NET
+      2025.1.0, which GHSA-q939-rpr3-3284 (high, arbitrary file write via ScpClient recursive
+      download) covers for "<= 2025.1.0"; NU1903 is an error here, so it fails the build. 2026.0.0 is
+      the patched release. Drop this line once Testcontainers ships a version that requires it itself.
+    -->
+    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />

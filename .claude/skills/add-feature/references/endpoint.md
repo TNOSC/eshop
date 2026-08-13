@@ -157,5 +157,6 @@ try { … } catch (Exception) { … }                      // ❌ decorators + g
 if (result.FirstError.Type == ErrorType.NotFound)      // ❌ ToHttp/CustomResults already map it
 return Results.BadRequest("SKU is required");          // ❌ validation belongs to the pipeline
 app.MapPost("/api/catalog/products", …)                // ❌ use the *Routes constant
-.RequireAuthorization()                                // ❌ not until Identity (T11) lands
+.HasPermission("catalog:write")                        // ❌ use the Permissions.* constant, not a literal
+if (customer.Id != callerId) return Results.Forbid();  // ❌ resolve the caller from IUserContext instead
 ```

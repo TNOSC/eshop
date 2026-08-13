@@ -13,6 +13,7 @@ using Tnosc.Lib.Infrastructure.Persistence.Contexts;
 using Tnosc.Lib.Infrastructure.Persistence.DeadLetters;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Migrations;
+using Tnosc.Lib.Infrastructure.Persistence.Options;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Tnosc.Lib.Infrastructure.Persistence.Publishers;
 

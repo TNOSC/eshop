@@ -12,9 +12,13 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Testcontainers.PostgreSql" />
+		<!-- Pins Testcontainers' transitive SSH.NET past GHSA-q939-rpr3-3284. See Directory.Packages.props. -->
+		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="Respawn" />
 		<PackageReference Include="Shouldly" />
 		<PackageReference Include="Bogus" />
+		<!-- The 401/403/200 progression needs a real HTTP pipeline; there was no such seam before T11. -->
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 	</ItemGroup>
 
 	<ItemGroup>

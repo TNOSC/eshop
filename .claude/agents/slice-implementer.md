@@ -39,7 +39,9 @@ handled in `Server.Infrastructure.Persistence`. Getting this wrong fails an arch
 - Propagate `Errors.ToArray()` unchanged — never re-decide the domain's verdict.
 - Cache tags are constants from `Server.Shared/<Context>/CacheTags.cs`, never literals.
 - **No manual DI registration** — everything is discovered by Scrutor/assembly scan.
-- Auth is not wired yet (T11), so no `.RequireAuthorization()`.
+- Auth is wired (Keycloak, T11). Protect a write with `.HasPermission(Permissions.X.Write)` using a
+  constant from `Server.Shared/Authorization/Permissions.cs`, never a literal; use plain
+  `.RequireAuthorization()` when any authenticated caller will do. Storefront reads stay anonymous.
 
 ## Finish honestly
 

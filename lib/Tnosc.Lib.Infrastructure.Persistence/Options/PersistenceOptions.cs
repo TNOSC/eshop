@@ -6,10 +6,11 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Tnosc.Lib.Infrastructure.Persistence.Extensions;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 
-namespace Tnosc.Lib.Infrastructure.Persistence.Extensions;
+namespace Tnosc.Lib.Infrastructure.Persistence.Options;
 
 /// <summary>
 /// Configures <see cref="PersistenceExtensions.AddPersistence{TWriteContext, TReadContext}"/>.

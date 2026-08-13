@@ -1,0 +1,163 @@
+{
+  "realm": "eshop",
+  "displayName": "Tnosc EShop",
+  "enabled": true,
+
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+
+  "verifyEmail": false,
+
+  "sslRequired": "external",
+  "accessTokenLifespan": 1800,
+
+  "defaultRole": {
+    "name": "default-roles-eshop",
+    "description": "${role_default-roles}",
+    "composite": true,
+    "clientRole": false,
+    "containerId": "eshop"
+  },
+
+  "roles": {
+    "realm": [
+      {
+        "name": "default-roles-eshop",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "customer",
+            "offline_access",
+            "uma_authorization"
+          ],
+          "client": {
+            "account": [
+              "manage-account",
+              "view-profile"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "eshop"
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "eshop"
+      },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "eshop"
+      },
+      {
+        "name": "admin",
+        "description": "Back-office operator. Never granted by self-registration — an operator assigns it in the admin console.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "eshop"
+      },
+      {
+        "name": "customer",
+        "description": "Storefront shopper. Granted to every new user through the realm default-role composite.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "eshop"
+      }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "eshop-web",
+      "name": "Tnosc EShop Web",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "implicitFlowEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "https://localhost:7257/*",
+        "http://localhost:5053/*",
+        "https://localhost:7257/scalar/*",
+        "http://localhost:5053/scalar/*"
+      ],
+      "webOrigins": [
+        "https://localhost:7257",
+        "http://localhost:5053"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "https://localhost:7257/*##http://localhost:5053/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "eshop-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "",
+            "included.custom.audience": "eshop-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+
+  "users": [
+    {
+      "username": "admin@eshop.local",
+      "email": "admin@eshop.local",
+      "firstName": "Amel",
+      "lastName": "Operator",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-eshop",
+        "admin"
+      ]
+    },
+    {
+      "username": "customer@eshop.local",
+      "email": "customer@eshop.local",
+      "firstName": "Sami",
+      "lastName": "Shopper",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Passw0rd!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-eshop",
+        "customer"
+      ]
+    }
+  ]
+}

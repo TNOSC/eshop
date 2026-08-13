@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tnosc.EShop.Server.Application.Catalog.Commands.UpdateProductPrice;
+using Tnosc.EShop.Server.Shared.Authorization;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Application.Commands;
@@ -34,8 +35,11 @@ internal sealed class UpdateProductPriceEndpoint : IApiEndpoint
                description: "Sets a new price on a product. Discontinued products cannot be repriced.")
            .Produces(statusCode: StatusCodes.Status204NoContent)
            .ProducesValidationProblem(statusCode: StatusCodes.Status400BadRequest)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status401Unauthorized)
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status403Forbidden)
            .Produces<ProblemDetails>(statusCode: StatusCodes.Status404NotFound)
-           .Produces<ProblemDetails>(statusCode: StatusCodes.Status409Conflict);
+           .Produces<ProblemDetails>(statusCode: StatusCodes.Status409Conflict)
+           .HasPermission(permission: Permissions.Catalog.Write);
 
     private static async Task<IResult> HandleAsync(
         Guid id,

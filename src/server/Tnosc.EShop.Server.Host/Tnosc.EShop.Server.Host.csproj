@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
     <ProjectReference Include="..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Server.Api\Tnosc.EShop.Server.Api.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Server.Infrastructure.External\Tnosc.EShop.Server.Infrastructure.External.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Server.Infrastructure.Job\Tnosc.EShop.Server.Infrastructure.Job.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Server.Infrastructure.Persistence\Tnosc.EShop.Server.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
     <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Host\Tnosc.Lib.Host.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Keycloak.Authentication" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scalar.AspNetCore" />

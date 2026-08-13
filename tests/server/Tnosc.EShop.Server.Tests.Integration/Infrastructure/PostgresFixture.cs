@@ -49,6 +49,14 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     private IHost? _host;
     private NpgsqlConnection? _respawnConnection;
     private Respawner? _respawner;
+    private string? _connectionString;
+
+    /// <summary>
+    /// Gets the connection string of the running container, so a test that boots its own host —
+    /// <see cref="EShopApiFactory"/> — points at this same already-migrated database rather than
+    /// starting a second container.
+    /// </summary>
+    public string ConnectionString => _connectionString ?? throw NotInitialized();
 
     /// <summary>
     /// Gets the root service provider built against the container, using the production
@@ -67,6 +75,7 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
         await _container.StartAsync();
 
         string connectionString = _container.GetConnectionString();
+        _connectionString = connectionString;
 
         _host = BuildHost(connectionString: connectionString);
 
@@ -99,7 +108,9 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// <returns>The built <see cref="IHost"/>.</returns>
     private static IHost BuildHost(string connectionString)
     {
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+        // Fully qualified: the Host project now declares types under the Tnosc.EShop.Server.Host
+        // namespace, which shadows the unqualified `Host` from Microsoft.Extensions.Hosting here.
+        HostApplicationBuilder builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder();
         builder.Configuration[ConnectionStringConfigurationKey] = connectionString;
 
         // Deterministic clock for backoff / audit-stamping assertions. Registered before
