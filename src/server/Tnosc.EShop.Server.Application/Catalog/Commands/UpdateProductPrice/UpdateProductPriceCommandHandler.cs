@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
+using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Shared.Catalog;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Attributes;

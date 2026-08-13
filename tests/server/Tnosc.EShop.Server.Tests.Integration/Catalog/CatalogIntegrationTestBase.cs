@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Server.Domain.Catalog.Brands;
 using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
+using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Queries;
 using Tnosc.Lib.Domain.Results;

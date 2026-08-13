@@ -43,7 +43,7 @@ public sealed class AuthorizationEndpointTests(PostgresFixture fixture) : IAsync
     {
         await fixture.ResetAsync();
 
-        _factory = new EShopApiFactory(connectionString: fixture.ConnectionString);
+        _factory = new EShopApiFactory(connectionString: fixture.ConnectionString, redisConnectionString: fixture.RedisConnectionString);
         _client = _factory.CreateClient();
     }
 

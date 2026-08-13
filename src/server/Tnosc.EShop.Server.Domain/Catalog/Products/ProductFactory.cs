@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Server.Domain.Catalog.Brands;
 using Tnosc.EShop.Server.Domain.Catalog.Categories;
+using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.Lib.Domain.Results;
 
 namespace Tnosc.EShop.Server.Domain.Catalog.Products;

@@ -8,11 +8,18 @@ using System.Globalization;
 using Tnosc.Lib.Domain.Results;
 using Tnosc.Lib.Domain.ValueObjects;
 
-namespace Tnosc.EShop.Server.Domain.Catalog.Products;
+namespace Tnosc.EShop.Server.Domain.Shared;
 
 /// <summary>
 /// A monetary amount in a single currency.
 /// </summary>
+/// <remarks>
+/// Lives in <c>Server.Domain/Shared</c> rather than under a single bounded context because it is
+/// genuinely ubiquitous language — both Catalog (a product's price) and Basket (a basket line's
+/// snapshot unit price and the basket's total) need it, and Basket must not reference Catalog. Keep
+/// this kernel tiny: a type only belongs here once more than one context genuinely needs the exact
+/// same vocabulary.
+/// </remarks>
 public sealed record Money : ValueObject
 {
     /// <summary>
@@ -60,6 +67,29 @@ public sealed record Money : ValueObject
 
         return new Money(amount: amount, currency: currency!);
     }
+
+    /// <summary>
+    /// Adds another <see cref="Money"/> of the same currency.
+    /// </summary>
+    /// <param name="other">The amount to add. Must carry the same currency.</param>
+    /// <returns>The summed <see cref="Money"/>, or a <c>Money.CurrencyMismatch</c> validation error.</returns>
+    public Result<Money> Add(Money other)
+    {
+        if (!string.Equals(a: Currency, b: other.Currency, comparisonType: System.StringComparison.Ordinal))
+        {
+            return MoneyErrors.CurrencyMismatch;
+        }
+
+        return new Money(amount: Amount + other.Amount, currency: Currency);
+    }
+
+    /// <summary>
+    /// Multiplies this amount by a non-negative integer factor.
+    /// </summary>
+    /// <param name="factor">The factor to multiply by.</param>
+    /// <returns>The scaled <see cref="Money"/>.</returns>
+    public Money Multiply(int factor) =>
+        new(amount: Amount * factor, currency: Currency);
 
     /// <summary>
     /// Returns the amount and currency in a human-readable form.

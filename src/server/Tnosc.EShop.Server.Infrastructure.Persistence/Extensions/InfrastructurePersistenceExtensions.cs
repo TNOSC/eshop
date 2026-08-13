@@ -7,6 +7,8 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tnosc.EShop.Server.Application.Basket.Ports;
+using Tnosc.EShop.Server.Infrastructure.Persistence.Basket.Queries;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.Lib.Application.Decorators;
 using Tnosc.Lib.Application.DomainEvents;
@@ -59,6 +61,12 @@ public static class InfrastructurePersistenceExtensions
 
         builder.Services.AddRepositories();
         builder.Services.AddQueries();
+
+        // IProductLookup implements no IQueryHandler<,>, so AddQueries' scan misses it — it is a
+        // Basket-owned application port, not a CQRS query handler. Registered explicitly here rather
+        // than in Server.Infrastructure.External because its implementation queries EShopReadDbContext,
+        // a genuine Postgres read; see plan/13-t12-basket.md.
+        builder.Services.AddScoped<IProductLookup, ProductLookup>();
 
         return builder;
     }

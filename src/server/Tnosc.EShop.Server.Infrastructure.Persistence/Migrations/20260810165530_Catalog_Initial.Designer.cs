@@ -230,7 +230,7 @@ namespace Tnosc.EShop.Server.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Tnosc.EShop.Server.Domain.Catalog.Products.Money", "Price", b1 =>
+                    b.OwnsOne("Tnosc.EShop.Server.Domain.Shared.Money", "Price", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uuid");

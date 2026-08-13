@@ -6,7 +6,7 @@
 
 using Tnosc.Lib.Domain.Results;
 
-namespace Tnosc.EShop.Server.Domain.Catalog.Products;
+namespace Tnosc.EShop.Server.Domain.Shared;
 
 /// <summary>
 /// Every way a candidate <see cref="Money"/> can break its invariants.
@@ -26,4 +26,11 @@ public static class MoneyErrors
     public static Error InvalidCurrency => Error.Validation(
         code: "Money.InvalidCurrency",
         description: "A currency must be a three-letter uppercase ISO 4217 code.");
+
+    /// <summary>
+    /// Gets the error returned when two amounts of different currencies are combined.
+    /// </summary>
+    public static Error CurrencyMismatch => Error.Validation(
+        code: "Money.CurrencyMismatch",
+        description: "Amounts of different currencies cannot be combined.");
 }

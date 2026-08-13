@@ -31,12 +31,14 @@ namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 /// </para>
 /// </remarks>
 /// <param name="connectionString">The fixture's Postgres connection string.</param>
-internal sealed class EShopApiFactory(string connectionString) : WebApplicationFactory<Program>
+/// <param name="redisConnectionString">The fixture's Redis connection string.</param>
+internal sealed class EShopApiFactory(string connectionString, string redisConnectionString) : WebApplicationFactory<Program>
 {
     /// <inheritdoc />
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting(key: "ConnectionStrings:eshopdb", value: connectionString);
+        builder.UseSetting(key: "ConnectionStrings:cache", value: redisConnectionString);
 
         // The fixture owns migrations; a second migrator racing it would be the only writer here that
         // production does not have.

@@ -18,6 +18,14 @@ IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres(name: "p
 
 IResourceBuilder<PostgresDatabaseResource> db = postgres.AddDatabase(name: "eshopdb");
 
+// Two jobs: the basket store (one JSON document per customer, TTL'd) and the L2 backing store for
+// HybridCache solution-wide. WithDataVolume is deliberate — baskets surviving a container restart is
+// what a developer expects — and carries the same caveat as Postgres's: a document-shape change may
+// need the volume dropped before the next run behaves.
+IResourceBuilder<RedisResource> cache = builder.AddRedis(name: "cache")
+    .WithDataVolume()
+    .WithRedisInsight();
+
 // Keycloak gets its OWN database on this same Postgres server rather than a schema inside eshopdb.
 // Same server, same volume, same credentials — but its ~90 Liquibase-managed tables never appear in
 // eshopdb, so EF migrations, Respawn's schema reset and the outbox are all unaffected by them.
@@ -55,7 +63,9 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
 builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
     .WithReference(source: db)
     .WithReference(source: keycloak)
+    .WithReference(source: cache)
     .WaitFor(dependency: db)
-    .WaitFor(dependency: keycloak);
+    .WaitFor(dependency: keycloak)
+    .WaitFor(dependency: cache);
 
 await builder.Build().RunAsync();

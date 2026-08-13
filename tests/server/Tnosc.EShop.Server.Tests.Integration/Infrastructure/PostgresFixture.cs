@@ -16,8 +16,11 @@ using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Respawn;
 using Respawn.Graph;
+using StackExchange.Redis;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 using Tnosc.EShop.Server.Application.Extensions;
+using Tnosc.EShop.Server.Infrastructure.External.Extensions;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Extensions;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure.TestModel;
@@ -42,14 +45,19 @@ namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
 {
     private const string ConnectionStringConfigurationKey = "ConnectionStrings:eshopdb";
+    private const string RedisConnectionStringConfigurationKey = "ConnectionStrings:cache";
 
-    private static readonly string[] SchemasToReset = ["catalog", "identity", "basket", "ordering", "payment", "outbox", "idempotency"];
+    // No "basket" — Basket lives in Redis, not Postgres, and has no schema to reset.
+    private static readonly string[] SchemasToReset = ["catalog", "identity", "ordering", "payment", "outbox", "idempotency"];
 
     private PostgreSqlContainer? _container;
+    private RedisContainer? _redisContainer;
     private IHost? _host;
     private NpgsqlConnection? _respawnConnection;
     private Respawner? _respawner;
+    private ConnectionMultiplexer? _redisConnection;
     private string? _connectionString;
+    private string? _redisConnectionString;
 
     /// <summary>
     /// Gets the connection string of the running container, so a test that boots its own host —
@@ -57,6 +65,12 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// starting a second container.
     /// </summary>
     public string ConnectionString => _connectionString ?? throw NotInitialized();
+
+    /// <summary>
+    /// Gets the connection string of the running Redis container, so <see cref="EShopApiFactory"/>
+    /// points at this same container rather than starting a second one.
+    /// </summary>
+    public string RedisConnectionString => _redisConnectionString ?? throw NotInitialized();
 
     /// <summary>
     /// Gets the root service provider built against the container, using the production
@@ -72,12 +86,19 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
             .WithReuse(reuse: true)
             .Build();
 
-        await _container.StartAsync();
+        _redisContainer = new RedisBuilder(image: "redis:8-alpine")
+            .WithReuse(reuse: true)
+            .Build();
+
+        await Task.WhenAll(_container.StartAsync(), _redisContainer.StartAsync());
 
         string connectionString = _container.GetConnectionString();
         _connectionString = connectionString;
 
-        _host = BuildHost(connectionString: connectionString);
+        string redisConnectionString = _redisContainer.GetConnectionString();
+        _redisConnectionString = redisConnectionString;
+
+        _host = BuildHost(connectionString: connectionString, redisConnectionString: redisConnectionString);
 
         using (IServiceScope scope = _host.Services.CreateScope())
         {
@@ -95,6 +116,12 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
             SchemasToInclude = SchemasToReset,
             TablesToIgnore = [new Table(name: "__EFMigrationsHistory")]
         });
+
+        // AllowAdmin is required for FlushAllDatabasesAsync in ResetAsync — StackExchange.Redis
+        // refuses admin-only commands like FLUSHALL on a connection that did not opt in.
+        var redisOptions = ConfigurationOptions.Parse(configuration: redisConnectionString);
+        redisOptions.AllowAdmin = true;
+        _redisConnection = await ConnectionMultiplexer.ConnectAsync(configuration: redisOptions);
     }
 
     /// <summary>
@@ -105,13 +132,15 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
     /// the extended write model, and the widened domain-event registry.
     /// </summary>
     /// <param name="connectionString">The Postgres connection string to register under <c>eshopdb</c>.</param>
+    /// <param name="redisConnectionString">The Redis connection string to register under <c>cache</c>.</param>
     /// <returns>The built <see cref="IHost"/>.</returns>
-    private static IHost BuildHost(string connectionString)
+    private static IHost BuildHost(string connectionString, string redisConnectionString)
     {
         // Fully qualified: the Host project now declares types under the Tnosc.EShop.Server.Host
         // namespace, which shadows the unqualified `Host` from Microsoft.Extensions.Hosting here.
         HostApplicationBuilder builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder();
         builder.Configuration[ConnectionStringConfigurationKey] = connectionString;
+        builder.Configuration[RedisConnectionStringConfigurationKey] = redisConnectionString;
 
         // Deterministic clock for backoff / audit-stamping assertions. Registered before
         // AddInfrastructurePersistence so its TryAddSingleton(TimeProvider.System) becomes a no-op.
@@ -137,9 +166,15 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
 
         builder.Services.AddUserContext();
 
-        // The query pipeline's CacheableDecorator takes a HybridCache, so resolving any
-        // IQueryHandler<,> needs one registered — exactly as Program.cs does for the real host.
+        // Mirrors Program.cs's order exactly: the L2 registrations must precede AddHybridCache(), or
+        // HybridCache resolves with no IDistributedCache and stays L1-only — which would leave
+        // GetCategoriesCachingTests and the Basket cache tests exercising a different code path than
+        // production. AddRedisClient registers the IConnectionMultiplexer AddInfrastructureExternal's
+        // Redis basket store consumes.
+        builder.AddRedisDistributedCache(connectionName: "cache");
+        builder.AddRedisClient(connectionName: "cache");
         builder.Services.AddHybridCache();
+        builder.Services.AddInfrastructureExternal(configuration: builder.Configuration);
 
         builder.Services.AddApplication();
         builder.AddInfrastructurePersistence();
@@ -187,6 +222,11 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
             await _respawnConnection.DisposeAsync();
         }
 
+        if (_redisConnection is not null)
+        {
+            await _redisConnection.DisposeAsync();
+        }
+
         _host?.Dispose();
 
         if (_container is not null)
@@ -195,14 +235,27 @@ public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable
             // next test run rather than stopping it here.
             await _container.DisposeAsync();
         }
+
+        if (_redisContainer is not null)
+        {
+            await _redisContainer.DisposeAsync();
+        }
     }
 
     /// <summary>
-    /// Truncates every table in the schemas under test back to empty. Called by
-    /// <see cref="IntegrationTestBase"/> before every test so tests never observe another test's data.
+    /// Truncates every table in the schemas under test back to empty, and flushes Redis. Called by
+    /// <see cref="IntegrationTestBase"/> before every test so tests never observe another test's data —
+    /// without the flush, cached entries and Basket documents would leak between tests, since
+    /// HybridCache and the Redis container are both process/container-wide singletons Respawn's table
+    /// truncation never reaches.
     /// </summary>
-    public async Task ResetAsync() =>
+    public async Task ResetAsync()
+    {
         await (_respawner ?? throw NotInitialized()).ResetAsync(connection: _respawnConnection ?? throw NotInitialized());
+
+        ConnectionMultiplexer redisConnection = _redisConnection ?? throw NotInitialized();
+        await redisConnection.GetServer(endpoint: redisConnection.GetEndPoints()[0]).FlushAllDatabasesAsync();
+    }
 
     /// <summary>
     /// Replaces <c>DbContextOptions&lt;EShopWriteDbContext&gt;</c>'s registration with one that wraps

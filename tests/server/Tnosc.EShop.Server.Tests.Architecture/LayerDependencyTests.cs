@@ -54,6 +54,7 @@ public sealed class LayerDependencyTests
             "Microsoft.AspNetCore",
             "Npgsql",
             "System.Data",
+            "StackExchange.Redis",
         ];
 
         TestResult result = Types.InAssembly(assembly: DomainAssembly)
@@ -155,6 +156,44 @@ public sealed class LayerDependencyTests
         }
 
         violations.ShouldBeEmpty(customMessage: $"EF Core must stay hidden behind repository contracts, but these types reference it directly: {string.Join(separator: ", ", values: violations)}");
+    }
+
+    // No assembly other than Server.Infrastructure.External references StackExchange.Redis — the
+    // mechanical form of "Redis is fenced behind Basket's ports exactly the way EF Core is fenced
+    // behind repository contracts". Mirrors Only_Persistence_Assemblies_Should_Depend_On_EfCore.
+    [Fact]
+    public void Only_External_Should_Depend_On_Redis()
+    {
+        (string Name, Assembly Assembly)[] nonExternalAssemblies =
+        [
+            ("Server.Domain", DomainAssembly),
+            ("Server.Application", ApplicationAssembly),
+            ("Server.Api", ApiAssembly),
+            ("Server.Infrastructure.Persistence", PersistenceAssembly),
+            ("Server.Infrastructure.Job", JobAssembly),
+            ("Server.Shared", SharedAssembly),
+            ("Lib.Domain", LibDomainAssembly),
+            ("Lib.Application", LibApplicationAssembly),
+            ("Lib.Api", LibApiAssembly),
+            ("Lib.Host", LibHostAssembly),
+        ];
+
+        List<string> violations = [];
+
+        foreach ((string name, Assembly assembly) in nonExternalAssemblies)
+        {
+            TestResult result = Types.InAssembly(assembly: assembly)
+                .Should()
+                .NotHaveDependencyOnAny(dependencies: "StackExchange.Redis")
+                .GetResult();
+
+            if (!result.IsSuccessful)
+            {
+                violations.AddRange(collection: (result.FailingTypeNames ?? []).Select(selector: t => $"{name}: {t}"));
+            }
+        }
+
+        violations.ShouldBeEmpty(customMessage: $"StackExchange.Redis must stay fenced inside Server.Infrastructure.External, but these types reference it directly: {string.Join(separator: ", ", values: violations)}");
     }
 
     // Bounded-context isolation — types under "...Catalog" don't depend on

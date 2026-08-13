@@ -78,4 +78,17 @@ public abstract class AggregateRoot<TEntityId> : Entity<TEntityId>, IAggregateRo
     /// </summary>
     protected void IncrementVersion() =>
         Version++;
+
+    /// <summary>
+    /// Sets the version number directly, bypassing the normal increment-on-mutation path.
+    /// </summary>
+    /// <remarks>
+    /// For aggregates reconstructed from a stored snapshot outside EF's change tracker — for example,
+    /// a <c>Basket</c> read back from its Redis document — where the version must be restored exactly
+    /// as persisted rather than recomputed by replaying transitions. A call to this method represents
+    /// reconstruction, not a state transition: no domain event should be raised alongside it.
+    /// </remarks>
+    /// <param name="version">The version to restore.</param>
+    protected void SetVersion(int version) =>
+        Version = version;
 }

@@ -2,4 +2,16 @@
   <ItemGroup>
     <ProjectReference Include="..\Tnosc.EShop.Server.Application\Tnosc.EShop.Server.Application.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- BasketDocument, BasketDocumentMapper and the Redis-backed types are internal; the unit suite
+         exercises the document round-trip directly, and the integration suite exercises them against a
+         real Redis container. -->
+    <InternalsVisibleTo Include="Tnosc.EShop.Server.Tests.Unit" />
+    <InternalsVisibleTo Include="Tnosc.EShop.Server.Tests.Integration" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+  </ItemGroup>
 </Project>
