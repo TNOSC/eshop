@@ -1,5 +1,7 @@
 # Tnosc.EShop
 
+## Description
+
 A reference eShop backend built the long way round: Clean Architecture, DDD and CQRS on a small
 in-repo framework (`lib/`) rather than on MediatR, FluentValidation and AutoMapper. Five bounded
 contexts — **Catalog**, **Identity**, **Basket**, **Ordering**, **Payment** — talk to each other only
@@ -15,9 +17,7 @@ endpoint.
 - Narrow policies: [`.claude/rules/`](./.claude/rules)
 - Design decisions and their reasoning: [`docs/decisions/`](./docs/decisions)
 
----
-
-## The architecture in a paragraph
+### The architecture in a paragraph
 
 Dependencies point inwards, always. **Domain** owns every business decision and knows about nothing
 else — no EF Core, no ASP.NET, not even `Microsoft.Extensions.*`. **Application** orchestrates: it
@@ -52,6 +52,34 @@ against B's own types.
             Host  ── composition root: wires all of the above, plus Keycloak, Redis, OpenTelemetry
 ```
 
+### The decorator pipeline
+
+Cross-cutting concerns (logging, exceptions, validation, retry, caching, transactions, idempotency)
+are never written into a handler — they wrap it. Each is a nested `IHandlerDecorator` in
+`Tnosc.Lib.Application`, applied with Scrutor's `TryDecorate` in outermost-to-innermost order, and
+composed differently for each of the three flows:
+
+| Flow | Pipeline (outermost → innermost) |
+|---|---|
+| **Command** (`ICommandHandler<,>`/`<>`) | `Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Idempotency → Handler` |
+| **Query** (`IQueryHandler<,>`) | `Logging → Exception → Cacheable → Retry → Handler` |
+| **Domain event** (`IDomainEventHandler<>`) | `Retry → Idempotency → Handler` |
+
+Two placements are load-bearing, not incidental:
+
+- **`Idempotency` is innermost on every pipeline that has it**, so the key is claimed in the same
+  database transaction as the handler's own writes — see
+  [`.claude/rules/idempotency.md`](./.claude/rules/idempotency.md).
+- **`Retry` sits outside `Idempotency`**, so each attempt gets its own transaction rather than
+  retrying inside one Postgres has already aborted.
+
+Opt-in decorators (`Cacheable`/`CacheTag`, `Idempotent`, `Retry`) are attributes on the handler class,
+read through `HandlerMetadata`, which unwraps the whole chain rather than inspecting the outermost
+decorator directly. See [ADR-009](./docs/decisions/ADR-009-Cross-Cutting-Concerns-Via-Decorators.md)
+for why this replaced a mediator pipeline, and
+[ADR-001](./docs/decisions/ADR-001-No-Mediator-Library-Custom-CQRS-Pipeline.md) for the CQRS split
+that shapes it.
+
 Two things worth knowing before reading any code:
 
 - **One database, one schema per context** (`catalog`, `identity`, `ordering`, `payment`, plus
@@ -65,7 +93,26 @@ Two things worth knowing before reading any code:
 
 ---
 
-## Prerequisites
+## Table of contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Get a token and call the API](#get-a-token-and-call-the-api)
+  - [Project layout](#project-layout)
+  - [How to add a feature slice](#how-to-add-a-feature-slice)
+  - [How to add a migration](#how-to-add-a-migration)
+  - [Build](#build)
+- [Tests](#tests)
+- [Roadmap](#roadmap)
+- [Credits](#credits)
+- [License](#license)
+- [Contributing](#contributing)
+
+---
+
+## Installation
+
+### Prerequisites
 
 | | |
 |---|---|
@@ -73,7 +120,7 @@ Two things worth knowing before reading any code:
 | Docker | Required. Postgres, Redis and Keycloak all run as containers, and the integration and acceptance suites need it too. |
 | Free ports | **8080** for Keycloak — the AppHost pins it so the admin console lives at a stable address. If it is taken, the Keycloak container silently never starts. |
 
-## Run it
+### Run it
 
 ```bash
 dotnet run --project aspire/Tnosc.EShop.AppHost
@@ -98,7 +145,11 @@ with you. The same is true of the realm: `--import-realm` is a no-op once the re
 `aspire/Tnosc.EShop.AppHost/Realms/eshop-realm.json` changes nothing until the realm is deleted or the
 volume is dropped.
 
-## Get a token and call the API
+---
+
+## Usage
+
+### Get a token and call the API
 
 Keycloak owns sign-up, login and passwords; this API has no registration endpoint and no dev
 token-issuing endpoint. The realm ships two users, both with the password `Passw0rd!`:
@@ -142,9 +193,7 @@ Roles live in Keycloak; permissions live in code. An endpoint names
 into permission claims. Adding a permission is a constant, not a realm change — see
 [`.claude/rules/authorization.md`](./.claude/rules/authorization.md).
 
----
-
-## Project layout
+### Project layout
 
 | Project | What it is for |
 |---|---|
@@ -164,9 +213,7 @@ into permission claims. Adding a permission is a constant, not a realm change �
 | `aspire/…AppHost` | Postgres, pgAdmin, Redis, RedisInsight, Keycloak + realm import, the API |
 | `aspire/…ServiceDefaults` | OpenTelemetry, health checks, service discovery, resilience |
 
----
-
-## How to add a feature slice
+### How to add a feature slice
 
 A slice is vertical, and the order is fixed. Catalog is the reference implementation — copy its
 shapes, then:
@@ -193,7 +240,7 @@ code style.
 
 Catalog is the reference implementation. Copy its slice layout.
 
-## How to add a migration
+### How to add a migration
 
 ```bash
 dotnet ef migrations add <Name> --context EShopWriteDbContext \
@@ -215,7 +262,24 @@ no `DropColumn`/`RenameColumn` should appear that you did not ask for (EF infers
 drop-plus-add, which discards the data), and no other context's objects should be in there. Full
 checklist in [`.claude/rules/migrations.md`](./.claude/rules/migrations.md).
 
-## Testing strategy
+### Build
+
+```bash
+dotnet build Tnosc.EShop.slnx
+```
+
+`TreatWarningsAsErrors`, `CodeAnalysisTreatWarningsAsErrors`, `AnalysisMode=All`, four analyzer
+packages, `Nullable=enable` and `ImplicitUsings=disable` apply to every project, and all five `lib/`
+projects generate documentation files — so a missing XML doc there is a build error. Central Package
+Management is on: never put `Version=` on a `PackageReference`; add a `<PackageVersion>` to
+`Directory.Packages.props` and reference the package bare.
+
+A change is done when the build is clean, the new tests are green, and the architecture suite still
+passes.
+
+---
+
+## Tests
 
 Four suites, and the split is a rule rather than a habit: domain and command logic are isolated and
 fast; anything involving a query, a projection or the outbox runs against a real database.
@@ -253,41 +317,51 @@ that data volume.
 
 An architecture test failure is a design error, not a test to relax.
 
-## Build
+---
 
-```bash
-dotnet build Tnosc.EShop.slnx
-```
+## Roadmap
 
-`TreatWarningsAsErrors`, `CodeAnalysisTreatWarningsAsErrors`, `AnalysisMode=All`, four analyzer
-packages, `Nullable=enable` and `ImplicitUsings=disable` apply to every project, and all five `lib/`
-projects generate documentation files — so a missing XML doc there is a build error. Central Package
-Management is on: never put `Version=` on a `PackageReference`; add a `<PackageVersion>` to
-`Directory.Packages.props` and reference the package bare.
+The API and its test suites are the deliverable so far. Two things are next:
 
-A change is done when the build is clean, the new tests are green, and the architecture suite still
-passes.
+- **A Blazor client, on Fluent UI v5** (`Microsoft.FluentUI.AspNetCore.Components`) — `src/client/web/`
+  is currently an empty solution folder reserved for it. It will consume the existing OpenAPI contract
+  rather than change it.
+- **AI integration via the Microsoft Agent Framework** — an agent over the Catalog/Ordering read side
+  (e.g. product search, order status) as a new bounded-context-style slice, following the same
+  Domain/Application/Infrastructure/Api layering and decorator pipeline as everything else here rather
+  than bypassing it.
+
+Neither has landed yet; this section states the intent, not a shipped seam.
 
 ---
 
-## Deliberately deferred
+## Credits
 
-These are decisions, not oversights. Each has a seam already in place and a known upgrade path.
+Tnosc.EShop is written and maintained by **Ahmed HEDFI** (ahmed.hedfi@gmail.com), for the
+**Tunisian .NET Open Source Community (TNOSC)**.
 
-| Deferred | Upgrade path |
-|---|---|
-| ~~**Inbox table** for exactly-once delivery~~ — **delivered** | Shipped as `outbox.processed_events(event_id, handler)`, claimed by `IdempotencyDecorator.DomainEventHandler<>` in the handler's own transaction. Keyed on `IDomainEvent.Id` rather than the outbox row id, as `IDomainEventHandler`'s contract specified. See `.claude/rules/idempotency.md` |
-| **One write context per bounded context** | Keyed services + `[FromKeyedServices] IUnitOfWork` on `TransactionDecorator` (T5) |
-| **Aspire migration service** with `WaitForCompletion` | Currently a gated startup hosted service with an advisory lock (T6) |
-| **Outbox as a separate worker process** | Engine is already host-agnostic; a worker `Program.cs` calls the same extension (T6) |
-| **Read replica** for the read context | The separate `ReadDbContext` is the seam; point it at a different connection string (T5) |
-| ~~**Redis** for the basket~~ — **delivered** | Shipped in T12: the basket is a TTL'd JSON document in Redis rather than a Postgres schema, and the same resource backs `HybridCache` as a distributed L2 |
-| **Real payment gateway** | `IPaymentGateway` port is already the seam (T14) |
+## License
 
-Two more worth naming explicitly:
+Provided by TNOSC and freely available under the **MIT License**, per the header carried in every
+source file in this repository.
 
-- **There is no HTTP surface for the dead-letter queue.** `IDeadLetterQueue` can list, replay
-  (handler-scoped) and discard, but replay is not an operation to leave reachable without deciding who
-  may call it.
-- **No client.** `src/client/web/` is an empty solution folder. The API, its OpenAPI document and the
-  Scalar reference are the whole deliverable.
+## Contributing
+
+This repo enforces its architecture with tests, not code review, so start with the rules rather than
+the code:
+
+- [`CLAUDE.md`](./CLAUDE.md) and its scoped per-project files for the conventions of the tree you're
+  editing.
+- [`.claude/rules/`](./.claude/rules) for narrow, cross-cutting policies (cache tags, idempotency,
+  domain events, migrations, configuration options, authorization, dependencies, code style).
+- [`docs/decisions/`](./docs/decisions) for the reasoning behind decisions already made, before
+  proposing to reverse one.
+
+A change is done when `dotnet build Tnosc.EShop.slnx` is clean, the new unit and integration tests
+are green, and the architecture suite still passes.
+
+This repo also leans on the **Claude Code harness** for day-to-day development: scoped `CLAUDE.md`
+files and [`.claude/rules/`](./.claude/rules) are read automatically by the agent, and
+[`.claude/agents/`](./.claude/agents) and [`.claude/skills/`](./.claude/skills) encode repeatable
+workflows (scaffolding a slice, backfilling tests, an architecture audit) as first-class tools rather
+than ad hoc prompts. Contributions using Claude Code should go through those rather than freehand.
