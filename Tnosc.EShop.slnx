@@ -17,7 +17,10 @@
   </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/client/" />
-  <Folder Name="/src/client/web/" />
+  <Folder Name="/src/client/web/">
+    <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.Client/Tnosc.EShop.Client.Web.Client.csproj" Id="8e55823b-3bba-4ec3-aed3-5c2f2d714a5e" />
+    <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.csproj" Id="dc23b549-7d4b-4c23-89a7-9f511d7d8fce" />
+  </Folder>
   <Folder Name="/src/server/">
     <Project Path="src/server/Tnosc.EShop.Server.Host/Tnosc.EShop.Server.Host.csproj" />
   </Folder>

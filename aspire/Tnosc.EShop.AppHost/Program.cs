@@ -60,12 +60,17 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
     .WithEnvironment(name: "KC_DB_PASSWORD", value: ReferenceExpression.Create($"{postgresPassword}"))
     .WaitFor(dependency: keycloakDb);
 
-builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
+IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
     .WithReference(source: db)
     .WithReference(source: keycloak)
     .WithReference(source: cache)
     .WaitFor(dependency: db)
     .WaitFor(dependency: keycloak)
     .WaitFor(dependency: cache);
+
+builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
+    .WithReference(source: eshopHost)
+    .WaitFor(dependency: eshopHost)
+    .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();

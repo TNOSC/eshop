@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\client\Tnosc.EShop.Client.Web\Tnosc.EShop.Client.Web\Tnosc.EShop.Client.Web.csproj" />
     <ProjectReference Include="..\..\src\server\Tnosc.EShop.Server.Host\Tnosc.EShop.Server.Host.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
   </ItemGroup>

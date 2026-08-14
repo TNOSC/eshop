@@ -14,6 +14,7 @@ decorator pipeline, the outbox, and the test split. They are the executable vers
 | **add-context** | `/add-context Basket` | Bootstraps a new bounded context: folders across all five projects, Postgres schema, routes, first slice, migration, test scaffolding. |
 | **add-tests** | `/add-tests UpdateProductPriceCommandHandler` | Backfills domain, handler and query-handler tests into the right suite. |
 | **ca-review** | `/ca-review` | Reviews pending changes against the layer, domain, handler, persistence and test rules. |
+| **fluentui-blazor-usage** | automatic | Provides accurate coding patterns for Blazor with Fluent UI v5 — covers setup, theming, layout, dialogs, forms, data grid, icons, and common pitfalls. |
 
 You don't have to invoke them explicitly — once installed, Claude Code picks the right skill when you
 say things like "add an endpoint to discontinue a product".
@@ -31,14 +32,15 @@ Tnosc.EShop/
         ├── add-entity/
         ├── add-context/
         ├── add-tests/
-        └── ca-review/
+        ├── ca-review/
+        └── fluentui-blazor-usage/
 ```
 
 ```bash
 mkdir -p .claude/skills && cp -r skills/*/ .claude/skills/
 ```
 
-Verify with `/skills` — all five should be listed.
+Verify with `/skills` — all six should be listed.
 
 ## How they relate to the `CLAUDE.md` files
 
