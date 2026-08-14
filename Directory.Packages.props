@@ -5,6 +5,8 @@
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.11" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+    <!-- WASM has no shared framework, so AuthorizeView/CascadingAuthenticationState need this explicitly. -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.11" />
     <!--
       v5 is a prerelease (no stable build targets net10.0 yet), matching this solution's TFM;
       pin the exact version so restore does not silently drift across prerelease builds.
