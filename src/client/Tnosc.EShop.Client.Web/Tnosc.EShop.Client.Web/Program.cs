@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Pages;
 using Tnosc.EShop.Client.Web.Components;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
