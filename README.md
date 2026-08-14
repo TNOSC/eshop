@@ -2,8 +2,7 @@
 
 # Tnosc.EShop
 
-**A reference eShop backend built the long way round.**
-Clean Architecture · DDD · CQRS - on a small in-repo framework, not MediatR/FluentValidation/AutoMapper.
+**A reference eShop backend implemented with Clean Architecture · DDD · CQRS, using a lightweight in‑repo framework instead of MediatR, FluentValidation, or AutoMapper**
 
 [![.NET](https://img.shields.io/badge/.NET-10.0--preview-512BD4?logo=dotnet&logoColor=white)](#installation)
 [![PostgreSQL](https://img.shields.io/badge/Postgres-Npgsql%20EFCore-336791?logo=postgresql&logoColor=white)](#installation)
