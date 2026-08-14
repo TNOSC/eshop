@@ -1,21 +1,31 @@
+<div align="center">
+
 # Tnosc.EShop
 
-## Description
+**A reference eShop backend built the long way round.**
+Clean Architecture · DDD · CQRS — on a small in-repo framework, not MediatR/FluentValidation/AutoMapper.
 
-A reference eShop backend built the long way round: Clean Architecture, DDD and CQRS on a small
-in-repo framework (`lib/`) rather than on MediatR, FluentValidation and AutoMapper. Five bounded
-contexts — **Catalog**, **Identity**, **Basket**, **Ordering**, **Payment** — talk to each other only
-through domain events carried by a transactional outbox, and every architectural rule here is
-enforced by a test rather than by a code review.
+[![.NET](https://img.shields.io/badge/.NET-10.0--preview-512BD4?logo=dotnet&logoColor=white)](#installation)
+[![PostgreSQL](https://img.shields.io/badge/Postgres-Npgsql%20EFCore-336791?logo=postgresql&logoColor=white)](#installation)
+[![Keycloak](https://img.shields.io/badge/Auth-Keycloak%2026.6-4D4D4D?logo=keycloak&logoColor=white)](#usage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
+
+</div>
+
+Five bounded contexts — **Catalog**, **Identity**, **Basket**, **Ordering**, **Payment** — talk to
+each other only through domain events carried by a transactional outbox, and every architectural rule
+here is enforced by a test rather than by a code review.
 
 It is a teaching codebase as much as a working one. The interesting parts are the ones that are
 usually hand-waved: the outbox and its inbox, the decorator pipeline, the read/write context split,
 where a business rule is allowed to live, and how a permission gets from a Keycloak realm role to an
 endpoint.
 
-- Design rules: [`CLAUDE.md`](./CLAUDE.md) and its scoped per-project files
-- Narrow policies: [`.claude/rules/`](./.claude/rules)
-- Design decisions and their reasoning: [`docs/decisions/`](./docs/decisions)
+| | |
+|---|---|
+| 📐 Design rules | [`CLAUDE.md`](./CLAUDE.md) |
+| 📏 Narrow policies | [`.claude/rules/`](./.claude/rules) |
+| 🧭 Design decisions | [`docs/decisions/`](./docs/decisions) |
 
 ### The architecture in a paragraph
 
@@ -29,27 +39,28 @@ lives here on purpose because a projection is a technical concern. **Api** is Mi
 reference each other: context B reacts to context A's domain event in B's own `EventHandlers/` folder,
 against B's own types.
 
-```
-            ┌──────────────────────────────────────────────┐
-            │                   Api                        │  Minimal APIs, Result → HTTP
-            └───────────────┬──────────────────────────────┘
-                            │
-            ┌───────────────▼──────────────────────────────┐
-            │               Application                    │  commands, handlers, validators,
-            │   (decorator pipeline, ports, workflows)     │  workflows, ports — no business ifs
-            └───────────────┬──────────────────────────────┘
-                            │
-            ┌───────────────▼──────────────────────────────┐
-            │                 Domain                       │  aggregates, value objects, factories,
-            │  entities · VOs · events · repo contracts    │  strategies, domain events, contracts
-            └──────────────────────────────────────────────┘
-                            ▲                    ▲
-            ┌───────────────┴───────────┐  ┌─────┴────────────────┐
-            │ Infrastructure.Persistence│  │ Infrastructure.      │
-            │ EF Core · outbox · queries│  │ External · Job       │
-            └───────────────────────────┘  └──────────────────────┘
+```mermaid
+flowchart TB
+    Api["<b>Api</b><br/>Minimal APIs · Result → HTTP"]
+    App["<b>Application</b><br/>commands · handlers · validators<br/>decorator pipeline · ports · workflows<br/><i>no business ifs</i>"]
+    Dom["<b>Domain</b><br/>aggregates · value objects · factories<br/>strategies · domain events · repo contracts"]
+    InfraP["<b>Infrastructure.Persistence</b><br/>EF Core · outbox · queries"]
+    InfraE["<b>Infrastructure.External / Job</b><br/>gateways · background jobs"]
+    Host(("Host<br/>composition root<br/>Keycloak · Redis · OTel"))
 
-            Host  ── composition root: wires all of the above, plus Keycloak, Redis, OpenTelemetry
+    Api --> App --> Dom
+    InfraP -.implements.-> App
+    InfraE -.implements.-> App
+    Host -.wires.-> Api
+    Host -.wires.-> InfraP
+    Host -.wires.-> InfraE
+
+    style Dom fill:#4D4D4D,color:#fff,stroke:#333,stroke-width:2px
+    style App fill:#6c4fa1,color:#fff,stroke:#333
+    style Api fill:#2f6fed,color:#fff,stroke:#333
+    style InfraP fill:#336791,color:#fff,stroke:#333
+    style InfraE fill:#336791,color:#fff,stroke:#333
+    style Host fill:#111,color:#fff,stroke:#333,stroke-width:2px
 ```
 
 ### The decorator pipeline
@@ -59,11 +70,25 @@ are never written into a handler — they wrap it. Each is a nested `IHandlerDec
 `Tnosc.Lib.Application`, applied with Scrutor's `TryDecorate` in outermost-to-innermost order, and
 composed differently for each of the three flows:
 
-| Flow | Pipeline (outermost → innermost) |
-|---|---|
-| **Command** (`ICommandHandler<,>`/`<>`) | `Logging → Exception → Validation → Retry → CacheInvalidation → Transaction → Idempotency → Handler` |
-| **Query** (`IQueryHandler<,>`) | `Logging → Exception → Cacheable → Retry → Handler` |
-| **Domain event** (`IDomainEventHandler<>`) | `Retry → Idempotency → Handler` |
+```mermaid
+flowchart LR
+    subgraph Command["Command pipeline"]
+        direction LR
+        C1[Logging] --> C2[Exception] --> C3[Validation] --> C4[Retry] --> C5[CacheInvalidation] --> C6[Transaction] --> C7[Idempotency] --> C8[Handler]
+    end
+    subgraph Query["Query pipeline"]
+        direction LR
+        Q1[Logging] --> Q2[Exception] --> Q3[Cacheable] --> Q4[Retry] --> Q5[Handler]
+    end
+    subgraph Event["Domain event pipeline"]
+        direction LR
+        E1[Retry] --> E2[Idempotency] --> E3[Handler]
+    end
+
+    style C7 fill:#6c4fa1,color:#fff
+    style Q3 fill:#336791,color:#fff
+    style E2 fill:#6c4fa1,color:#fff
+```
 
 Two placements are load-bearing, not incidental:
 
@@ -90,6 +115,42 @@ Two things worth knowing before reading any code:
   its key — the caller's `Idempotency-Key` for a command, `IDomainEvent.Id` for an event — in the
   *same transaction* as the handler's own writes. See
   [`.claude/rules/idempotency.md`](./.claude/rules/idempotency.md).
+
+```mermaid
+sequenceDiagram
+    participant H as Command Handler
+    participant DB as Aggregate + Outbox<br/>(one transaction)
+    participant P as OutboxProcessor
+    participant EH as Event Handler(s)<br/>(other context)
+
+    H->>DB: mutate aggregate + raise event
+    DB-->>H: commit (write + outbox row atomic)
+    loop poll
+        P->>DB: claim rows FOR UPDATE SKIP LOCKED
+        P->>EH: deliver event
+        alt handler succeeds
+            EH-->>P: ack → row marked processed
+        else handler throws
+            EH-->>P: row stays, retried with backoff
+            Note over P: exhausted → moved to dead_letters
+        end
+    end
+```
+
+Each bounded context reacts to another's event in its **own** `EventHandlers/` folder, never by
+referencing the other context's types:
+
+```mermaid
+flowchart LR
+    Basket -- OrderPlaced --> Ordering
+    Ordering -- OrderConfirmed --> Payment
+    Payment -- PaymentCaptured / PaymentFailed --> Ordering
+    Ordering -- OrderPaid / OrderCancelled --> Basket
+
+    style Basket fill:#2f6fed,color:#fff
+    style Ordering fill:#6c4fa1,color:#fff
+    style Payment fill:#336791,color:#fff
+```
 
 ---
 
@@ -218,6 +279,20 @@ into permission claims. Adding a permission is a constant, not a realm change �
 A slice is vertical, and the order is fixed. Catalog is the reference implementation — copy its
 shapes, then:
 
+```mermaid
+flowchart LR
+    D["1 · Domain<br/>owns the decision"] --> A["2 · Application<br/>command + handler + validator"]
+    A --> I["3 · Infrastructure<br/>query handler + read model"]
+    I --> P["4 · Api<br/>endpoint + OpenAPI"]
+    P --> T["5 · Tests<br/>unit + integration + architecture"]
+
+    style D fill:#4D4D4D,color:#fff
+    style A fill:#6c4fa1,color:#fff
+    style I fill:#336791,color:#fff
+    style P fill:#2f6fed,color:#fff
+    style T fill:#1a7f37,color:#fff
+```
+
 1. **Domain** — does an aggregate already own this decision? If the rule spans more than one instance
    (uniqueness, for example) it belongs in a factory that can reach the repository, never in a handler.
 2. **Application** — `<Feature>Command` + `<Feature>CommandHandler` (sealed) + validator, in
@@ -302,6 +377,22 @@ dotnet test tests/server/Tnosc.EShop.Server.Tests.Unit --filter "FullyQualifiedN
 ```
 
 The acceptance suite boots the whole AppHost once and drives two journeys over HTTP:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Authenticated: sign in
+    Authenticated --> Provisioned: profile + address
+    Provisioned --> Browsed: browse catalogue
+    Browsed --> Basketed: fill basket
+    Basketed --> Placed: place order
+    Placed --> Confirmed: confirm order
+
+    Confirmed --> Paid: wallet payment captured
+    Paid --> [*]: basket cleared
+
+    Confirmed --> Cancelled: card payment declined (test card)
+    Cancelled --> [*]
+```
 
 - **Paid:** authenticate → provision profile and address → browse the catalogue → fill a basket →
   place an order → confirm it → the outbox opens a wallet payment, captures it, and the order reaches

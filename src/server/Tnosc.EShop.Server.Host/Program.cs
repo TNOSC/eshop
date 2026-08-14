@@ -26,10 +26,6 @@ builder.AddKeycloakAuthentication();
 builder.Services.AddUserContext();
 builder.Services.AddGlobalExceptionHandling();
 
-// The L2 registrations must precede AddHybridCache() — otherwise HybridCache resolves with no
-// IDistributedCache and stays L1-only, silently losing the shared cache every [Cacheable] query
-// (not only Basket's) is meant to get. AddRedisClient registers the IConnectionMultiplexer that
-// Server.Infrastructure.External's Redis basket store consumes.
 builder.AddRedisDistributedCache(connectionName: "cache");
 builder.AddRedisClient(connectionName: "cache");
 builder.Services.AddHybridCache();
