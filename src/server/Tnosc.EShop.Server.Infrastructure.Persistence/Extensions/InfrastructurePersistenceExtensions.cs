@@ -5,13 +5,16 @@
 // ----------------------------------------------------------------------------------
 
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Tnosc.EShop.Server.Application.Basket.Ports;
 using Tnosc.EShop.Server.Application.Ordering.Ports;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Basket.Queries;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Ordering.Queries;
+using Tnosc.EShop.Server.Infrastructure.Persistence.Seeding;
 using Tnosc.Lib.Application.Decorators;
 using Tnosc.Lib.Application.DomainEvents;
 using Tnosc.Lib.Application.Extensions;
@@ -77,7 +80,30 @@ public static class InfrastructurePersistenceExtensions
         builder.Services.AddScoped<ICustomerProfileReader, CustomerProfileReader>();
         builder.Services.AddScoped<IStockAvailabilityReader, StockAvailabilityReader>();
 
+        builder.AddDevelopmentSeeding();
+
         return builder;
+    }
+
+    // The first of the two gates on sample data, and the structural one: outside Development nothing
+    // is registered at all, so no configuration value can switch seeding on in Production. The second
+    // gate is SeedOptions.Enabled, which the seeder itself reads. Registered after AddPersistence so
+    // it queues behind the migration hosted service — hosted services start in registration order.
+    private static void AddDevelopmentSeeding(this IHostApplicationBuilder builder)
+    {
+        builder.Services.AddOptions<SeedOptions>()
+            .Bind(config: builder.Configuration.GetSection(key: SeedOptions.SectionName))
+            .ValidateOnStart();
+
+        builder.Services.AddSingleton(implementationFactory: static resolve =>
+            resolve.GetRequiredService<IOptions<SeedOptions>>().Value);
+
+        if (!builder.Environment.IsDevelopment())
+        {
+            return;
+        }
+
+        builder.Services.AddHostedService<DevelopmentDataSeeder>();
     }
 
     private static void AddRepositories(this IServiceCollection services)

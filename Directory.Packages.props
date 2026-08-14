@@ -56,6 +56,13 @@
     -->
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.10" />
+    <!--
+      Must equal the Aspire.AppHost.Sdk version in aspire/Tnosc.EShop.AppHost.csproj (13.4.6). The
+      testing package boots the very same AppHost the SDK builds, so a version skew between the two
+      fails at run time rather than at restore. This is also why T8's integration suite used
+      Testcontainers instead of booting the distributed app: there, the app is not the unit under test.
+    -->
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.4.6" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.12.0" />
     <!--
       Transitive pin, not a package this solution uses directly. Testcontainers 4.12.0 pulls SSH.NET

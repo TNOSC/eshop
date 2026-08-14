@@ -5,7 +5,7 @@
 | `Tests.Unit` | Domain factories, entities, value objects, strategies, invariants; **command handlers**; `lib/` units | xUnit, NSubstitute, Shouldly, Bogus |
 | `Tests.Integration` | **Query handlers**, EF projections, `UnitOfWork`, outbox processor, auditing | Testcontainers Postgres + Respawn |
 | `Tests.Architecture` | The layering, naming and no-branching rules, mechanically | NetArchTest + Roslyn + Cecil |
-| `Tests.Acceptance` | End-to-end over HTTP | Aspire.Hosting.Testing (not yet populated) |
+| `Tests.Acceptance` | The customer journey end-to-end over HTTP against the booted AppHost | Aspire.Hosting.Testing |
 
 That split is the rule, not a habit: domain and command logic are isolated and fast; queries are
 validated against a real database. Never unit-test a query handler with a fake context, and never
@@ -63,4 +63,17 @@ no-business-branching scan. Add a test here whenever you add a rule.
 dotnet test tests/server/Tnosc.EShop.Server.Tests.Unit
 dotnet test tests/server/Tnosc.EShop.Server.Tests.Integration   # needs Docker
 dotnet test tests/server/Tnosc.EShop.Server.Tests.Architecture
+dotnet test tests/server/Tnosc.EShop.Server.Tests.Acceptance    # Docker, and host port 8080 free
 ```
+
+## Acceptance tests
+
+`AppHostFixture` boots the real AppHost — Postgres, Redis, Keycloak and the API — once for the
+`AppHostCollection`, switching seeding on explicitly (the journeys buy a seeded SKU, and no endpoint
+can create a product from nothing). **Docker must be running and host port 8080 must be free**, so
+don't run this suite while `dotnet run --project aspire/Tnosc.EShop.AppHost` is up.
+
+Everything after `POST /api/orders` happens through the outbox, so assert it with
+`AppHostFixture.PollAsync(...)` and never with a fixed `Task.Delay`. The routes, credentials and SKU
+are restated in `AcceptanceRoutes` rather than imported from `Server.Api` — a client that shared the
+server's route constants could not catch a path changing underneath it.
