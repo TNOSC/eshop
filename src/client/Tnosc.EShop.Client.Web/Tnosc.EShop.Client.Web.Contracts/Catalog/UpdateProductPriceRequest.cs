@@ -1,0 +1,10 @@
+// ----------------------------------------------------------------------------------
+// Copyright (c) Tunisian .NET Open Source Community (TNOSC).
+// This code is provided by TNOSC and is freely available under the MIT License.
+// Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
+// ----------------------------------------------------------------------------------
+
+namespace Tnosc.EShop.Client.Web.Contracts.Catalog;
+
+/// <summary>The request body to change a product's price.</summary>
+public sealed record UpdateProductPriceRequest(decimal Amount, string Currency);
