@@ -1,8 +1,8 @@
 # CLAUDE.md
 
-Clean Architecture / DDD / CQRS eShop built on the in-repo `lib/` framework. Authoritative design docs:
-[`# Clean Architecture Rules & Design.md`](./%23%20Clean%20Architecture%20Rules%20%26%20Design.md) and
-[`plan/00-conventions.md`](./plan/00-conventions.md); [`PLAN.md`](./PLAN.md) tracks delivery order.
+Clean Architecture / DDD / CQRS eShop built on the in-repo `lib/` framework. Authoritative source: this
+file and the scoped `CLAUDE.md` files below, backed by [`.claude/rules/`](./.claude/rules) for narrow
+policies and [`docs/decisions/`](./docs/decisions) for the reasoning behind them.
 
 **Scoped rules live in nested `CLAUDE.md` files — read the one for the tree you are editing:**
 `lib/` · `src/server/Tnosc.EShop.Server.Domain/` · `…Server.Application/` ·

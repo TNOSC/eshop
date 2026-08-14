@@ -70,7 +70,7 @@ public static class InfrastructurePersistenceExtensions
         // IProductLookup implements no IQueryHandler<,>, so AddQueries' scan misses it — it is a
         // Basket-owned application port, not a CQRS query handler. Registered explicitly here rather
         // than in Server.Infrastructure.External because its implementation queries EShopReadDbContext,
-        // a genuine Postgres read; see plan/13-t12-basket.md.
+        // a genuine Postgres read.
         builder.Services.AddScoped<IProductLookup, ProductLookup>();
 
         // Ordering's two read ports, registered for the same reason and in the same way: neither

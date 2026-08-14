@@ -43,9 +43,10 @@ which is part of the definition of done for any feature.
   changed and must be updated deliberately with a stated reason. There is no `#pragma` equivalent for an
   architecture test, and that asymmetry is intentional: these are design decisions, not style preferences.
 - Alternative rejected: relying on code review alone — rejected as not scaling with codebase growth, and
-  specifically unable to reliably catch IL-shaped violations (like B2 in `PLAN.md`'s bug table — decorators
-  reading `innerHandler.GetType()` — a bug that a human reviewer plausibly would not have caught by reading
-  the source).
+  specifically unable to reliably catch IL-shaped violations (like the bug where decorators read
+  `innerHandler.GetType()` — since only the innermost decorator ever sees the actual handler type in a
+  real chain, every attribute-driven decorator silently became a no-op — a bug that a human reviewer
+  plausibly would not have caught by reading the source).
 
 ## Consequences
 

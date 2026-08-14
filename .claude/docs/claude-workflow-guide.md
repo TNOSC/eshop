@@ -57,11 +57,6 @@ paths. If auto-loading doesn't fire, the pointer is still in context.
 /fix-build                              → groups by rule ID, fixes causes, not symptoms
 ```
 
-**Find out where things stand**
-```
-/plan-status                            → PLAN.md checkboxes vs. what's actually in the code
-```
-
 ## Skill or command?
 
 If it produces code from a description, it's a **skill** — it should fire without a `/`. If it runs a

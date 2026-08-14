@@ -31,7 +31,7 @@ Every dependency is permanent in practice. Before adding one:
 3. **Does it fit the architecture?** A package that wants to own dispatching (MediatR), validation
    (FluentValidation) or mapping (AutoMapper) conflicts with deliberate decisions here — the custom
    `ICommandHandler` pipeline, `IValidator<T>` returning `Result`, and hand-written projections. Those
-   choices are recorded in `PLAN.md`; do not reverse one by adding a package.
+   choices are recorded in `docs/decisions/` (see ADR-009); do not reverse one by adding a package.
 
 State the reason in the commit message. If the answer to "could we do this in 30 lines we control?"
 is yes, prefer the 30 lines.

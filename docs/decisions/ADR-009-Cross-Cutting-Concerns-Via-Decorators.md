@@ -28,14 +28,14 @@ domain events: `Retry → Idempotency → Handler`.
 
 ## Rationale
 
-- **Solves "God Handlers" without a mediator pipeline.** The design doc's rule of thumb — cross-cutting
-  bloat gets decorators, workflow bloat gets extracted step services (see the `CustomerWorkflow` example)
-  — needs some composition mechanism for the decorator half even without MediatR's `IPipelineBehavior`;
-  Scrutor decoration around the same closed handler interfaces used for direct DI injection (ADR-001)
-  fills that role.
+- **Solves "God Handlers" without a mediator pipeline.** The rule of thumb — cross-cutting bloat gets
+  decorators, workflow bloat gets extracted step services (see the `CustomerWorkflow` example) — needs
+  some composition mechanism for the decorator half even without MediatR's `IPipelineBehavior`; Scrutor
+  decoration around the same closed handler interfaces used for direct DI injection (ADR-001) fills that
+  role.
 - **Scrutor over hand-rolled reflection.** `TryDecorate` already solves open-generic decoration correctly;
-  reimplementing it is roughly 200 lines of reflection that (per `PLAN.md`'s own architecture-decisions
-  table) is "subtly wrong" territory for a solved problem — not a place to spend custom code.
+  reimplementing it is roughly 200 lines of reflection that is "subtly wrong" territory for a solved
+  problem — not a place to spend custom code.
 - **Explicit order over convention-based pipeline ordering.** Because there is no mediator behavior chain
   to order implicitly by registration or attribute, the decorator order is visible directly in the
   `AddCommands`/`AddQueries`/`AddDomainEventHandlers` registration code, and the last `TryDecorate` call
@@ -60,4 +60,4 @@ domain events: `Retry → Idempotency → Handler`.
   documents as historical near-misses.
 - Attribute-reading decorators must read the handler's own type, not the decorator chain's outer type, or
   every attribute-driven decorator silently becomes a no-op in a real (fully decorated) chain — this was
-  bug B2 in `PLAN.md`'s Phase 1 bug table, fixed before any feature slice was built on top of it.
+  bug B2, fixed before any feature slice was built on top of it.

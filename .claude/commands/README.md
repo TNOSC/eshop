@@ -8,7 +8,6 @@ Explicit workflows, invoked as `/name`. Each is a Markdown file with `descriptio
 | [`/verify`](verify.md) | The definition of done: build, then the architecture, unit and integration suites. Reports honestly, including skipped suites. Fixes nothing. |
 | [`/migration`](migration.md) | Adds an EF migration with the right two-context flags, then reviews the generated file for unintended drops and renames. |
 | [`/fix-build`](fix-build.md) | Triages a warnings-as-errors failure: groups by rule ID, fixes causes, suppresses only as a last resort. |
-| [`/plan-status`](plan-status.md) | Cross-checks `PLAN.md` checkboxes against the code that actually exists, and names the next actionable task. |
 
 ## Commands vs skills
 
@@ -27,5 +26,5 @@ a command.
 
 Keep the shape: frontmatter, a one-line statement of intent, numbered **Steps**, and a **Report**
 section saying what to output. Link to a `.claude/rules/*.md` rather than restating policy. Be
-explicit about what the command must *not* do — `/verify` not fixing, `/plan-status` not editing
-`PLAN.md` — since that is where a helpful agent tends to overstep.
+explicit about what the command must *not* do — `/verify` not fixing, `/migration` not skipping the
+review step — since that is where a helpful agent tends to overstep.

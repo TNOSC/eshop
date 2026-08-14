@@ -30,7 +30,7 @@ namespace Tnosc.EShop.Server.Application.Basket.EventHandlers;
 /// does. Marking it would be worse than useless: <c>IdempotencyDecorator</c> commits its claim in an
 /// EF transaction that the Redis delete does not join, so a crash between the two would burn the key
 /// while leaving the basket full, and the redelivery that exists to fix that would be skipped. The
-/// attribute would open precisely the window it exists to close. See <c>plan/14-t13-ordering.md</c>.
+/// attribute would open precisely the window it exists to close.
 /// </para>
 /// <para>
 /// It delegates to <see cref="ClearBasketCommand"/> rather than calling

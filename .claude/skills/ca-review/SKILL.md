@@ -9,8 +9,8 @@ argument-hint: [optional: files or feature to review; defaults to the working-tr
 Review the given scope (default: `git diff` plus untracked files) against this repo's rules. Report
 findings with `file:line`, ordered by severity. **Do not fix anything unless asked.**
 
-Ground truth, in order: the scoped `CLAUDE.md` for each project touched, the root `CLAUDE.md`,
-`# Clean Architecture Rules & Design.md`, and `plan/00-conventions.md`.
+Ground truth, in order: the scoped `CLAUDE.md` for each project touched, the root `CLAUDE.md`, and
+`.claude/rules/*.md`.
 
 Much of this is already mechanised — **run `dotnet test tests/server/Tnosc.EShop.Server.Tests.Architecture`
 first** and report failures as blockers. Then review what the tests cannot see.

@@ -14,7 +14,6 @@ run the architecture tests, and report.
 2. The root `CLAUDE.md`
 3. `.claude/rules/*.md` for the narrow policies (cache tags, migrations, domain events, suppressions,
    dependencies)
-4. `# Clean Architecture Rules & Design.md` and `plan/00-conventions.md`
 
 ## Method
 

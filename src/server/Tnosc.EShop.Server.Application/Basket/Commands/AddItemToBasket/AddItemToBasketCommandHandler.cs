@@ -28,7 +28,7 @@ namespace Tnosc.EShop.Server.Application.Basket.Commands.AddItemToBasket;
 /// handler — takes no <c>IUnitOfWork</c>, carries no <c>[Transactional]</c> and no
 /// <c>[Idempotent]</c>: persistence is immediate through <see cref="IBasketRepository.SaveAsync"/>,
 /// and there is no EF transaction for either facility to hang off. See
-/// <c>.claude/rules/idempotency.md</c> and <c>plan/13-t12-basket.md</c>.
+/// <c>.claude/rules/idempotency.md</c>.
 /// </remarks>
 /// <param name="repository">The basket repository.</param>
 /// <param name="productLookup">The port used to snapshot the product's current catalogue data.</param>

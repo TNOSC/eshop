@@ -29,7 +29,7 @@ schema separation is the persistence-level enforcement of that same boundary.
 - **`FOR UPDATE SKIP LOCKED` is what makes the outbox correct under concurrency.** Multiple outbox
   processor instances need to claim rows without blocking each other or double-processing; Postgres's
   `SKIP LOCKED` support is the specific capability this architecture depends on for that guarantee, and it
-  drove the database choice directly (per `PLAN.md`'s architecture-decisions table).
+  drove the database choice directly.
 - **One database, not one-per-context, because the write and the outbox insert must share a transaction.**
   `TransactionDecorator` injects a single `IUnitOfWork`, and the outbox row for a raised domain event must
   commit atomically with the aggregate write that raised it (ADR-011) — which requires both to go through

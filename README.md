@@ -3,17 +3,17 @@
 A reference eShop backend built the long way round: Clean Architecture, DDD and CQRS on a small
 in-repo framework (`lib/`) rather than on MediatR, FluentValidation and AutoMapper. Five bounded
 contexts — **Catalog**, **Identity**, **Basket**, **Ordering**, **Payment** — talk to each other only
-through domain events carried by a transactional outbox, and every architectural rule in the design
-doc is enforced by a test rather than by a code review.
+through domain events carried by a transactional outbox, and every architectural rule here is
+enforced by a test rather than by a code review.
 
 It is a teaching codebase as much as a working one. The interesting parts are the ones that are
 usually hand-waved: the outbox and its inbox, the decorator pipeline, the read/write context split,
 where a business rule is allowed to live, and how a permission gets from a Keycloak realm role to an
 endpoint.
 
-- Design doc: [`# Clean Architecture Rules & Design.md`](./%23%20Clean%20Architecture%20Rules%20%26%20Design.md)
-- Delivery plan and its task files: [`PLAN.md`](./PLAN.md), [`plan/`](./plan)
-- Conventions every task assumes: [`plan/00-conventions.md`](./plan/00-conventions.md)
+- Design rules: [`CLAUDE.md`](./CLAUDE.md) and its scoped per-project files
+- Narrow policies: [`.claude/rules/`](./.claude/rules)
+- Design decisions and their reasoning: [`docs/decisions/`](./docs/decisions)
 
 ---
 
@@ -168,8 +168,8 @@ into permission claims. Adding a permission is a constant, not a realm change �
 
 ## How to add a feature slice
 
-A slice is vertical, and the order is fixed. Read
-[`plan/00-conventions.md`](./plan/00-conventions.md) once for the canonical shapes, then:
+A slice is vertical, and the order is fixed. Catalog is the reference implementation — copy its
+shapes, then:
 
 1. **Domain** — does an aggregate already own this decision? If the rule spans more than one instance
    (uniqueness, for example) it belongs in a factory that can reach the repository, never in a handler.

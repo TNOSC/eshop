@@ -6,9 +6,8 @@ argument-hint: <context name and purpose, e.g. "Basket — a customer's pending 
 
 # Add a Bounded Context
 
-The planned contexts are **Catalog, Identity, Basket, Ordering, Payment** (`PLAN.md`, tasks T10–T14).
-Catalog is built and is the reference. Check `PLAN.md` for the task file covering the context you are
-adding — it records decisions already made, so do not relitigate them.
+The bounded contexts are **Catalog, Identity, Basket, Ordering, Payment** — all five are built.
+Catalog is the reference implementation; copy its layout when adding a new context beyond these five.
 
 ## Invariants
 

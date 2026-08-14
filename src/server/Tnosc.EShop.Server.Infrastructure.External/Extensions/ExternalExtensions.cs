@@ -56,8 +56,8 @@ public static class ExternalExtensions
         services.AddScoped<IOrderBasketReader, RedisOrderBasketReader>();
 
         // Payment's external boundary. Registered as a typed HttpClient with the standard resilience
-        // handler (retry, circuit breaker, timeout) per plan/15-t14-payment.md — see FakePaymentGateway
-        // for why nothing here issues a real call yet.
+        // handler (retry, circuit breaker, timeout) — see FakePaymentGateway for why nothing here
+        // issues a real call yet.
         services.AddHttpClient<IPaymentGateway, FakePaymentGateway>()
             .AddStandardResilienceHandler();
 

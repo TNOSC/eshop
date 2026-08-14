@@ -22,7 +22,7 @@ each mechanism is for and when to reach for which.
 | | |
 |---|---|
 | **Skills** (5) | `add-feature`, `add-entity`, `add-context`, `add-tests`, `ca-review` |
-| **Commands** (4) | `/verify`, `/migration`, `/fix-build`, `/plan-status` |
+| **Commands** (3) | `/verify`, `/migration`, `/fix-build` |
 | **Agents** (3) | `arch-auditor` (read-only), `slice-implementer`, `test-backfiller` |
 | **Rules** (5) | cache tags, analyzer suppressions, migrations, domain events, dependencies |
 | **Hooks** (2, live) | C# convention check on write/edit; build reminder on stop — both advisory |
