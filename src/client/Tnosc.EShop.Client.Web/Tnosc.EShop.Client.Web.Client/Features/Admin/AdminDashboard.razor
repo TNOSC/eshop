@@ -1,0 +1,8 @@
+@page "/admin"
+@attribute [Authorize(Roles = "admin")]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+
+<PageTitle>Back office — Tnosc EShop</PageTitle>
+
+<PageHeader Title="Back office" Subtitle="Manage products and customers." />

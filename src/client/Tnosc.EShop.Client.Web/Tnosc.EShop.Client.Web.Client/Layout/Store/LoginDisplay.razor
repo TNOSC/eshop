@@ -1,0 +1,14 @@
+@namespace Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<AuthorizeView>
+    <Authorized>
+        <FluentAnchorButton Href="bff/logout" Appearance="ButtonAppearance.Transparent">
+            Sign out
+        </FluentAnchorButton>
+    </Authorized>
+    <NotAuthorized>
+        <FluentAnchorButton Href="bff/login" Appearance="ButtonAppearance.Transparent">
+            Sign in
+        </FluentAnchorButton>
+    </NotAuthorized>
+</AuthorizeView>

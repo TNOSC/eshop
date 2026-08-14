@@ -1,0 +1,12 @@
+@namespace Tnosc.EShop.Client.Web.Client.Layout.Admin
+
+<FluentNav Density="NavDensity.Medium">
+    <FluentNavCategory Title="Catalog" IconRest="@(new Icons.Regular.Size20.Box())">
+        <FluentNavItem Href="/admin/products">Products</FluentNavItem>
+    </FluentNavCategory>
+    <FluentNavCategory Title="Identity" IconRest="@(new Icons.Regular.Size20.People())">
+        <FluentNavItem Href="/admin/customers">Customers</FluentNavItem>
+    </FluentNavCategory>
+    <FluentDivider />
+    <FluentNavItem Href="/" IconRest="@(new Icons.Regular.Size20.ArrowLeft())">Back to store</FluentNavItem>
+</FluentNav>

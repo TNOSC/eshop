@@ -1,0 +1,20 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Shared
+
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="4">
+    <FluentText As="TextTag.H1" Size="TextSize.Size700" Weight="TextWeight.Semibold">
+        @Title
+    </FluentText>
+    @if (!string.IsNullOrEmpty(Subtitle))
+    {
+        <FluentText Color="Color.Lightweight">@Subtitle</FluentText>
+    }
+</FluentStack>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+}

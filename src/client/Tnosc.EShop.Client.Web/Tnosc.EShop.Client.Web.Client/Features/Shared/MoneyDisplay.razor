@@ -1,0 +1,15 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Shared
+
+<span>@FormattedAmount @Currency</span>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public decimal Amount { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string Currency { get; set; } = string.Empty;
+
+    private string FormattedAmount => Amount.ToString(format: "N2", provider: CultureInfo.InvariantCulture);
+}

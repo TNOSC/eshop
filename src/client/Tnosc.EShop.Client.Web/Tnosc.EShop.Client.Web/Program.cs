@@ -16,6 +16,8 @@ builder.Services.AddRazorComponents()
 
 // Interactive Server rendering runs FluentUI components on the server, so it needs its own HttpClient.
 builder.Services.AddHttpClient();
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddFluentUIComponents();
 
 WebApplication app = builder.Build();

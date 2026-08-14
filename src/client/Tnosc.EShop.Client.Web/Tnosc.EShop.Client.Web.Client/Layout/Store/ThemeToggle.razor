@@ -1,0 +1,7 @@
+@namespace Tnosc.EShop.Client.Web.Client.Layout.Store
+@inject IThemeService ThemeService
+
+<FluentButton IconStart="@(new Icons.Regular.Size20.WeatherMoon())"
+              Appearance="ButtonAppearance.Transparent"
+              Title="Toggle theme"
+              OnClick="@ToggleThemeAsync" />
