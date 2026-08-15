@@ -32,4 +32,35 @@ public interface ICatalogApi
     /// <summary>Retrieves every catalog category.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
     Task<ApiResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken);
+
+    /// <summary>Adds a product to the catalogue.</summary>
+    /// <param name="request">The product to create.</param>
+    /// <param name="idempotencyKey">
+    /// The idempotency key for this logical request. Callers own the key's lifetime — it must be
+    /// stable across Polly's transport-level retries and rotated only once a response (success or
+    /// business failure) actually arrives, never per HTTP send.
+    /// </param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ApiResult<Guid>> CreateProductAsync(
+        CreateProductRequest request,
+        Guid idempotencyKey,
+        CancellationToken cancellationToken);
+
+    /// <summary>Changes a product's price.</summary>
+    /// <param name="productId">The product to reprice.</param>
+    /// <param name="request">The new price.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ApiResult> UpdateProductPriceAsync(
+        Guid productId,
+        UpdateProductPriceRequest request,
+        CancellationToken cancellationToken);
+
+    /// <summary>Adjusts a product's stock level by a signed delta.</summary>
+    /// <param name="productId">The product to adjust.</param>
+    /// <param name="request">The signed stock delta.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ApiResult> AdjustStockAsync(
+        Guid productId,
+        AdjustStockRequest request,
+        CancellationToken cancellationToken);
 }

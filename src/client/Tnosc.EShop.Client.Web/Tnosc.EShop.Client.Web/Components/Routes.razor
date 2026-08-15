@@ -3,7 +3,19 @@
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Client.Layout.Store.StoreLayout)">
-            <NotAuthorized><RedirectToLogin /></NotAuthorized>
+            <NotAuthorized Context="authState">
+                @* AuthorizeRouteView collapses "not signed in" and "signed in but lacks the role" into the
+                   same template — an unqualified redirect here would send an authenticated customer back
+                   to login on a 403, and they would bounce right back. *@
+                @if (authState.User.Identity?.IsAuthenticated == true)
+                {
+                    <Forbidden />
+                }
+                else
+                {
+                    <RedirectToLogin />
+                }
+            </NotAuthorized>
             <Authorizing><FluentSpinner /></Authorizing>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />

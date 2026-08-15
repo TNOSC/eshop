@@ -1,0 +1,64 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog
+@using Tnosc.EShop.Client.Web.Contracts.Catalog
+
+<EditForm EditContext="@_editContext" OnSubmit="@SubmitAsync">
+    <DataAnnotationsValidator />
+
+    @if (_unmappedMessages.Count > 0)
+    {
+        <FluentMessageBar Intent="MessageBarIntent.Error" Title="Could not create product">
+            @string.Join(separator: " ", values: _unmappedMessages)
+        </FluentMessageBar>
+    }
+
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+        <FluentTextInput Label="SKU" @bind-Value="_model.Sku" />
+        <ValidationMessage For="@(() => _model.Sku)" />
+
+        <FluentTextInput Label="Name" @bind-Value="_model.Name" />
+        <ValidationMessage For="@(() => _model.Name)" />
+
+        <FluentTextInput Label="Description" @bind-Value="_model.Description" />
+        <ValidationMessage For="@(() => _model.Description)" />
+
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="12">
+            <FluentNumberInput TValue="decimal" Label="Price" Step="@(0.01m)" Min="0" @bind-Value="_model.PriceAmount" />
+            <FluentSelect TOption="string"
+                          TValue="string"
+                          Label="Currency"
+                          Items="@Currencies"
+                          OptionText="@(currency => currency)"
+                          OptionValue="@(currency => currency)"
+                          @bind-Value="_model.PriceCurrency" />
+        </FluentStack>
+        <ValidationMessage For="@(() => _model.PriceAmount)" />
+        <ValidationMessage For="@(() => _model.PriceCurrency)" />
+
+        <FluentNumberInput TValue="int" Label="Initial stock" Min="0" @bind-Value="_model.StockQuantity" />
+        <ValidationMessage For="@(() => _model.StockQuantity)" />
+
+        <FluentSelect TOption="Category"
+                      TValue="Guid?"
+                      Label="Category"
+                      Placeholder="Select a category"
+                      Items="@_categories"
+                      OptionText="@(category => category.Name)"
+                      OptionValue="@(category => (Guid?)category.Id)"
+                      @bind-Value="_model.CategoryId" />
+        <ValidationMessage For="@(() => _model.CategoryId)" />
+
+        <FluentTextInput Label="Brand id" Placeholder="GUID — no brands endpoint exists yet" @bind-Value="_model.BrandId" />
+        <ValidationMessage For="@(() => _model.BrandId)" />
+    </FluentStack>
+
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8" Margin="Margin.Top3">
+        <FluentButton Type="ButtonType.Submit" Appearance="ButtonAppearance.Primary" Loading="@_isSubmitting" Disabled="@_isSubmitting">
+            Create
+        </FluentButton>
+        <FluentButton OnClick="@CancelAsync" Disabled="@_isSubmitting">Cancel</FluentButton>
+    </FluentStack>
+</EditForm>
+
+@code {
+    private static readonly string[] Currencies = ["USD", "EUR", "TND"];
+}

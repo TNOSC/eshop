@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
@@ -56,5 +57,49 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
         return await ApiResponseReader.ReadAsync<IReadOnlyList<Category>>(
             response: response,
             cancellationToken: cancellationToken);
+    }
+
+    public async Task<ApiResult<Guid>> CreateProductAsync(
+        CreateProductRequest request,
+        Guid idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        using HttpRequestMessage message = new(method: HttpMethod.Post, requestUri: ApiRoutes.Catalog.Products)
+        {
+            Content = JsonContent.Create(inputValue: request),
+        };
+        message.Headers.Add(name: IdempotencyHeader.Name, value: idempotencyKey.ToString());
+
+        using HttpResponseMessage response = await httpClient.SendAsync(
+            request: message,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync<Guid>(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ApiResult> UpdateProductPriceAsync(
+        Guid productId,
+        UpdateProductPriceRequest request,
+        CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PutAsJsonAsync(
+            requestUri: ApiRoutes.Catalog.ProductPrice(id: productId),
+            value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ApiResult> AdjustStockAsync(
+        Guid productId,
+        AdjustStockRequest request,
+        CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PostAsJsonAsync(
+            requestUri: ApiRoutes.Catalog.ProductStock(id: productId),
+            value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
     }
 }

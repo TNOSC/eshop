@@ -1,0 +1,19 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog
+
+<EditForm EditContext="@_editContext" OnValidSubmit="@SubmitAsync">
+    <DataAnnotationsValidator />
+
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+        <FluentText>@Sku currently has @CurrentStock in stock.</FluentText>
+
+        <FluentNumberInput TValue="int" Label="Adjustment (negative to remove)" @bind-Value="_model.Delta" />
+        <ValidationMessage For="@(() => _model.Delta)" />
+    </FluentStack>
+
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8" Margin="Margin.Top3">
+        <FluentButton Type="ButtonType.Submit" Appearance="ButtonAppearance.Primary" Loading="@_isSubmitting" Disabled="@_isSubmitting">
+            Save
+        </FluentButton>
+        <FluentButton OnClick="@CancelAsync" Disabled="@_isSubmitting">Cancel</FluentButton>
+    </FluentStack>
+</EditForm>
