@@ -1,0 +1,29 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Contracts.Catalog
+
+<FluentCard data-testid="product-card" Shadow="CardShadow.Small">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+            <FluentText Weight="TextWeight.Semibold" data-testid="product-card-name">@Product.Name</FluentText>
+            @if (Product.StockQuantity <= 0)
+            {
+                <FluentBadge Color="BadgeColor.Danger" Content="Out of stock" />
+            }
+        </FluentStack>
+
+        <FluentText Color="Color.Lightweight">@Product.BrandName · @Product.CategoryName</FluentText>
+
+        <MoneyDisplay Amount="@Product.PriceAmount" Currency="@Product.PriceCurrency" />
+
+        <FluentAnchorButton Href="@($"/products/{Product.Id}")" Appearance="ButtonAppearance.Primary">
+            View details
+        </FluentAnchorButton>
+    </FluentStack>
+</FluentCard>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public required ProductSummary Product { get; set; }
+}
