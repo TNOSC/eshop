@@ -6,7 +6,7 @@
 
 using System.Threading;
 
-namespace Tnosc.Lib.Application.Observabilities;
+namespace Tnosc.Lib.Application.Contexts;
 
 /// <summary>
 /// Ambient, async-flowing correlation id used as the default for exceptions that

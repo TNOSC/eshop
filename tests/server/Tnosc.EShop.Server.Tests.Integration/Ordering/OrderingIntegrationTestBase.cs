@@ -19,7 +19,7 @@ using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Application.Observabilities;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Application.Queries;
 using Tnosc.Lib.Domain.Results;
 

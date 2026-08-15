@@ -15,7 +15,7 @@ namespace Tnosc.Lib.Application.Attributes;
 /// <remarks>
 /// <para>
 /// On a command handler the key is the caller's <c>Idempotency-Key</c>, taken from
-/// <see cref="Observabilities.IdempotencyKeyContext"/>; a repeat of the same key replays the
+/// <see cref="Contexts.IdempotencyKeyContext"/>; a repeat of the same key replays the
 /// original response instead of running the handler again. A marked command handler whose key is
 /// missing <b>fails</b> rather than degrading silently — the attribute is opt-in, so its author
 /// asked for the guarantee.

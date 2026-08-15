@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using Tnosc.Lib.Application.Observabilities;
+using Tnosc.Lib.Application.Contexts;
 
 namespace Tnosc.Lib.Application.Exceptions;
 

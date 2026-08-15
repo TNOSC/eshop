@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Tnosc.Lib.Application.Abstractions.Contexts;
-using Tnosc.Lib.Application.Observabilities;
+using Tnosc.Lib.Application.Contexts;
 
 namespace Tnosc.Lib.Host.Middleware;
 

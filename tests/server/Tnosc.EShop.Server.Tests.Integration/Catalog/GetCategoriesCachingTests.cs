@@ -20,7 +20,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.Queries;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Application.Observabilities;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Domain.Results;
 using Xunit;
 

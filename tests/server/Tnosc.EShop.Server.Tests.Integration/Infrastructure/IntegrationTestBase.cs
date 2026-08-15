@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure.TestModel;
 using Tnosc.Lib.Application.Abstractions.Persistence;
-using Tnosc.Lib.Application.Observabilities;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Xunit;
 
