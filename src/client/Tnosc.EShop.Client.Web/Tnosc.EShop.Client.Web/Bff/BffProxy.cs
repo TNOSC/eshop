@@ -28,20 +28,38 @@ namespace Tnosc.EShop.Client.Web.Bff;
 /// </summary>
 internal static class BffProxy
 {
-    /// <summary>Maps the catch-all forwarding route.</summary>
-    /// <param name="app">The application to map the route on.</param>
-    public static void MapProxy(WebApplication app) =>
+    /// <summary>Maps the catch-all forwarding routes: authenticated, plus an anonymous carve-out.</summary>
+    /// <param name="app">The application to map the routes on.</param>
+    public static void MapProxy(WebApplication app)
+    {
+        // Authenticated: everything under /bff/api. DisableAntiforgery is safe only because
+        // SameOriginRequirement provides a compensating CSRF defence inside ForwardAsync.
         app.Map(pattern: BffRoutes.ApiCatchAll, handler: ForwardAsync)
-            .AllowAnonymous() // task 08 replaces this with RequireAuthorization + a carve-out
-            .DisableAntiforgery(); // safe only because task 08 adds a compensating CSRF defence
+            .RequireAuthorization()
+            .DisableAntiforgery();
+
+        // Carve-out: anonymous GETs against the Catalog read endpoints only, so a signed-out visitor
+        // can still browse the storefront once WASM takes over. GET-only is the important half — a
+        // more specific literal segment (/catalog/) beats the authenticated catch-all's parameter by
+        // ASP.NET Core's route precedence, so this wins for Catalog GETs; everything else, including
+        // POST /api/catalog/products, falls through to the authenticated route above.
+        app.MapGet(pattern: BffRoutes.CatalogCatchAll, handler: ForwardAsync)
+            .AllowAnonymous();
+    }
 
     private static async Task ForwardAsync(
         HttpContext context,
         IHttpClientFactory factory,
         CancellationToken cancellationToken)
     {
-        // Guarded rather than called unconditionally: until task 07 registers AddAuthentication(),
-        // no IAuthenticationService exists, and GetTokenAsync throws rather than returning null.
+        if (!SameOriginRequirement.IsSatisfied(request: context.Request))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return;
+        }
+
+        // Guarded rather than called unconditionally: an anonymous Catalog-read carve-out request has
+        // no authenticated user, and GetTokenAsync throws rather than returning null in that case.
         string? accessToken = context.User.Identity?.IsAuthenticated == true
             ? await context.GetTokenAsync(tokenName: "access_token")
             : null;

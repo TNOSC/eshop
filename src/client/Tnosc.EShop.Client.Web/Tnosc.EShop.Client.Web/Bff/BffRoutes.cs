@@ -10,10 +10,16 @@ namespace Tnosc.EShop.Client.Web.Bff;
 internal static class BffRoutes
 {
     /// <summary>
-    /// Catch-all pattern forwarding every request under <c>/bff/api/</c> to the downstream API,
-    /// preserving the remainder of the path as <c>path</c>.
+    /// Catch-all pattern forwarding every authenticated request under <c>/bff/api/</c> to the
+    /// downstream API, preserving the remainder of the path as <c>path</c>.
     /// </summary>
     public const string ApiCatchAll = "/bff/api/{**path}";
+
+    /// <summary>
+    /// Catch-all pattern for the anonymous carve-out — Catalog read endpoints only, and only for
+    /// <c>GET</c>, so a signed-out visitor can still browse the storefront once WASM takes over.
+    /// </summary>
+    public const string CatalogCatchAll = "/bff/api/catalog/{**path}";
 
     /// <summary>Starts the OIDC code-flow challenge against Keycloak.</summary>
     public const string Login = "/bff/login";

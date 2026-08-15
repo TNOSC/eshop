@@ -29,17 +29,30 @@ public static class ClientServiceCollectionExtensions
     /// An optional callback applied to every typed client's <see cref="IHttpClientBuilder"/>. Used by
     /// the server host to attach <c>ServerAccessTokenHandler</c> to just these clients, rather than to
     /// every <see cref="System.Net.Http.HttpClient"/> in the host via
-    /// <c>ConfigureHttpClientDefaults</c>.
+    /// <c>ConfigureHttpClientDefaults</c>. When omitted — the WASM host's own registration — every
+    /// typed client instead gets <see cref="RequestedWithHandler"/> attached, since a WASM caller has
+    /// no server-side <c>HttpContext</c> to read a token from and needs the same-origin proof the BFF
+    /// proxy checks in its place.
     /// </param>
     public static IServiceCollection AddEShopApiClients(
         this IServiceCollection services,
         Uri baseAddress,
         Action<IHttpClientBuilder>? configure = null)
     {
+        services.AddTransient<RequestedWithHandler>();
+
         IHttpClientBuilder catalog = services.AddHttpClient<ICatalogApi, CatalogApi>(
             name: ApiClientNames.Catalog,
             configureClient: client => client.BaseAddress = baseAddress);
-        configure?.Invoke(obj: catalog);
+
+        if (configure is null)
+        {
+            catalog.AddHttpMessageHandler<RequestedWithHandler>();
+        }
+        else
+        {
+            configure.Invoke(obj: catalog);
+        }
 
         return services;
     }
