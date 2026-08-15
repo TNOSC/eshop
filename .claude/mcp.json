@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "fluent-ui-blazor": {
+      "type": "stdio",
+      "command": "fluentui-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
