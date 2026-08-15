@@ -14,4 +14,7 @@ public static class ApiClientNames
 {
     /// <summary>The Catalog typed client.</summary>
     public const string Catalog = "eshop-catalog";
+
+    /// <summary>The BFF's downstream forwarder client, targeting <c>eshop-host</c> directly.</summary>
+    public const string Downstream = "eshop-downstream";
 }
