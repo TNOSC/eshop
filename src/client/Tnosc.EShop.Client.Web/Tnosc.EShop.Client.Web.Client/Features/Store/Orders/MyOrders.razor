@@ -1,0 +1,38 @@
+@page "/orders"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Contracts.Ordering
+
+<PageTitle>Your orders — Tnosc EShop</PageTitle>
+
+<PageHeader Title="Your orders" />
+
+@if (_problem is not null)
+{
+    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+}
+
+<FluentDataGrid TGridItem="OrderSummary"
+                ItemsProvider="@_ordersProvider"
+                Pagination="@_pagination"
+                ResizableColumns="true"
+                ShowHover="true"
+                OnRowClick="@(row => Navigation.NavigateTo($"/orders/{row.Item?.Id}"))">
+    <ChildContent>
+        <PropertyColumn Property="@(o => o.OrderNumber)" Title="Order #" />
+        <TemplateColumn Title="Status">
+            <FluentBadge>@context.Status</FluentBadge>
+        </TemplateColumn>
+        <TemplateColumn Title="Total" Align="DataGridCellAlignment.End">
+            <MoneyDisplay Amount="@context.TotalAmount" Currency="@context.TotalCurrency" />
+        </TemplateColumn>
+        <PropertyColumn Property="@(o => o.LineCount)" Title="Lines" Align="DataGridCellAlignment.End" />
+        <PropertyColumn Property="@(o => o.PlacedOnUtc)" Title="Placed" Format="g" />
+    </ChildContent>
+    <EmptyContent><FluentLabel>You have not placed any orders yet.</FluentLabel></EmptyContent>
+</FluentDataGrid>
+
+<FluentPaginator State="@_pagination" />

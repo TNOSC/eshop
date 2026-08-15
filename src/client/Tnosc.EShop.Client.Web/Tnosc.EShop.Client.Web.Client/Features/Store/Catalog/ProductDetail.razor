@@ -48,7 +48,9 @@ else
                     <Authorized>
                         <FluentButton Appearance="ButtonAppearance.Primary"
                                       IconStart="@(new Icons.Regular.Size20.Cart())"
-                                      Disabled="@(_product.StockQuantity <= 0)">
+                                      Loading="@_isAddingToBasket"
+                                      Disabled="@(_product.StockQuantity <= 0 || _isAddingToBasket)"
+                                      OnClick="@AddToBasketAsync">
                             Add to basket
                         </FluentButton>
                     </Authorized>

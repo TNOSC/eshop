@@ -7,6 +7,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Extensions;
 
@@ -40,18 +41,37 @@ public static class ClientServiceCollectionExtensions
         Action<IHttpClientBuilder>? configure = null)
     {
         services.AddTransient<RequestedWithHandler>();
+        services.AddScoped<BasketState>();
 
         IHttpClientBuilder catalog = services.AddHttpClient<ICatalogApi, CatalogApi>(
             name: ApiClientNames.Catalog,
             configureClient: client => client.BaseAddress = baseAddress);
 
+        IHttpClientBuilder basket = services.AddHttpClient<IBasketApi, BasketApi>(
+            name: ApiClientNames.Basket,
+            configureClient: client => client.BaseAddress = baseAddress);
+
+        IHttpClientBuilder ordering = services.AddHttpClient<IOrderingApi, OrderingApi>(
+            name: ApiClientNames.Ordering,
+            configureClient: client => client.BaseAddress = baseAddress);
+
+        IHttpClientBuilder identity = services.AddHttpClient<IIdentityApi, IdentityApi>(
+            name: ApiClientNames.Identity,
+            configureClient: client => client.BaseAddress = baseAddress);
+
         if (configure is null)
         {
             catalog.AddHttpMessageHandler<RequestedWithHandler>();
+            basket.AddHttpMessageHandler<RequestedWithHandler>();
+            ordering.AddHttpMessageHandler<RequestedWithHandler>();
+            identity.AddHttpMessageHandler<RequestedWithHandler>();
         }
         else
         {
             configure.Invoke(obj: catalog);
+            configure.Invoke(obj: basket);
+            configure.Invoke(obj: ordering);
+            configure.Invoke(obj: identity);
         }
 
         return services;

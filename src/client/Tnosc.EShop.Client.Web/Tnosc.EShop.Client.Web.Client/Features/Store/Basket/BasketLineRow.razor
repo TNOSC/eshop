@@ -1,0 +1,33 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Contracts.Basket
+
+<FluentStack Orientation="Orientation.Horizontal" HorizontalGap="12" VerticalAlignment="VerticalAlignment.Center">
+    <FluentNumberInput TValue="int"
+                        Min="1"
+                        Value="@Item.Quantity"
+                        ValueChanged="@(quantity => QuantityChanged.InvokeAsync(quantity))"
+                        StepButtons="NumberInputStepVisibility.Visible"
+                        Style="width: 100px;" />
+
+    <MoneyDisplay Amount="@(Item.UnitPriceAmount * Item.Quantity)" Currency="@Item.UnitPriceCurrency" />
+
+    <FluentButton Appearance="ButtonAppearance.Transparent"
+                  IconStart="@(new Icons.Regular.Size20.Delete())"
+                  Title="Remove"
+                  OnClick="@(() => Remove.InvokeAsync())">
+        Remove
+    </FluentButton>
+</FluentStack>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public required BasketItem Item { get; set; }
+
+    [Parameter]
+    public EventCallback<int> QuantityChanged { get; set; }
+
+    [Parameter]
+    public EventCallback Remove { get; set; }
+}

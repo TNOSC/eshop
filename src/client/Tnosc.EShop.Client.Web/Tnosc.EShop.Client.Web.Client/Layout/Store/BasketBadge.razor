@@ -1,6 +1,7 @@
 @namespace Tnosc.EShop.Client.Web.Client.Layout.Store
+@implements IDisposable
 
-<FluentCounterBadge Count="0" ShowZero="false">
+<FluentCounterBadge Count="@BasketState.ItemCount" ShowZero="false">
     <AnchorContent>
         <FluentAnchorButton Href="/basket"
                              Appearance="ButtonAppearance.Transparent"

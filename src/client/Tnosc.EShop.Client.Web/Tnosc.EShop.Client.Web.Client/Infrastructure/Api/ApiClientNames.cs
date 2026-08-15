@@ -15,6 +15,15 @@ public static class ApiClientNames
     /// <summary>The Catalog typed client.</summary>
     public const string Catalog = "eshop-catalog";
 
+    /// <summary>The Basket typed client.</summary>
+    public const string Basket = "eshop-basket";
+
+    /// <summary>The Ordering typed client.</summary>
+    public const string Ordering = "eshop-ordering";
+
+    /// <summary>The Identity typed client.</summary>
+    public const string Identity = "eshop-identity";
+
     /// <summary>The BFF's downstream forwarder client, targeting <c>eshop-host</c> directly.</summary>
     public const string Downstream = "eshop-downstream";
 }
