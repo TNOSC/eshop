@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Client.Web.Client\Tnosc.EShop.Client.Web.Client.csproj" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
 	<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />

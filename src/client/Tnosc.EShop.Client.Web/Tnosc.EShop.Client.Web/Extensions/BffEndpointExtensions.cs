@@ -13,11 +13,17 @@ namespace Tnosc.EShop.Client.Web.Extensions;
 internal static class BffEndpointExtensions
 {
     /// <summary>
-    /// Maps the BFF endpoints. Call after <c>app.UseAntiforgery()</c> and before
-    /// <c>app.MapRazorComponents&lt;App&gt;()</c> — from task 07 onward, also after
-    /// <c>UseAuthentication()</c>/<c>UseAuthorization()</c>, since the proxy reads the authenticated
+    /// Maps the BFF endpoints. Call after <c>UseAuthentication()</c>/<c>UseAuthorization()</c> and
+    /// <c>app.UseAntiforgery()</c>, and before <c>app.MapRazorComponents&lt;App&gt;()</c> — the proxy
+    /// and <see cref="UserInfoEndpoint"/> read the authenticated
     /// <see cref="Microsoft.AspNetCore.Http.HttpContext"/>.
     /// </summary>
     /// <param name="app">The application to map the endpoints on.</param>
-    public static void MapBffEndpoints(this WebApplication app) => BffProxy.MapProxy(app: app);
+    public static void MapBffEndpoints(this WebApplication app)
+    {
+        LoginEndpoint.MapLogin(app: app);
+        LogoutEndpoint.MapLogout(app: app);
+        UserInfoEndpoint.MapUserInfo(app: app);
+        BffProxy.MapProxy(app: app);
+    }
 }

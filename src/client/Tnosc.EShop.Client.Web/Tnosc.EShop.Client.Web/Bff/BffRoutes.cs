@@ -14,4 +14,13 @@ internal static class BffRoutes
     /// preserving the remainder of the path as <c>path</c>.
     /// </summary>
     public const string ApiCatchAll = "/bff/api/{**path}";
+
+    /// <summary>Starts the OIDC code-flow challenge against Keycloak.</summary>
+    public const string Login = "/bff/login";
+
+    /// <summary>Signs out of both the cookie session and Keycloak.</summary>
+    public const string Logout = "/bff/logout";
+
+    /// <summary>Returns the authenticated caller's identity and roles.</summary>
+    public const string UserInfo = "/bff/userinfo";
 }

@@ -49,6 +49,13 @@ ParameterResource postgresPassword = postgres.Resource.PasswordParameter
 // If port 8080 is already taken on the host, DCP cannot allocate it and the Keycloak resource simply
 // never starts — no error is logged, the container just never appears. Symptom: everything else comes
 // up and Keycloak is missing. Fix: free the port, or change the number here.
+//
+// KC_HOSTNAME/KC_HOSTNAME_PORT pin Keycloak to mint ONE canonical issuer
+// (http://localhost:8080/realms/eshop) regardless of who is asking. Without this, the API resolves
+// Keycloak's authority via service discovery (the container-network address) while the web BFF's
+// browser-facing OIDC flow is pinned to localhost:8080 for the same reason a browser cannot resolve a
+// container hostname — and a token minted at one issuer fails validation against the other with a 401
+// that looks like a token bug rather than a hostname mismatch.
 IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloak", port: 8080)
     .WithRealmImport(import: "./Realms")
     .WithEnvironment(name: "KC_DB", value: "postgres")
@@ -58,6 +65,8 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
             $"jdbc:postgresql://{postgres.Resource.PrimaryEndpoint.Property(property: EndpointProperty.HostAndPort)}/keycloakdb"))
     .WithEnvironment(name: "KC_DB_USERNAME", value: postgres.Resource.UserNameReference)
     .WithEnvironment(name: "KC_DB_PASSWORD", value: ReferenceExpression.Create($"{postgresPassword}"))
+    .WithEnvironment(name: "KC_HOSTNAME", value: "localhost")
+    .WithEnvironment(name: "KC_HOSTNAME_PORT", value: "8080")
     .WaitFor(dependency: keycloakDb);
 
 IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
@@ -70,7 +79,9 @@ IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_
 
 builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
     .WithReference(source: eshopHost)
+    .WithReference(source: keycloak)
     .WaitFor(dependency: eshopHost)
+    .WaitFor(dependency: keycloak)
     .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();

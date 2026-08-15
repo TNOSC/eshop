@@ -92,15 +92,21 @@
         "https://localhost:7257/*",
         "http://localhost:5053/*",
         "https://localhost:7257/scalar/*",
-        "http://localhost:5053/scalar/*"
+        "http://localhost:5053/scalar/*",
+        "https://tnosc-eshop-client-web.dev.localhost:7278/*",
+        "http://tnosc-eshop-client-web.dev.localhost:5257/*",
+        "https://localhost:7278/*"
       ],
       "webOrigins": [
         "https://localhost:7257",
-        "http://localhost:5053"
+        "http://localhost:5053",
+        "https://tnosc-eshop-client-web.dev.localhost:7278",
+        "http://tnosc-eshop-client-web.dev.localhost:5257",
+        "https://localhost:7278"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "https://localhost:7257/*##http://localhost:5053/*"
+        "post.logout.redirect.uris": "https://localhost:7257/*##http://localhost:5053/*##https://tnosc-eshop-client-web.dev.localhost:7278/*##http://tnosc-eshop-client-web.dev.localhost:5257/*##https://localhost:7278/*"
       },
       "protocolMappers": [
         {
@@ -114,6 +120,20 @@
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "eshop-realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
           }
         }
       ]
