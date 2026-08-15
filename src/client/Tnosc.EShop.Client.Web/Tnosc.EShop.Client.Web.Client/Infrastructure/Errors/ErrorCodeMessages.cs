@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
-using Tnosc.EShop.Client.Web.Contracts.Common;
+using Tnosc.Lib.Web.Contracts;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 

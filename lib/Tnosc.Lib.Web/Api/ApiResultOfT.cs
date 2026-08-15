@@ -4,9 +4,9 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
-using Tnosc.EShop.Client.Web.Contracts.Common;
+using Tnosc.Lib.Web.Contracts;
 
-namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+namespace Tnosc.Lib.Web.Api;
 
 /// <summary>
 /// The outcome of an API call that returns a <typeparamref name="TValue"/> on success — the

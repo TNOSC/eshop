@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Text;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 
-namespace Tnosc.EShop.Client.Web.Contracts.Common;
+namespace Tnosc.EShop.Client.Web.Contracts.Routes;
 
 /// <summary>
 /// Every API route the client calls, as relative paths — deliberately without a leading slash, since

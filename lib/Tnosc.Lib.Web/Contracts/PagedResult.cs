@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Tnosc.EShop.Client.Web.Contracts.Common;
+namespace Tnosc.Lib.Web.Contracts;
 
 /// <summary>
 /// A single page of <typeparamref name="TItem"/> as returned by the server's paged endpoints.

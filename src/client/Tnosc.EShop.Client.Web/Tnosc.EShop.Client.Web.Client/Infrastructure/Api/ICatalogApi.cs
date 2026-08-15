@@ -9,7 +9,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
-using Tnosc.EShop.Client.Web.Contracts.Common;
+using Tnosc.Lib.Web.Api;
+using Tnosc.Lib.Web.Contracts;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 

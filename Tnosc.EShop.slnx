@@ -9,6 +9,7 @@
     <Project Path="lib/Tnosc.Lib.Domain/Tnosc.Lib.Domain.csproj" Id="7662c2e5-3a3f-4b38-9a19-2b1f32dd97f7" />
     <Project Path="lib/Tnosc.Lib.Host/Tnosc.Lib.Host.csproj" Id="7b7d4852-7e5d-47bc-9ff6-2e28cbe61162" />
     <Project Path="lib/Tnosc.Lib.Infrastructure.Persistence/Tnosc.Lib.Infrastructure.Persistence.csproj" Id="13e82821-77d3-41c7-8c18-b1e7669ba3d5" />
+    <Project Path="lib/Tnosc.Lib.Web/Tnosc.Lib.Web.csproj" Id="27722e50-b9e9-4067-ab91-f2273fde7bea" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

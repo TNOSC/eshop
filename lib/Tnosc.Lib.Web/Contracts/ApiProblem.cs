@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Tnosc.EShop.Client.Web.Contracts.Common;
+namespace Tnosc.Lib.Web.Contracts;
 
 /// <summary>
 /// The ProblemDetails shape returned by the server, covering both the <c>Result</c>-error variant
