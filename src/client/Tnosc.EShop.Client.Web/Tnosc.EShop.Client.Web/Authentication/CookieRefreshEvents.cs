@@ -17,6 +17,7 @@ using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Tnosc.EShop.Client.Web.Extensions;
 
 namespace Tnosc.EShop.Client.Web.Authentication;
 
@@ -78,7 +79,7 @@ internal sealed class CookieRefreshEvents(
             new KeyValuePair<string, string>("refresh_token", refreshToken),
         ]);
 
-        using HttpClient client = httpClientFactory.CreateClient();
+        using HttpClient client = httpClientFactory.CreateClient(name: WebAuthenticationExtensions.KeycloakHttpClientName);
         using HttpResponseMessage response = await client.PostAsync(
             requestUri: configuration.TokenEndpoint,
             content: content,

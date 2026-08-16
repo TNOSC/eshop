@@ -14,9 +14,11 @@ namespace Tnosc.EShop.Client.Web.Authentication;
 
 /// <summary>
 /// Reads Keycloak's <c>realm_access.roles</c> claim out of the raw access token and adds a
-/// <see cref="ClaimTypes.Role"/> claim per role to the OIDC principal.
+/// <see cref="ClaimTypes.Role"/> claim per role to the OIDC principal, and mirrors the ID token's
+/// <c>sub</c> claim onto <see cref="ClaimTypes.NameIdentifier"/>.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This is a deliberate duplicate of
 /// <c>Tnosc.EShop.Server.Host.Authentication.KeycloakClaimsTransformation</c> — the web project cannot
 /// reference <c>Server.Host</c>, and a shared project would couple this client to the server's
@@ -25,18 +27,41 @@ namespace Tnosc.EShop.Client.Web.Authentication;
 /// <c>oidc-usermodel-realm-role-mapper</c> protocol mapper is present (see
 /// <c>aspire/Tnosc.EShop.AppHost/Realms/eshop-realm.json</c>). Reading the access token here is what
 /// makes role-based authorization work even against an unmodified realm.
+/// </para>
+/// <para>
+/// <see cref="WebAuthenticationExtensions.AddEShopBffAuthentication"/> sets <c>MapInboundClaims =
+/// false</c>, so the principal keeps the token's raw <c>sub</c> claim type rather than
+/// <see cref="ClaimTypes.NameIdentifier"/>. <c>UserInfoEndpoint</c> and
+/// <c>PersistingRevalidatingAuthenticationStateProvider</c> both read the caller's id via
+/// <see cref="ClaimTypes.NameIdentifier"/>, so without this the id comes back empty — silently, since
+/// neither of those call sites treats a missing id as an error.
 /// </remarks>
 internal static class KeycloakRoleClaimsTransformation
 {
     private const string RealmAccessClaimType = "realm_access";
+    private const string SubjectClaimType = "sub";
 
-    /// <summary>Adds a role claim per Keycloak realm role found in the validated access token.</summary>
+    /// <summary>
+    /// Adds a role claim per Keycloak realm role found in the validated access token, and a
+    /// <see cref="ClaimTypes.NameIdentifier"/> claim mirroring the ID token's <c>sub</c>.
+    /// </summary>
     /// <param name="context">The token-validated context supplied by the OIDC handler.</param>
     /// <returns>A completed task.</returns>
     public static Task OnTokenValidatedAsync(TokenValidatedContext context)
     {
+        if (context.Principal?.Identity is not ClaimsIdentity identity)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (identity.FindFirst(type: ClaimTypes.NameIdentifier) is null
+            && identity.FindFirst(type: SubjectClaimType) is { Value.Length: > 0 } subjectClaim)
+        {
+            identity.AddClaim(claim: new Claim(type: ClaimTypes.NameIdentifier, value: subjectClaim.Value));
+        }
+
         string? accessToken = context.TokenEndpointResponse?.AccessToken;
-        if (accessToken is null || context.Principal?.Identity is not ClaimsIdentity identity)
+        if (accessToken is null)
         {
             return Task.CompletedTask;
         }

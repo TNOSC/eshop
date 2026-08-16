@@ -19,7 +19,11 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveAuto" />
+    @* No rendermode here: Routes.razor lives in this Server project, which is never shipped to the
+       WASM bundle, so an interactive mode on Routes itself fails at runtime once WebAssembly is
+       chosen ("Root component type ... could not be found"). Each routable page in .Client instead
+       declares its own rendermode. *@
+    <Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>

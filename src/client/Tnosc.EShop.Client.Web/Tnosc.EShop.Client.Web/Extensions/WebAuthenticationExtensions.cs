@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Net.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -26,6 +27,14 @@ namespace Tnosc.EShop.Client.Web.Extensions;
 internal static class WebAuthenticationExtensions
 {
     private const string KeycloakServiceName = "keycloak";
+
+    /// <summary>
+    /// Name of the <see cref="IHttpClientFactory"/> client <see cref="CookieRefreshEvents"/> uses for
+    /// the <c>refresh_token</c> grant — carries the same Development-only certificate relaxation as
+    /// <see cref="ConfigureOpenIdConnect"/>'s <c>BackchannelHttpHandler</c>, so both backchannel calls
+    /// to Keycloak trust the same self-signed certificate.
+    /// </summary>
+    internal const string KeycloakHttpClientName = "Keycloak";
 
     /// <summary>
     /// Binds <see cref="OidcOptions"/>, registers the cookie scheme and the Keycloak OIDC challenge
@@ -71,6 +80,13 @@ internal static class WebAuthenticationExtensions
         builder.Services.AddTransient<CookieRefreshEvents>();
 
         bool isDevelopment = builder.Environment.IsDevelopment();
+
+        IHttpClientBuilder keycloakHttpClientBuilder = builder.Services.AddHttpClient(name: KeycloakHttpClientName);
+        if (isDevelopment)
+        {
+            keycloakHttpClientBuilder.ConfigurePrimaryHttpMessageHandler(
+                configureHandler: static () => CreateDevelopmentKeycloakHandler());
+        }
 
         builder.Services.AddAuthentication(configureOptions: options =>
             {
@@ -123,8 +139,24 @@ internal static class WebAuthenticationExtensions
 
         if (isDevelopment)
         {
-            options.Authority = $"http://localhost:8080/realms/{oidcOptions.Realm}";
-            options.RequireHttpsMetadata = false;
+            options.Authority = $"https://localhost:8080/realms/{oidcOptions.Realm}";
+            // AddKeycloak provisions an ephemeral, per-run self-signed HTTPS certificate for the
+            // container's published endpoint (see aspire.dev.internal / KC_HTTPS_CERTIFICATE_FILE on
+            // the Keycloak resource) — the host OS never trusts it. Discovery and the code exchange
+            // both go through this handler, so this is the one place that needs to accept it.
+            options.BackchannelHttpHandler = CreateDevelopmentKeycloakHandler();
         }
     }
+
+    // Trusts the same ephemeral, per-run self-signed certificate the Development Authority above
+    // talks to. Shared with CookieRefreshEvents's KeycloakHttpClientName client, which performs the
+    // same kind of backchannel call (the refresh_token grant) against the same Keycloak endpoint.
+#pragma warning disable MA0039, S4830 // Development-only: Aspire provisions an ephemeral, per-run self-signed certificate for the Keycloak container endpoint that the OS never trusts; there is no chain to validate against.
+    private static HttpClientHandler CreateDevelopmentKeycloakHandler() =>
+        new()
+        {
+            ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+        };
+#pragma warning restore MA0039, S4830
 }
