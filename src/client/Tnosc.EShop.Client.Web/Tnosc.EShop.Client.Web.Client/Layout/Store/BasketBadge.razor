@@ -1,13 +1,14 @@
 @namespace Tnosc.EShop.Client.Web.Client.Layout.Store
 @implements IDisposable
 
-<FluentCounterBadge Count="@BasketState.ItemCount" ShowZero="false">
-    <AnchorContent>
-        <FluentAnchorButton Href="/basket"
-                             Appearance="ButtonAppearance.Transparent"
-                             IconOnly="true"
-                             Title="Basket">
-            <FluentIcon Value="@(new Icons.Regular.Size20.Cart())" />
-        </FluentAnchorButton>
-    </AnchorContent>
-</FluentCounterBadge>
+<a class="eshop-basket-badge" href="/basket" title="Basket" aria-label="Basket">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+        <path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6.2"/>
+        <circle cx="9.5" cy="20.5" r="1.25"/>
+        <circle cx="17" cy="20.5" r="1.25"/>
+    </svg>
+    @if (BasketState.ItemCount > 0)
+    {
+        <span class="eshop-basket-count">@BasketState.ItemCount</span>
+    }
+</a>

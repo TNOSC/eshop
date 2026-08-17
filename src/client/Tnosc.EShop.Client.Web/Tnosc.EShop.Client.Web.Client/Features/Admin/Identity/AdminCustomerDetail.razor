@@ -21,7 +21,7 @@ else
     <PageHeader Title="@_customer.Email" Subtitle="@(_customer.IsActive ? "Active" : "Inactive")" />
 
     <FluentCard Margin="Margin.Top3">
-        <FluentText Weight="TextWeight.Semibold">Profile</FluentText>
+        <FluentText As="TextTag.H2" Class="eshop-h2">Profile</FluentText>
 
         <EditForm EditContext="@_profileEditContext" OnValidSubmit="@SaveProfileAsync">
             <DataAnnotationsValidator />
@@ -48,7 +48,7 @@ else
     </FluentCard>
 
     <FluentCard Margin="Margin.Top3">
-        <FluentText Weight="TextWeight.Semibold">Addresses</FluentText>
+        <FluentText As="TextTag.H2" Class="eshop-h2">Addresses</FluentText>
 
         <FluentDataGrid TGridItem="CustomerAddress" Items="@_customer.Addresses.AsQueryable()" ResizableColumns="true">
             <ChildContent>

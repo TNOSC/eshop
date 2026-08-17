@@ -1,0 +1,17 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Catalog
+
+<img class="eshop-product-image"
+     alt="@Alt"
+     src="@ProductImageResolver.For(sku: Sku)"
+     loading="lazy" />
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string Sku { get; set; } = string.Empty;
+
+    [Parameter]
+    [EditorRequired]
+    public string Alt { get; set; } = string.Empty;
+}

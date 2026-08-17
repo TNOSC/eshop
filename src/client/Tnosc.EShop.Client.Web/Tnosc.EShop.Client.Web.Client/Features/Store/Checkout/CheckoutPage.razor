@@ -5,11 +5,14 @@
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Contracts.Basket
+@using Tnosc.EShop.Client.Web.Contracts.Identity
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Checkout — Tnosc EShop</PageTitle>
 
-<PageHeader Title="Checkout" />
+<StoreHero Title="Checkout" />
 
+<div class="eshop-page">
 @if (_problem is not null)
 {
     <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
@@ -20,51 +23,52 @@ else if (_isLoading || _basket is null || _customer is null)
 }
 else if (_basket.Items.Count == 0)
 {
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12" Margin="Margin.Top4">
-        <FluentText>Your basket is empty — there is nothing to check out.</FluentText>
-        <FluentAnchorButton Href="/products" Appearance="ButtonAppearance.Primary">Browse products</FluentAnchorButton>
-    </FluentStack>
+    <p>Your shopping bag is empty — there is nothing to check out. <a href="/products">Continue shopping.</a></p>
 }
 else if (_customer.DefaultAddressId is null)
 {
-    <FluentText>You need a default delivery address before you can place an order. Contact support to have one added.</FluentText>
+    <p>You need a default delivery address before you can place an order. Contact support to have one added.</p>
 }
 else
 {
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-        <FluentCard>
-            <FluentText Weight="TextWeight.Semibold">Delivery address</FluentText>
-            @{
-                var address = _customer.Addresses.First(a => a.Id == _customer.DefaultAddressId);
-            }
-            <FluentText>@address.Street</FluentText>
-            <FluentText>@address.PostalCode @address.City, @address.Country</FluentText>
-        </FluentCard>
+    CustomerAddress address = _customer.Addresses.First(a => a.Id == _customer.DefaultAddressId);
+    <div class="eshop-checkout">
+        <section class="eshop-form-section">
+            <h2 class="eshop-h2">Delivery address</h2>
+            <p>@address.Street</p>
+            <p>@address.PostalCode @address.City, @address.Country</p>
+        </section>
 
-        <FluentCard>
-            <FluentText Weight="TextWeight.Semibold">Items</FluentText>
+        <section class="eshop-form-section">
+            <h2 class="eshop-h2">Items</h2>
             @foreach (BasketItem item in _basket.Items)
             {
-                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                    <FluentText>@item.ProductName × @item.Quantity</FluentText>
+                <div class="eshop-checkout-line">
+                    <span>@item.ProductName × @item.Quantity</span>
                     <MoneyDisplay Amount="@(item.UnitPriceAmount * item.Quantity)" Currency="@item.UnitPriceCurrency" />
-                </FluentStack>
+                </div>
             }
             @if (_basket.TotalAmount is { } totalAmount && _basket.TotalCurrency is { } totalCurrency)
             {
-                <FluentDivider />
-                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-                    <FluentText Weight="TextWeight.Semibold">Total</FluentText>
+                <div class="eshop-checkout-line total">
+                    <span>Total</span>
                     <MoneyDisplay Amount="@totalAmount" Currency="@totalCurrency" />
-                </FluentStack>
+                </div>
             }
-        </FluentCard>
+        </section>
 
-        <FluentButton Appearance="ButtonAppearance.Primary"
-                      Loading="@_isPlacingOrder"
-                      Disabled="@_isPlacingOrder"
-                      OnClick="@PlaceOrderAsync">
-            Place order
-        </FluentButton>
-    </FluentStack>
+        <div class="eshop-form-buttons">
+            <a class="eshop-button eshop-button-secondary" href="/basket">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" />
+                Back to the shopping bag
+            </a>
+            <FluentButton Appearance="ButtonAppearance.Primary"
+                          Loading="@_isPlacingOrder"
+                          Disabled="@_isPlacingOrder"
+                          OnClick="@PlaceOrderAsync">
+                Place order
+            </FluentButton>
+        </div>
+    </div>
 }
+</div>

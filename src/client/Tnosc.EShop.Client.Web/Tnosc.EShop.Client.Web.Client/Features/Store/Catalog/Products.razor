@@ -2,47 +2,55 @@
 @rendermode InteractiveAuto
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
 @using Tnosc.EShop.Client.Web.Contracts.Catalog
 
 <PageTitle>Catalogue — Tnosc EShop</PageTitle>
 
-<PageHeader Title="Catalogue" Subtitle="Browse everything in the store." />
+<StoreHero Title="Catalogue" Subtitle="Browse everything in the store." />
 
-<ProductFilters Search="@Search"
-                SearchChanged="@OnSearchChangedAsync"
-                CategoryId="@CategoryId"
-                CategoryIdChanged="@OnCategoryIdChangedAsync"
-                Categories="@_categories" />
-
-@if (_problem is not null)
-{
-    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
-}
-else if (_isLoading)
-{
-    <FluentGrid Spacing="3">
-        @for (int i = 0; i < PageSize; i++)
+<div class="eshop-page eshop-catalog">
+    <ProductFilters Search="@Search"
+                    SearchChanged="@OnSearchChangedAsync"
+                    CategoryId="@CategoryId"
+                    Categories="@_categories" />
+    <div class="eshop-catalog-results">
+        @if (_problem is not null)
         {
-            <FluentGridItem Xs="12" Sm="6" Md="4" Lg="3">
-                <FluentSkeleton Height="220px" />
-            </FluentGridItem>
+            <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
         }
-    </FluentGrid>
-}
-else if (_products.Count == 0)
-{
-    <PageHeader Title="No products found" Subtitle="Try a different search or category." />
-}
-else
-{
-    <FluentGrid Spacing="3">
-        @foreach (ProductSummary product in _products)
+        else if (_isLoading)
         {
-            <FluentGridItem Xs="12" Sm="6" Md="4" Lg="3">
-                <ProductCard Product="@product" />
-            </FluentGridItem>
+            <div class="eshop-catalog-items">
+                @for (int i = 0; i < PageSize; i++)
+                {
+                    <div class="eshop-card eshop-card-skeleton">
+                        <FluentSkeleton Height="220px" />
+                    </div>
+                }
+            </div>
         }
-    </FluentGrid>
+        else if (_products.Count == 0)
+        {
+            <p class="eshop-catalog-empty">No products found. Try a different search or category.</p>
+        }
+        else
+        {
+            <div class="eshop-catalog-items">
+                @foreach (ProductSummary product in _products)
+                {
+                    <ProductCard Product="@product" />
+                }
+            </div>
 
-    <FluentPaginator State="@_pagination" CurrentPageIndexChanged="@OnPageIndexChangedAsync" />
-}
+            <div class="eshop-pages">
+                @for (int i = 0; i < _pagination.LastPageIndex + 1; i++)
+                {
+                    int pageIndex = i;
+                    <a class="@(pageIndex == _pagination.CurrentPageIndex ? "active" : "")"
+                       href="@PageUri(pageIndex)">@(pageIndex + 1)</a>
+                }
+            </div>
+        }
+    </div>
+</div>

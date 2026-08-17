@@ -1,0 +1,60 @@
+.eshop-card {
+    flex-basis: calc(33.33% - var(--eshop-grid-gap));
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 2px;
+    position: relative;
+}
+
+.eshop-card:hover {
+    cursor: pointer;
+    padding: 0;
+    border: 2px solid var(--eshop-ink);
+}
+
+.eshop-card-link {
+    text-decoration: none;
+    display: block;
+}
+
+.eshop-card-content {
+    display: flex;
+    padding: 0 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.eshop-card-name {
+    color: var(--eshop-ink);
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+    line-height: var(--eshop-body-line);
+    text-align: left;
+}
+
+.eshop-card-price {
+    color: var(--eshop-muted);
+    margin-left: auto;
+    text-align: right;
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-card-flag {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--eshop-status-bad);
+    color: var(--eshop-on-ink);
+    font-size: var(--eshop-chip-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+@media only screen and (max-width: 480px) {
+    .eshop-card { flex-basis: calc(100% - 2rem); }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .eshop-card { flex-basis: calc(50% - 3rem); }
+}

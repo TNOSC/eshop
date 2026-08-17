@@ -1,0 +1,10 @@
+.eshop-order-placed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--eshop-status-good);
+    background: var(--eshop-panel);
+    color: var(--eshop-ink);
+}

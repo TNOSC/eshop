@@ -1,12 +1,12 @@
 @namespace Tnosc.EShop.Client.Web.Client.Features.Shared
 
 <FluentStack Orientation="Orientation.Vertical" VerticalGap="4">
-    <FluentText As="TextTag.H1" Size="TextSize.Size700" Weight="TextWeight.Semibold">
+    <FluentText As="TextTag.H1" Class="eshop-page-header-title">
         @Title
     </FluentText>
     @if (!string.IsNullOrEmpty(Subtitle))
     {
-        <FluentText Color="Color.Lightweight">@Subtitle</FluentText>
+        <FluentText Class="eshop-page-header-subtitle">@Subtitle</FluentText>
     }
 </FluentStack>
 

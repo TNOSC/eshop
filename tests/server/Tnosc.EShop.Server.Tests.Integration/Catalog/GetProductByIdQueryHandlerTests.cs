@@ -66,6 +66,7 @@ public sealed class GetProductByIdQueryHandlerTests(PostgresFixture fixture) : C
         dto.PriceCurrency.ShouldBe(expected: currency);
         dto.StockQuantity.ShouldBe(expected: stock);
         dto.BrandId.ShouldBe(expected: brand.Id.Value);
+        dto.BrandName.ShouldBe(expected: brand.Name);
         dto.CategoryId.ShouldBe(expected: category.Id.Value);
         dto.IsDiscontinued.ShouldBeFalse();
     }

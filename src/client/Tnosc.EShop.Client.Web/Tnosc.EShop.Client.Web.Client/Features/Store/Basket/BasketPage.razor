@@ -5,11 +5,13 @@
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Contracts.Basket
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Basket — Tnosc EShop</PageTitle>
 
-<PageHeader Title="Your basket" />
+<StoreHero Title="Your shopping bag" />
 
+<div class="eshop-page">
 @if (_problem is not null)
 {
     <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
@@ -20,39 +22,48 @@ else if (_isLoading || _basket is null)
 }
 else if (_basket.Items.Count == 0)
 {
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12" Margin="Margin.Top4">
-        <FluentText>Your basket is empty.</FluentText>
-        <FluentAnchorButton Href="/products" Appearance="ButtonAppearance.Primary">Browse products</FluentAnchorButton>
-    </FluentStack>
+    <p>Your shopping bag is empty. <a href="/products">Continue shopping.</a></p>
 }
 else
 {
-    <FluentDataGrid TGridItem="BasketItem" Items="@_basket.Items.AsQueryable()" ResizableColumns="true" ShowHover="true">
-        <ChildContent>
-            <PropertyColumn Property="@(i => i.Sku)" Title="SKU" />
-            <PropertyColumn Property="@(i => i.ProductName)" Title="Product" />
-            <TemplateColumn Title="Unit price" Align="DataGridCellAlignment.End">
-                <MoneyDisplay Amount="@context.UnitPriceAmount" Currency="@context.UnitPriceCurrency" />
-            </TemplateColumn>
-            <TemplateColumn Title="Quantity / Total" Align="DataGridCellAlignment.End">
-                <BasketLineRow Item="@context"
-                               QuantityChanged="@(quantity => ChangeQuantityAsync(item: context, quantity: quantity))"
-                               Remove="@(() => RemoveItemAsync(item: context))" />
-            </TemplateColumn>
-        </ChildContent>
-    </FluentDataGrid>
+    <div class="eshop-cart">
+        <div class="eshop-cart-items">
+            <div class="eshop-cart-header">
+                <div class="eshop-cart-info">Products</div>
+                <div class="eshop-cart-qty">Quantity</div>
+                <div class="eshop-cart-total">Total</div>
+            </div>
 
-    <FluentStack Orientation="Orientation.Horizontal"
-                 HorizontalAlignment="HorizontalAlignment.End"
-                 VerticalAlignment="VerticalAlignment.Center"
-                 HorizontalGap="16"
-                 Margin="Margin.Top4">
-        @if (_basket.TotalAmount is { } totalAmount && _basket.TotalCurrency is { } totalCurrency)
-        {
-            <FluentText Weight="TextWeight.Semibold">
-                Total: <MoneyDisplay Amount="@totalAmount" Currency="@totalCurrency" />
-            </FluentText>
-        }
-        <FluentAnchorButton Href="/checkout" Appearance="ButtonAppearance.Primary">Checkout</FluentAnchorButton>
-    </FluentStack>
+            @foreach (BasketItem item in _basket.Items)
+            {
+                <BasketLineRow Item="@item"
+                               QuantityChanged="@(quantity => ChangeQuantityAsync(item: item, quantity: quantity))"
+                               Remove="@(() => RemoveItemAsync(item: item))"
+                               @key="item.Sku" />
+            }
+        </div>
+
+        <aside class="eshop-cart-summary">
+            <div class="eshop-cart-summary-inner">
+                <div class="eshop-cart-summary-header">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Cart())" />
+                    Your shopping bag
+                    <span class="eshop-cart-count">@_basket.Items.Count</span>
+                </div>
+                @if (_basket.TotalAmount is { } totalAmount && _basket.TotalCurrency is { } totalCurrency)
+                {
+                    <div class="eshop-cart-summary-total">
+                        <div>Total</div>
+                        <div><MoneyDisplay Amount="@totalAmount" Currency="@totalCurrency" /></div>
+                    </div>
+                }
+                <a class="eshop-button eshop-button-primary" href="/checkout">Check out</a>
+                <a class="eshop-cart-summary-link" href="/products">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" />
+                    Continue shopping
+                </a>
+            </div>
+        </aside>
+    </div>
 }
+</div>

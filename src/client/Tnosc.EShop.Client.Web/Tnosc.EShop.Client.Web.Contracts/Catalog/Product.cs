@@ -18,5 +18,6 @@ public sealed record Product(
     string PriceCurrency,
     int StockQuantity,
     Guid BrandId,
+    string BrandName,
     Guid CategoryId,
     bool IsDiscontinued);

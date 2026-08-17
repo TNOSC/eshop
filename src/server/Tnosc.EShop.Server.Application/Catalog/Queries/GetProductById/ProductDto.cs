@@ -19,6 +19,7 @@ namespace Tnosc.EShop.Server.Application.Catalog.Queries.GetProductById;
 /// <param name="PriceCurrency">The product's current price currency.</param>
 /// <param name="StockQuantity">The number of units currently on hand.</param>
 /// <param name="BrandId">The identifier of the product's brand.</param>
+/// <param name="BrandName">The name of the product's brand.</param>
 /// <param name="CategoryId">The identifier of the product's category.</param>
 /// <param name="IsDiscontinued">Whether the product has been withdrawn from sale.</param>
 public sealed record ProductDto(
@@ -30,5 +31,6 @@ public sealed record ProductDto(
     string PriceCurrency,
     int StockQuantity,
     Guid BrandId,
+    string BrandName,
     Guid CategoryId,
     bool IsDiscontinued);

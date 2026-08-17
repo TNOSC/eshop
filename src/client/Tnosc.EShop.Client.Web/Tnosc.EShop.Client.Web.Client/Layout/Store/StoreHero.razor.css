@@ -1,0 +1,48 @@
+.eshop-hero {
+    position: relative;
+    height: var(--eshop-hero-short);
+    margin-bottom: 4rem;
+    overflow: hidden;
+}
+
+.eshop-hero.tall {
+    height: var(--eshop-hero-tall);
+    margin-bottom: 0;
+}
+
+.eshop-hero-image {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, var(--eshop-surface) 0%, transparent 70%),
+                      url("/images/hero.webp");
+    background-size: cover;
+    background-position: center;
+}
+
+.eshop-hero.tall .eshop-hero-image {
+    background-image: linear-gradient(to right, var(--eshop-surface) 0%, transparent 70%),
+                      url("/images/hero-home.webp");
+}
+
+.eshop-hero-content {
+    position: absolute;
+    bottom: 3rem;
+    max-width: 48rem;
+    padding-inline: var(--eshop-gutter);
+}
+
+.eshop-hero-content h1 {
+    color: var(--eshop-ink);
+    font-size: var(--eshop-hero-size);
+    font-weight: var(--eshop-weight-bold);
+    line-height: var(--eshop-hero-line);
+    margin: 0;
+}
+
+.eshop-hero-content p {
+    color: var(--eshop-ink);
+    font-size: var(--eshop-sub-size);
+    font-weight: var(--eshop-weight-bold);
+    line-height: var(--eshop-sub-line);
+    margin: 0;
+}

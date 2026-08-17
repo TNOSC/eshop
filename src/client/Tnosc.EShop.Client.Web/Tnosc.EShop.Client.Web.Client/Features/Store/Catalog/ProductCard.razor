@@ -2,25 +2,23 @@
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Contracts.Catalog
 
-<FluentCard data-testid="product-card" Shadow="CardShadow.Small">
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="8">
-        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-            <FluentText Weight="TextWeight.Semibold" data-testid="product-card-name">@Product.Name</FluentText>
-            @if (Product.StockQuantity <= 0)
-            {
-                <FluentBadge Color="BadgeColor.Danger" Content="Out of stock" />
-            }
-        </FluentStack>
-
-        <FluentText Color="Color.Lightweight">@Product.BrandName · @Product.CategoryName</FluentText>
-
-        <MoneyDisplay Amount="@Product.PriceAmount" Currency="@Product.PriceCurrency" />
-
-        <FluentAnchorButton Href="@($"/products/{Product.Id}")" Appearance="ButtonAppearance.Primary">
-            View details
-        </FluentAnchorButton>
-    </FluentStack>
-</FluentCard>
+<div class="eshop-card" data-testid="product-card">
+    <a class="eshop-card-link" href="@($"/products/{Product.Id}")">
+        <span class="eshop-card-image">
+            <ProductImage Sku="@Product.Sku" Alt="@Product.Name" />
+        </span>
+        <span class="eshop-card-content">
+            <span class="eshop-card-name" data-testid="product-card-name">@Product.Name</span>
+            <span class="eshop-card-price">
+                <MoneyDisplay Amount="@Product.PriceAmount" Currency="@Product.PriceCurrency" />
+            </span>
+        </span>
+    </a>
+    @if (Product.StockQuantity <= 0)
+    {
+        <span class="eshop-card-flag">Out of stock</span>
+    }
+</div>
 
 @code {
     [Parameter]

@@ -4,6 +4,10 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
@@ -14,15 +18,17 @@ using Tnosc.Lib.Web.Contracts;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders;
 
-/// <summary>The caller's own order history: a server-paged grid, newest first.</summary>
+/// <summary>The caller's own order history: a paged list, newest first, with the page reflected in
+/// the URL so a shared link and the back button reproduce the same view.</summary>
 public partial class MyOrders : ComponentBase
 {
     private const int PageSize = 20;
 
     private readonly PaginationState _pagination = new() { ItemsPerPage = PageSize };
 
-    private GridItemsProvider<OrderSummary> _ordersProvider = default!;
+    private IReadOnlyList<OrderSummary> _orders = [];
     private ApiProblem? _problem;
+    private bool _isLoading = true;
 
     [Inject]
     public IOrderingApi OrderingApi { get; set; } = null!;
@@ -30,27 +36,57 @@ public partial class MyOrders : ComponentBase
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;
 
-    protected override void OnInitialized() => _ordersProvider = ProvideOrdersAsync;
+    [SupplyParameterFromQuery(Name = "page")]
+    [Parameter]
+    public int? Page { get; set; }
 
-    private async ValueTask<GridItemsProviderResult<OrderSummary>> ProvideOrdersAsync(
-        GridItemsProviderRequest<OrderSummary> request)
+    protected override async Task OnParametersSetAsync()
     {
-        int page = (request.StartIndex / PageSize) + 1;
+        int requestedPageIndex = Math.Max(val1: 0, val2: (Page ?? 1) - 1);
 
-        ApiResult<PagedResult<OrderSummary>> result = await OrderingApi.GetMyOrdersAsync(
-            page: page,
-            pageSize: PageSize,
-            cancellationToken: request.CancellationToken);
-
-        if (!result.IsSuccess)
+        if (_pagination.CurrentPageIndex != requestedPageIndex)
         {
-            _problem = result.Problem;
-            return GridItemsProviderResult.From<OrderSummary>(items: [], totalItemCount: 0);
+            await _pagination.SetCurrentPageIndexAsync(pageIndex: requestedPageIndex);
         }
 
+        await LoadOrdersAsync();
+    }
+
+    private async Task LoadOrdersAsync()
+    {
+        _isLoading = true;
         _problem = null;
-        return GridItemsProviderResult.From<OrderSummary>(
-            items: [.. result.Value.Items],
-            totalItemCount: (int)result.Value.TotalCount);
+
+        ApiResult<PagedResult<OrderSummary>> result = await OrderingApi.GetMyOrdersAsync(
+            page: _pagination.CurrentPageIndex + 1,
+            pageSize: PageSize,
+            cancellationToken: CancellationToken.None);
+
+        if (result.IsSuccess)
+        {
+            _orders = result.Value.Items;
+            await _pagination.SetTotalItemCountAsync(
+                totalItemCount: (int)result.Value.TotalCount,
+                force: false);
+        }
+        else
+        {
+            _problem = result.Problem;
+            _orders = [];
+        }
+
+        _isLoading = false;
+    }
+
+    private string PageUri(int pageIndex)
+    {
+        int page = pageIndex + 1;
+
+        Dictionary<string, object?> queryParameters = new(comparer: StringComparer.Ordinal)
+        {
+            ["page"] = page == 1 ? null : page.ToString(provider: CultureInfo.InvariantCulture),
+        };
+
+        return Navigation.GetUriWithQueryParameters(parameters: queryParameters);
     }
 }

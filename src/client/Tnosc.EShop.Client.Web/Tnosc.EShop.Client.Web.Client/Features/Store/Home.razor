@@ -1,11 +1,13 @@
 @page "/"
 @rendermode InteractiveAuto
-@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Tnosc EShop</PageTitle>
 
-<PageHeader Title="Welcome to Tnosc EShop" Subtitle="Browse the catalogue and start shopping." />
+<StoreHero Title="Ready for a new adventure?" Subtitle="Start the season with the latest in the catalogue." Tall="true" />
 
-<FluentAnchorButton Href="/products" Appearance="ButtonAppearance.Primary" IconStart="@(new Icons.Regular.Size20.Box())">
-    Browse the catalogue
-</FluentAnchorButton>
+<div class="eshop-page">
+    <FluentAnchorButton Href="/products" Appearance="ButtonAppearance.Primary" IconStart="@(new Icons.Regular.Size20.Box())">
+        Browse the catalogue
+    </FluentAnchorButton>
+</div>

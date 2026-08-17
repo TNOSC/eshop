@@ -109,11 +109,19 @@ public partial class Products : ComponentBase
     private Task OnSearchChangedAsync(string? search) =>
         NavigateAsync(search: search, categoryId: CategoryId, page: 1);
 
-    private Task OnCategoryIdChangedAsync(Guid? categoryId) =>
-        NavigateAsync(search: Search, categoryId: categoryId, page: 1);
+    private string PageUri(int pageIndex)
+    {
+        int page = pageIndex + 1;
 
-    private Task OnPageIndexChangedAsync(int pageIndex) =>
-        NavigateAsync(search: Search, categoryId: CategoryId, page: pageIndex + 1);
+        Dictionary<string, object?> queryParameters = new(comparer: StringComparer.Ordinal)
+        {
+            ["search"] = string.IsNullOrWhiteSpace(value: Search) ? null : Search,
+            ["categoryId"] = CategoryId,
+            ["page"] = page == 1 ? null : page.ToString(provider: CultureInfo.InvariantCulture),
+        };
+
+        return Navigation.GetUriWithQueryParameters(parameters: queryParameters);
+    }
 
     private Task NavigateAsync(string? search, Guid? categoryId, int page)
     {

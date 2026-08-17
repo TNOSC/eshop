@@ -1,0 +1,56 @@
+.eshop-navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background: transparent;
+}
+
+.eshop-navbar-inner {
+    max-width: var(--eshop-max);
+    margin-inline: auto;
+    padding-inline: var(--eshop-gutter);
+    min-height: var(--eshop-navbar-height);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.eshop-logo {
+    margin-right: auto;
+    color: var(--eshop-ink);
+    width: 20vw;
+    max-width: 250px;
+    min-width: 100px;
+    display: flex;
+}
+
+.eshop-navlinks {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.eshop-navlinks a {
+    color: var(--eshop-ink);
+    text-decoration: none;
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-navlinks a.active {
+    text-decoration: underline;
+    text-underline-offset: 0.4rem;
+}
+
+.eshop-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media only screen and (max-width: 480px) {
+    .eshop-navlinks { display: none; }
+}

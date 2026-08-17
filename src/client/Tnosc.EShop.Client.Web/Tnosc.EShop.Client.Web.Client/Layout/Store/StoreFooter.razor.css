@@ -1,0 +1,21 @@
+.eshop-footer {
+    margin-top: 3.5rem;
+    background-color: var(--eshop-ink);
+    width: 100%;
+}
+
+.eshop-footer-inner {
+    max-width: var(--eshop-max);
+    margin-inline: auto;
+    padding: 3.5rem var(--eshop-gutter);
+    color: var(--eshop-on-ink);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.eshop-logo-footer {
+    margin-right: auto;
+    color: var(--eshop-on-ink);
+    width: 100px;
+}

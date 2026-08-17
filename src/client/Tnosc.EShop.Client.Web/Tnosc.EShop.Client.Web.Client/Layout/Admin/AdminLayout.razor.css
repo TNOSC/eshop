@@ -1,0 +1,16 @@
+::deep .eshop-admin-header {
+    background: var(--eshop-surface);
+    border-bottom: 1px solid var(--eshop-rule);
+}
+
+::deep .eshop-admin-rail {
+    background: var(--eshop-surface);
+    border-right: 1px solid var(--eshop-rule);
+}
+
+::deep .eshop-admin-brand {
+    color: var(--eshop-ink);
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+    text-decoration: none;
+}

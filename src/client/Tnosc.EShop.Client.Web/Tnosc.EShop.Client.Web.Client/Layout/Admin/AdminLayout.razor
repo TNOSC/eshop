@@ -3,17 +3,17 @@
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <FluentLayout>
-    <FluentLayoutItem Area="LayoutArea.Header" Sticky="true">
+    <FluentLayoutItem Area="LayoutArea.Header" Sticky="true" Class="eshop-admin-header">
         <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
             <FluentLayoutHamburger />
-            <FluentAnchorButton Href="/admin" Appearance="ButtonAppearance.Transparent">Tnosc EShop — Back office</FluentAnchorButton>
+            <FluentAnchorButton Href="/admin" Appearance="ButtonAppearance.Transparent" Class="eshop-admin-brand">Tnosc EShop — Back office</FluentAnchorButton>
             <FluentSpacer />
-            <ThemeToggle />
-            <LoginDisplay />
+            <ThemeToggle @rendermode="InteractiveAuto" />
+            <UserMenu />
         </FluentStack>
     </FluentLayoutItem>
 
-    <FluentLayoutItem Area="LayoutArea.Navigation" Width="250px">
+    <FluentLayoutItem Area="LayoutArea.Navigation" Width="250px" Class="eshop-admin-rail">
         <AdminNav />
     </FluentLayoutItem>
 
@@ -25,8 +25,10 @@
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+    <a class="dismiss" role="button" aria-label="Dismiss">✕</a>
 </div>
 
 <FluentProviders />
 <FluentToastProvider />
+<FluentDialogProvider />
+<FluentTooltipProvider />

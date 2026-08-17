@@ -5,34 +5,49 @@
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Contracts.Ordering
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Your orders — Tnosc EShop</PageTitle>
 
-<PageHeader Title="Your orders" />
+<StoreHero Title="My orders" />
 
+<div class="eshop-page">
 @if (_problem is not null)
 {
     <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
 }
+else if (_isLoading)
+{
+    <LoadingPanel />
+}
+else if (_orders.Count == 0)
+{
+    <p>You have not placed any orders yet. <a href="/products">Continue shopping.</a></p>
+}
+else
+{
+    <ul class="eshop-orders">
+        <li class="eshop-orders-row header">
+            <div>Number</div><div>Date</div><div class="right">Total</div><div>Status</div>
+        </li>
+        @foreach (OrderSummary order in _orders)
+        {
+            <li class="eshop-orders-row">
+                <div><a href="@($"/orders/{order.Id}")">@order.OrderNumber</a></div>
+                <div>@order.PlacedOnUtc.ToString("g")</div>
+                <div class="right"><MoneyDisplay Amount="@order.TotalAmount" Currency="@order.TotalCurrency" /></div>
+                <div><OrderStatusPill Status="@order.Status" /></div>
+            </li>
+        }
+    </ul>
 
-<FluentDataGrid TGridItem="OrderSummary"
-                ItemsProvider="@_ordersProvider"
-                Pagination="@_pagination"
-                ResizableColumns="true"
-                ShowHover="true"
-                OnRowClick="@(row => Navigation.NavigateTo($"/orders/{row.Item?.Id}"))">
-    <ChildContent>
-        <PropertyColumn Property="@(o => o.OrderNumber)" Title="Order #" />
-        <TemplateColumn Title="Status">
-            <FluentBadge>@context.Status</FluentBadge>
-        </TemplateColumn>
-        <TemplateColumn Title="Total" Align="DataGridCellAlignment.End">
-            <MoneyDisplay Amount="@context.TotalAmount" Currency="@context.TotalCurrency" />
-        </TemplateColumn>
-        <PropertyColumn Property="@(o => o.LineCount)" Title="Lines" Align="DataGridCellAlignment.End" />
-        <PropertyColumn Property="@(o => o.PlacedOnUtc)" Title="Placed" Format="g" />
-    </ChildContent>
-    <EmptyContent><FluentLabel>You have not placed any orders yet.</FluentLabel></EmptyContent>
-</FluentDataGrid>
-
-<FluentPaginator State="@_pagination" />
+    <div class="eshop-pages">
+        @for (int i = 0; i < _pagination.LastPageIndex + 1; i++)
+        {
+            int pageIndex = i;
+            <a class="@(pageIndex == _pagination.CurrentPageIndex ? "active" : "")"
+               href="@PageUri(pageIndex)">@(pageIndex + 1)</a>
+        }
+    </div>
+}
+</div>

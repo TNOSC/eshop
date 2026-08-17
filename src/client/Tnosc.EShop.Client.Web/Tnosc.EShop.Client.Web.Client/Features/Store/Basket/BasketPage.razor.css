@@ -1,0 +1,88 @@
+.eshop-cart { display: flex; gap: var(--eshop-col-gap); }
+
+.eshop-cart-items {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    flex: 1 0 0;
+}
+
+.eshop-cart-header {
+    display: flex;
+    padding: 0.5rem 0;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid var(--eshop-rule);
+    color: var(--eshop-ink);
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-cart-info { flex-basis: 60%; }
+.eshop-cart-qty { flex: 1 0 0; }
+.eshop-cart-total { margin-left: auto; text-align: right; }
+
+.eshop-cart-summary {
+    flex-basis: 40%;
+}
+
+.eshop-cart-summary-inner {
+    display: flex;
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-shrink: 0;
+    background: var(--eshop-panel);
+}
+
+.eshop-cart-summary-header {
+    display: flex;
+    padding: 0.5rem 0;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--eshop-ink);
+    color: var(--eshop-ink);
+    font-size: var(--eshop-h2-size);
+    font-weight: var(--eshop-weight-semibold);
+    line-height: 120%;
+}
+
+.eshop-cart-count {
+    margin-left: auto;
+    background: var(--eshop-ink);
+    color: var(--eshop-on-ink);
+    border-radius: var(--eshop-radius-badge);
+    min-width: 3.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-cart-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-self: stretch;
+}
+
+.eshop-cart-summary-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--eshop-ink);
+    text-decoration: none;
+}
+
+.eshop-button {
+    align-self: stretch;
+}
+
+@media only screen and (max-width: 1024px) {
+    .eshop-cart { flex-direction: column-reverse; }
+}

@@ -1,0 +1,9 @@
+::deep .eshop-page-header-title {
+    font-size: var(--eshop-h2-size);
+    line-height: var(--eshop-h2-line);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+::deep .eshop-page-header-subtitle {
+    color: var(--eshop-muted);
+}

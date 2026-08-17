@@ -1,10 +1,28 @@
 @namespace Tnosc.EShop.Client.Web.Client.Layout.Store
 
-<FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
-    <FluentLayoutHamburger />
-    <FluentAnchorButton Href="/" Appearance="ButtonAppearance.Transparent">Tnosc EShop</FluentAnchorButton>
-    <FluentSpacer />
-    <BasketBadge />
-    <ThemeToggle />
-    <LoginDisplay />
-</FluentStack>
+<header class="eshop-navbar">
+    <div class="eshop-navbar-inner">
+        <a class="eshop-logo" href="/" aria-label="Tnosc EShop — home">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" fill="currentColor" role="img" aria-label="TNOSC eShop">
+                <text x="0" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="1">TNOSC</text>
+                <text x="196" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="300">eShop</text>
+            </svg>
+        </a>
+
+        <nav class="eshop-navlinks">
+            <NavLink href="/" Match="NavLinkMatch.All" ActiveClass="active">Home</NavLink>
+            <NavLink href="/products" ActiveClass="active">Catalogue</NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink href="/orders" ActiveClass="active">Orders</NavLink>
+                </Authorized>
+            </AuthorizeView>
+        </nav>
+
+        <div class="eshop-navbar-actions">
+            <BasketBadge @rendermode="InteractiveAuto" />
+            <UserMenu />
+            <ThemeToggle @rendermode="InteractiveAuto" />
+        </div>
+    </div>
+</header>
