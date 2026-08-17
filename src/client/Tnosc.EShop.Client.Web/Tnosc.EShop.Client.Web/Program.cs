@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Authentication;
 using Tnosc.EShop.Client.Web.Client.Extensions;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Components;
 using Tnosc.EShop.Client.Web.Extensions;
@@ -23,7 +24,7 @@ builder.Services.AddRazorComponents()
 
 // Interactive Server rendering runs FluentUI components on the server, so it needs its own HttpClient.
 builder.Services.AddHttpClient();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization().AddPermissionAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 builder.Services.AddFluentUIComponents();

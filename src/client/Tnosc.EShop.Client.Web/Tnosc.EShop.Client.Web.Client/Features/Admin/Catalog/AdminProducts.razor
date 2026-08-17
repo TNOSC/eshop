@@ -1,8 +1,9 @@
 @page "/admin/products"
 @rendermode InteractiveAuto
-@attribute [Authorize(Roles = "admin")]
+@attribute [Authorize(Policy = Permissions.Catalog.Write)]
 @using Microsoft.AspNetCore.Authorization
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Contracts.Catalog
 

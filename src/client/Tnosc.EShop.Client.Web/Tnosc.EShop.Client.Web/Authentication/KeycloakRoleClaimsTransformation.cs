@@ -4,18 +4,22 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 
 namespace Tnosc.EShop.Client.Web.Authentication;
 
 /// <summary>
 /// Reads Keycloak's <c>realm_access.roles</c> claim out of the raw access token and adds a
-/// <see cref="ClaimTypes.Role"/> claim per role to the OIDC principal, and mirrors the ID token's
-/// <c>sub</c> claim onto <see cref="ClaimTypes.NameIdentifier"/>.
+/// <see cref="ClaimTypes.Role"/> claim per role, plus a <see cref="PermissionRequirement.PermissionClaimType"/>
+/// claim per permission that role grants (via <see cref="RolePermissions"/>), to the OIDC principal —
+/// and mirrors the ID token's <c>sub</c> claim onto <see cref="ClaimTypes.NameIdentifier"/>.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -42,8 +46,9 @@ internal static class KeycloakRoleClaimsTransformation
     private const string SubjectClaimType = "sub";
 
     /// <summary>
-    /// Adds a role claim per Keycloak realm role found in the validated access token, and a
-    /// <see cref="ClaimTypes.NameIdentifier"/> claim mirroring the ID token's <c>sub</c>.
+    /// Adds a role claim per Keycloak realm role found in the validated access token, a permission
+    /// claim per permission those roles grant, and a <see cref="ClaimTypes.NameIdentifier"/> claim
+    /// mirroring the ID token's <c>sub</c>.
     /// </summary>
     /// <param name="context">The token-validated context supplied by the OIDC handler.</param>
     /// <returns>A completed task.</returns>
@@ -77,11 +82,25 @@ internal static class KeycloakRoleClaimsTransformation
             return Task.CompletedTask;
         }
 
+        HashSet<string> grantedPermissions = new(comparer: StringComparer.Ordinal);
+
         foreach (JsonElement role in roles.EnumerateArray())
         {
-            if (role.GetString() is { Length: > 0 } roleValue)
+            if (role.GetString() is not { Length: > 0 } roleValue)
             {
-                identity.AddClaim(claim: new Claim(type: ClaimTypes.Role, value: roleValue));
+                continue;
+            }
+
+            identity.AddClaim(claim: new Claim(type: ClaimTypes.Role, value: roleValue));
+
+            foreach (string permission in RolePermissions.For(role: roleValue))
+            {
+                if (grantedPermissions.Add(item: permission))
+                {
+                    identity.AddClaim(claim: new Claim(
+                        type: PermissionRequirement.PermissionClaimType,
+                        value: permission));
+                }
             }
         }
 

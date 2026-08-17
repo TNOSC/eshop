@@ -8,10 +8,11 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 
 namespace Tnosc.EShop.Client.Web.Bff;
 
-/// <summary>Returns the authenticated caller's identity and realm roles.</summary>
+/// <summary>Returns the authenticated caller's identity, realm roles and permissions.</summary>
 internal static class UserInfoEndpoint
 {
     /// <summary>Maps <see cref="BffRoutes.UserInfo"/>.</summary>
@@ -23,5 +24,10 @@ internal static class UserInfoEndpoint
         new(
             UserId: user.FindFirst(type: ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
             Name: user.Identity?.Name ?? string.Empty,
-            Roles: [.. user.FindAll(type: ClaimTypes.Role).Select(selector: static claim => claim.Value)]);
+            Roles: [.. user.FindAll(type: ClaimTypes.Role).Select(selector: static claim => claim.Value)],
+            Permissions:
+            [
+                .. user.FindAll(type: PermissionRequirement.PermissionClaimType)
+                    .Select(selector: static claim => claim.Value),
+            ]);
 }

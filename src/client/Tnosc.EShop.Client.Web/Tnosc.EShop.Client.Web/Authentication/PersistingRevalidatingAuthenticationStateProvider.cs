@@ -15,17 +15,18 @@ using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 
 namespace Tnosc.EShop.Client.Web.Authentication;
 
 /// <summary>
 /// Revalidates the interactive circuit's authentication state every <see cref="RevalidationInterval"/>
-/// and, on every persist, snapshots the caller's identity and realm roles into a
+/// and, on every persist, snapshots the caller's identity, realm roles and permissions into a
 /// <see cref="UserInfo"/> written to <see cref="PersistentComponentState"/> — the state
 /// <c>PersistentAuthenticationStateProvider</c> reads back once WASM takes over. Persisting the roles
-/// is what keeps <c>&lt;AuthorizeView Roles="admin"&gt;</c> correct after the interactive switch;
-/// miss it and the admin nav appears during prerender, then vanishes the moment the app becomes
-/// interactive.
+/// and permissions is what keeps <c>&lt;AuthorizeView Roles="admin"&gt;</c> and
+/// <c>[Authorize(Policy = Permissions.Catalog.Write)]</c> correct after the interactive switch; miss
+/// it and the admin nav appears during prerender, then vanishes the moment the app becomes interactive.
 /// </summary>
 /// <remarks>
 /// Deliberately a classic constructor, not a primary one: subscribing to
@@ -94,7 +95,12 @@ internal sealed class PersistingRevalidatingAuthenticationStateProvider : Revali
         UserInfo userInfo = new(
             UserId: userId,
             Name: name,
-            Roles: [.. principal.FindAll(type: ClaimTypes.Role).Select(selector: static claim => claim.Value)]);
+            Roles: [.. principal.FindAll(type: ClaimTypes.Role).Select(selector: static claim => claim.Value)],
+            Permissions:
+            [
+                .. principal.FindAll(type: PermissionRequirement.PermissionClaimType)
+                    .Select(selector: static claim => claim.Value),
+            ]);
 
         persistentComponentState.PersistAsJson(key: nameof(UserInfo), instance: userInfo);
     }

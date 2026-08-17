@@ -14,4 +14,11 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
 /// <param name="UserId">The caller's Keycloak subject id.</param>
 /// <param name="Name">The caller's display name.</param>
 /// <param name="Roles">The caller's realm roles.</param>
-public sealed record UserInfo(string UserId, string Name, string[] Roles);
+/// <param name="Permissions">
+/// The fine-grained permissions the caller's roles grant, expanded server-side by
+/// <c>KeycloakRoleClaimsTransformation</c> through <c>Authorization.RolePermissions</c>. Persisted
+/// separately from <see cref="Roles"/> so <c>[Authorize(Policy = Permissions.Catalog.Write)]</c> keeps
+/// working after the interactive switch to WebAssembly, the same way persisting <see cref="Roles"/>
+/// keeps <c>&lt;AuthorizeView Roles="admin"&gt;</c> working.
+/// </param>
+public sealed record UserInfo(string UserId, string Name, string[] Roles, string[] Permissions);

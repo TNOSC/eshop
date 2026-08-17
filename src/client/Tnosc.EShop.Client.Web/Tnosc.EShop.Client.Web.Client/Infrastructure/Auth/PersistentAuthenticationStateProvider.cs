@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
 
@@ -18,10 +19,11 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
 /// lifetime of this instance — WASM never revalidates it, since the cookie session lives on the server.
 /// </summary>
 /// <remarks>
-/// Losing the <see cref="ClaimTypes.Role"/> claims here is exactly what makes
-/// <c>&lt;AuthorizeView Roles="admin"&gt;</c> show the admin nav during prerender and then hide it the
-/// moment the app becomes interactive — see <c>PersistingRevalidatingAuthenticationStateProvider</c> on
-/// the server side, which is what persists <see cref="UserInfo.Roles"/> in the first place.
+/// Losing the <see cref="ClaimTypes.Role"/> or permission claims here is exactly what makes
+/// <c>&lt;AuthorizeView Roles="admin"&gt;</c> and <c>[Authorize(Policy = Permissions.Catalog.Write)]</c>
+/// pass during prerender and then fail the moment the app becomes interactive — see
+/// <c>PersistingRevalidatingAuthenticationStateProvider</c> on the server side, which is what persists
+/// <see cref="UserInfo.Roles"/> and <see cref="UserInfo.Permissions"/> in the first place.
 /// </remarks>
 internal sealed class PersistentAuthenticationStateProvider : AuthenticationStateProvider
 {
@@ -44,6 +46,8 @@ internal sealed class PersistentAuthenticationStateProvider : AuthenticationStat
                 new Claim(type: ClaimTypes.NameIdentifier, value: userInfo.UserId),
                 new Claim(type: ClaimTypes.Name, value: userInfo.Name),
                 .. userInfo.Roles.Select(selector: static role => new Claim(type: ClaimTypes.Role, value: role)),
+                .. userInfo.Permissions.Select(selector: static permission =>
+                    new Claim(type: PermissionRequirement.PermissionClaimType, value: permission)),
             ],
             authenticationType: "Persisted");
 

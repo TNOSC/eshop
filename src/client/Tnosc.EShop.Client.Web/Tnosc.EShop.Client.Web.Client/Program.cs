@@ -5,10 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Extensions;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthorizationCore().AddPermissionAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 builder.Services.AddFluentUIComponents();
