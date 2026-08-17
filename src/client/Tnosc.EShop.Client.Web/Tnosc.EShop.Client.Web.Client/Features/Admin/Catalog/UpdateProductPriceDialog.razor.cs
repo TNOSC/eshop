@@ -22,6 +22,8 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog;
 /// <summary>Changes an existing product's price. Does not require an idempotency key.</summary>
 public partial class UpdateProductPriceDialog : ComponentBase
 {
+    private static readonly string[] Currencies = ["USD", "EUR", "TND"];
+
     private readonly FormModel _model = new();
 
     private EditContext _editContext = default!;

@@ -27,15 +27,3 @@
         <MoneyDisplay Amount="@(Item.UnitPriceAmount * Item.Quantity)" Currency="@Item.UnitPriceCurrency" />
     </div>
 </div>
-
-@code {
-    [Parameter]
-    [EditorRequired]
-    public required BasketItem Item { get; set; }
-
-    [Parameter]
-    public EventCallback<int> QuantityChanged { get; set; }
-
-    [Parameter]
-    public EventCallback Remove { get; set; }
-}

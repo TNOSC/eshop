@@ -1,6 +1,4 @@
 @page "/Error"
-@using System.Diagnostics
-@using Microsoft.AspNetCore.Http
 
 <PageTitle>Error — Tnosc EShop</PageTitle>
 
@@ -19,14 +17,3 @@
 
     <a class="eshop-button eshop-button-primary" href="/">Back to the store</a>
 </div>
-
-@code{
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
-
-    private string? RequestId { get; set; }
-    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-    protected override void OnInitialized() =>
-        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-}

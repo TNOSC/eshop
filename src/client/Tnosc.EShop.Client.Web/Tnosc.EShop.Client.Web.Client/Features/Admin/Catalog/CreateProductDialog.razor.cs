@@ -26,6 +26,8 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog;
 /// </summary>
 public partial class CreateProductDialog : ComponentBase
 {
+    private static readonly string[] Currencies = ["USD", "EUR", "TND"];
+
     private static readonly IReadOnlyDictionary<string, string[]> EmptyErrors =
         new Dictionary<string, string[]>(comparer: StringComparer.Ordinal);
 

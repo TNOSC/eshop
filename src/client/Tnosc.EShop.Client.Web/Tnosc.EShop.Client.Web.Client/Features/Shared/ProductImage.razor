@@ -5,13 +5,3 @@
      alt="@Alt"
      src="@ProductImageResolver.For(sku: Sku)"
      loading="lazy" />
-
-@code {
-    [Parameter]
-    [EditorRequired]
-    public string Sku { get; set; } = string.Empty;
-
-    [Parameter]
-    [EditorRequired]
-    public string Alt { get; set; } = string.Empty;
-}
