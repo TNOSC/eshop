@@ -8,16 +8,17 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+namespace Tnosc.Lib.Web.Api;
 
 /// <summary>
-/// Attaches <c>X-Requested-With: XMLHttpRequest</c> to every outbound request made by the WASM
-/// typed API clients, so no call site has to remember it. This is the same-origin proof the BFF
-/// proxy's <c>SameOriginRequirement</c> checks in place of an antiforgery token, which a WASM
-/// <c>fetch</c> cannot carry.
+/// Attaches <c>X-Requested-With: XMLHttpRequest</c> to every outbound request made by a Blazor
+/// WebAssembly typed API client, so no call site has to remember it. This is the same-origin proof a
+/// BFF proxy's same-origin check (see <c>Tnosc.Lib.Web.Bff</c>) verifies in place of an antiforgery
+/// token, which a WASM <c>fetch</c> cannot carry.
 /// </summary>
-internal sealed class RequestedWithHandler : DelegatingHandler
+public sealed class RequestedWithHandler : DelegatingHandler
 {
+    /// <inheritdoc />
     protected override Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)

@@ -16,6 +16,7 @@ using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog;
@@ -95,7 +96,8 @@ public partial class ProductDetail : ComponentBase
             await NotificationExtensions.NotifyFailureAsync(
                 problem: result.Problem!,
                 notifications: Notifications,
-                navigation: Navigation);
+                navigation: Navigation,
+                humanize: ErrorCodeMessages.Humanize);
         }
         finally
         {

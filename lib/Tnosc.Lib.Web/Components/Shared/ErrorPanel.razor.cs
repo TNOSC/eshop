@@ -6,10 +6,12 @@
 
 using Microsoft.AspNetCore.Components;
 
-namespace Tnosc.EShop.Client.Web.Client.Features.Shared;
+namespace Tnosc.Lib.Web.Components.Shared;
 
+/// <summary>Displays a generic error message inside a <c>FluentMessageBar</c>.</summary>
 public partial class ErrorPanel : ComponentBase
 {
+    /// <summary>Gets or sets the error message to display.</summary>
     [Parameter]
     [EditorRequired]
     public string Message { get; set; } = string.Empty;

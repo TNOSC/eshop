@@ -16,6 +16,7 @@ using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Identity;
 
@@ -100,7 +101,7 @@ public partial class AdminCustomerDetail : ComponentBase
                 return;
             }
 
-            await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation);
+            await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
         }
         finally
         {
@@ -134,7 +135,7 @@ public partial class AdminCustomerDetail : ComponentBase
                 return;
             }
 
-            await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation);
+            await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
         }
         finally
         {
@@ -155,7 +156,7 @@ public partial class AdminCustomerDetail : ComponentBase
             return;
         }
 
-        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation);
+        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
     }
 
     private async Task RemoveAddressAsync(CustomerAddress address)
@@ -180,7 +181,7 @@ public partial class AdminCustomerDetail : ComponentBase
             return;
         }
 
-        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation);
+        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
     }
 
     private async Task DeactivateCustomerAsync()
@@ -211,7 +212,7 @@ public partial class AdminCustomerDetail : ComponentBase
             return;
         }
 
-        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem, notifications: Notifications, navigation: Navigation);
+        await NotificationExtensions.NotifyFailureAsync(problem: result.Problem, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
     }
 
     private sealed class ProfileFormModel

@@ -17,6 +17,7 @@ using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog;
 
@@ -132,7 +133,7 @@ public partial class CreateProductDialog : ComponentBase
             return;
         }
 
-        await NotificationExtensions.NotifyFailureAsync(problem: problem, notifications: Notifications, navigation: Navigation);
+        await NotificationExtensions.NotifyFailureAsync(problem: problem, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
     }
 
     private void ApplyServerValidation(ApiProblem problem)

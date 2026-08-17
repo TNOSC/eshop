@@ -4,7 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
-namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+namespace Tnosc.Lib.Web.Api;
 
 /// <summary>The HTTP header carrying an idempotency key on write requests.</summary>
 public static class IdempotencyHeader

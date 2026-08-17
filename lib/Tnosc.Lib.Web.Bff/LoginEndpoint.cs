@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Tnosc.EShop.Client.Web.Bff;
+namespace Tnosc.Lib.Web.Bff;
 
-/// <summary>Starts the OIDC code-flow challenge against Keycloak.</summary>
-internal static class LoginEndpoint
+/// <summary>Starts the OIDC code-flow challenge against the identity provider.</summary>
+public static class LoginEndpoint
 {
     /// <summary>Maps <see cref="BffRoutes.Login"/>.</summary>
     /// <param name="app">The application to map the route on.</param>

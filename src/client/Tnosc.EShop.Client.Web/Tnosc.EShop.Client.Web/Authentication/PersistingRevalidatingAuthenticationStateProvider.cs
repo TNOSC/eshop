@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+using Tnosc.Lib.Web.Authorization;
+using Tnosc.Lib.Web.Bff;
 
 namespace Tnosc.EShop.Client.Web.Authentication;
 

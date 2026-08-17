@@ -15,41 +15,56 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
-namespace Tnosc.EShop.Client.Web.Bff;
+namespace Tnosc.Lib.Web.Bff;
 
 /// <summary>
 /// Forwards every <c>/bff/api/{**path}</c> request to the downstream API, attaching the caller's
 /// bearer token server-side. Hand-written rather than YARP so the forwarded request goes through the
-/// named <see cref="HttpClient"/> that already carries <c>AddStandardResilienceHandler()</c> and
-/// <c>AddServiceDiscovery()</c> from <c>AddServiceDefaults()</c> — see <c>plan/05-bff-proxy.md</c> for
-/// the full reasoning.
+/// named <see cref="HttpClient"/> the host itself registers — which can carry
+/// <c>AddStandardResilienceHandler()</c> and <c>AddServiceDiscovery()</c> from
+/// <c>AddServiceDefaults()</c> the way the eShop host's does.
 /// </summary>
-internal static class BffProxy
+public static class BffProxy
 {
-    /// <summary>Maps the catch-all forwarding routes: authenticated, plus an anonymous carve-out.</summary>
+    /// <summary>Maps the catch-all forwarding routes: authenticated, plus an optional anonymous carve-out.</summary>
     /// <param name="app">The application to map the routes on.</param>
-    public static void MapProxy(WebApplication app)
+    /// <param name="downstreamClientName">
+    /// The name of the <see cref="IHttpClientFactory"/> client the proxy forwards through — registered
+    /// by the host itself, e.g. via <c>services.AddHttpClient(name: ...)</c>.
+    /// </param>
+    /// <param name="anonymousGetCatchAll">
+    /// An optional route pattern, more specific than <see cref="BffRoutes.ApiCatchAll"/>, forwarded
+    /// anonymously for <c>GET</c> only — e.g. a storefront's public read endpoints, so a signed-out
+    /// visitor can still browse before authenticating. A more specific literal segment beats the
+    /// authenticated catch-all's parameter by ASP.NET Core's route precedence, so this wins for
+    /// matching <c>GET</c>s; everything else still falls through to the authenticated route. Omit to
+    /// forward every request under <c>/bff/api/</c> only when authenticated.
+    /// </param>
+    public static void MapProxy(WebApplication app, string downstreamClientName, string? anonymousGetCatchAll = null)
     {
+        ArgumentNullException.ThrowIfNull(argument: app);
+        ArgumentException.ThrowIfNullOrEmpty(argument: downstreamClientName);
+
         // Authenticated: everything under /bff/api. DisableAntiforgery is safe only because
         // SameOriginRequirement provides a compensating CSRF defence inside ForwardAsync.
-        app.Map(pattern: BffRoutes.ApiCatchAll, handler: ForwardAsync)
+        app.Map(pattern: BffRoutes.ApiCatchAll, handler: (HttpContext context, IHttpClientFactory factory, CancellationToken cancellationToken) =>
+                ForwardAsync(context: context, factory: factory, downstreamClientName: downstreamClientName, cancellationToken: cancellationToken))
             .RequireAuthorization()
             .DisableAntiforgery();
 
-        // Carve-out: anonymous GETs against the Catalog read endpoints only, so a signed-out visitor
-        // can still browse the storefront once WASM takes over. GET-only is the important half — a
-        // more specific literal segment (/catalog/) beats the authenticated catch-all's parameter by
-        // ASP.NET Core's route precedence, so this wins for Catalog GETs; everything else, including
-        // POST /api/catalog/products, falls through to the authenticated route above.
-        app.MapGet(pattern: BffRoutes.CatalogCatchAll, handler: ForwardAsync)
-            .AllowAnonymous();
+        if (anonymousGetCatchAll is not null)
+        {
+            app.MapGet(pattern: anonymousGetCatchAll, handler: (HttpContext context, IHttpClientFactory factory, CancellationToken cancellationToken) =>
+                    ForwardAsync(context: context, factory: factory, downstreamClientName: downstreamClientName, cancellationToken: cancellationToken))
+                .AllowAnonymous();
+        }
     }
 
     private static async Task ForwardAsync(
         HttpContext context,
         IHttpClientFactory factory,
+        string downstreamClientName,
         CancellationToken cancellationToken)
     {
         if (!SameOriginRequirement.IsSatisfied(request: context.Request))
@@ -58,13 +73,13 @@ internal static class BffProxy
             return;
         }
 
-        // Guarded rather than called unconditionally: an anonymous Catalog-read carve-out request has
-        // no authenticated user, and GetTokenAsync throws rather than returning null in that case.
+        // Guarded rather than called unconditionally: an anonymous carve-out request has no
+        // authenticated user, and GetTokenAsync throws rather than returning null in that case.
         string? accessToken = context.User.Identity?.IsAuthenticated == true
             ? await context.GetTokenAsync(tokenName: "access_token")
             : null;
 
-        HttpClient client = factory.CreateClient(name: ApiClientNames.Downstream);
+        HttpClient client = factory.CreateClient(name: downstreamClientName);
         using HttpRequestMessage request = new(
             method: new HttpMethod(method: context.Request.Method),
             requestUri: context.Request.Path.Value!["/bff/".Length..] + context.Request.QueryString);

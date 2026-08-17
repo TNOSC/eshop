@@ -8,11 +8,18 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+namespace Tnosc.Lib.Web.Authorization;
 
 /// <summary>
 /// Succeeds a <see cref="PermissionRequirement"/> when the caller carries the matching permission claim.
 /// </summary>
+/// <remarks>
+/// The permission is read straight off the <c>ClaimsPrincipal</c> the authorization pipeline hands in,
+/// deliberately <strong>not</strong> through <c>IUserContext</c>. On an ASP.NET Core host, authorization
+/// handlers are resolved as singletons while <c>IUserContext</c> is scoped; injecting it here would be
+/// a captive-dependency lifetime mismatch. The principal on the requirement's context is the same one
+/// <c>IUserContext</c> would have read anyway.
+/// </remarks>
 public sealed class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
     /// <inheritdoc />

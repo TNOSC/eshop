@@ -17,6 +17,7 @@ using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout;
@@ -114,7 +115,8 @@ public partial class CheckoutPage : ComponentBase
             await NotificationExtensions.NotifyFailureAsync(
                 problem: result.Problem,
                 notifications: Notifications,
-                navigation: Navigation);
+                navigation: Navigation,
+                humanize: ErrorCodeMessages.Humanize);
         }
         catch (HttpRequestException)
         {

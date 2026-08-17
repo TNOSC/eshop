@@ -14,6 +14,7 @@ using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders;
 
@@ -107,6 +108,7 @@ public partial class OrderDetail : ComponentBase
         await NotificationExtensions.NotifyFailureAsync(
             problem: result.Problem!,
             notifications: Notifications,
-            navigation: Navigation);
+            navigation: Navigation,
+            humanize: ErrorCodeMessages.Humanize);
     }
 }

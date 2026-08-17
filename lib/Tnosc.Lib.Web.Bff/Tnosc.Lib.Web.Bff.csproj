@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Unlike Cookies/JwtBearer, OpenIdConnect auth is not part of the Microsoft.AspNetCore.App
+		     shared framework — it needs this package explicitly even with the FrameworkReference above. -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tnosc.Lib.Web\Tnosc.Lib.Web.csproj" />
+	</ItemGroup>
+</Project>

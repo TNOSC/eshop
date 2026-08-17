@@ -7,15 +7,14 @@
 using System;
 using System.Collections.Frozen;
 
-namespace Tnosc.EShop.Client.Web.Bff;
+namespace Tnosc.Lib.Web.Bff;
 
 /// <summary>
-/// Deny-lists for the headers the BFF proxy strips when forwarding a request or response. A
-/// deny-list is deliberate — an allow-list would silently drop headers such as
-/// <c>Idempotency-Key</c> that the proxy has no reason to know about individually. See
-/// <c>plan/05-bff-proxy.md</c> for the failure mode an allow-list produces.
+/// Deny-lists for the headers a BFF proxy strips when forwarding a request or response. A deny-list
+/// is deliberate — an allow-list would silently drop headers such as <c>Idempotency-Key</c> that the
+/// proxy has no reason to know about individually.
 /// </summary>
-internal static class BffProxyHeaders
+public static class BffProxyHeaders
 {
     /// <summary>
     /// Headers never forwarded from the browser to the downstream API. <c>Cookie</c> is denied

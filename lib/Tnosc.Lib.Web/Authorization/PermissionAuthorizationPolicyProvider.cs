@@ -9,19 +9,32 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+namespace Tnosc.Lib.Web.Authorization;
 
 /// <summary>
-/// Materialises an authorization policy on demand for any policy name that is a permission, so a page
-/// can write <c>[Authorize(Policy = Permissions.Catalog.Write)]</c> without a matching
-/// <c>AddPolicy(...)</c> call anywhere.
+/// Materialises an authorization policy on demand for any policy name that is a permission, so
+/// permissions never have to be registered one by one at startup.
 /// </summary>
 /// <remarks>
-/// The Blazor-client counterpart of <c>Tnosc.Lib.Host.Authorization.PermissionAuthorizationPolicyProvider</c>
-/// — duplicated because that one lives in <c>Tnosc.Lib.Host</c>, which cannot be referenced from a
-/// Blazor WebAssembly project. The inner provider is consulted first, so a policy genuinely registered
-/// through <c>AddAuthorizationCore(options =&gt; options.AddPolicy(...))</c> still wins over an
+/// <para>
+/// On an ASP.NET Core host this is the load-bearing piece behind
+/// <c>ApiEndpointExtensions.HasPermission(permission)</c>, which is just
+/// <c>RequireAuthorization(policyNames: permission)</c>; on a Blazor host it backs
+/// <c>[Authorize(Policy = ...)]</c>. Nothing registers a policy per permission, so without this
+/// provider such a call would throw at request/navigation time with "The AuthorizationPolicy named
+/// ... was not found". Here an unrecognised name is turned into
+/// <c>RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(name))</c> and memoised.
+/// </para>
+/// <para>
+/// Requiring an authenticated user as well as the permission is what yields the two distinct
+/// outcomes callers expect for free: <c>401</c> when no (or an invalid) token was supplied, and
+/// <c>403</c> when the token is good but does not carry the permission.
+/// </para>
+/// <para>
+/// The inner provider is consulted first, so a policy genuinely registered through
+/// <c>AddAuthorization(options =&gt; options.AddPolicy(...))</c> still wins over an
 /// on-demand permission policy of the same name.
+/// </para>
 /// </remarks>
 /// <param name="innerProvider">
 /// The provider consulted first — normally <see cref="DefaultAuthorizationPolicyProvider"/>, which

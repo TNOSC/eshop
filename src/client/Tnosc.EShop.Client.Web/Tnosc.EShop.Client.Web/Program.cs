@@ -7,10 +7,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Authentication;
 using Tnosc.EShop.Client.Web.Client.Extensions;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Components;
 using Tnosc.EShop.Client.Web.Extensions;
+using Tnosc.Lib.Web.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

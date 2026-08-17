@@ -9,7 +9,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+using Tnosc.Lib.Web.Authorization;
+using Tnosc.Lib.Web.Bff;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
 

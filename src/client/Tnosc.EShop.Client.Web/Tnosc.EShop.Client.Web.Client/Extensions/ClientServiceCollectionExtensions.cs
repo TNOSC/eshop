@@ -8,6 +8,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
+using Tnosc.Lib.Web.Api;
 
 namespace Tnosc.EShop.Client.Web.Client.Extensions;
 

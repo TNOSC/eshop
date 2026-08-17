@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+using Tnosc.Lib.Web.Authorization;
 
 namespace Tnosc.EShop.Client.Web.Authentication;
 

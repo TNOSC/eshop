@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Extensions;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+using Tnosc.Lib.Web.Extensions;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

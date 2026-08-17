@@ -7,13 +7,12 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization;
+using Tnosc.Lib.Web.Authorization;
 
-namespace Tnosc.EShop.Client.Web.Bff;
+namespace Tnosc.Lib.Web.Bff;
 
-/// <summary>Returns the authenticated caller's identity, realm roles and permissions.</summary>
-internal static class UserInfoEndpoint
+/// <summary>Returns the authenticated caller's identity, roles and permissions.</summary>
+public static class UserInfoEndpoint
 {
     /// <summary>Maps <see cref="BffRoutes.UserInfo"/>.</summary>
     /// <param name="app">The application to map the route on.</param>

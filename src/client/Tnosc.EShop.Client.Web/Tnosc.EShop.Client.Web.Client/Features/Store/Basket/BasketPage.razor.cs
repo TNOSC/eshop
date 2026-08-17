@@ -14,6 +14,7 @@ using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket;
@@ -84,7 +85,8 @@ public partial class BasketPage : ComponentBase
             await NotificationExtensions.NotifyFailureAsync(
                 problem: result.Problem!,
                 notifications: Notifications,
-                navigation: Navigation);
+                navigation: Navigation,
+                humanize: ErrorCodeMessages.Humanize);
         }
     }
 
@@ -112,7 +114,8 @@ public partial class BasketPage : ComponentBase
             await NotificationExtensions.NotifyFailureAsync(
                 problem: result.Problem!,
                 notifications: Notifications,
-                navigation: Navigation);
+                navigation: Navigation,
+                humanize: ErrorCodeMessages.Humanize);
         }
     }
 }

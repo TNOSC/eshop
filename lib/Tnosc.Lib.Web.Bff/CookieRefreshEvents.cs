@@ -17,21 +17,28 @@ using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Tnosc.EShop.Client.Web.Extensions;
 
-namespace Tnosc.EShop.Client.Web.Authentication;
+namespace Tnosc.Lib.Web.Bff;
 
 /// <summary>
 /// Refreshes the access token ahead of expiry whenever the session cookie is revalidated — before the
-/// request reaches the BFF proxy — using the realm's <c>refresh_token</c> grant. A failed refresh signs
-/// the session out rather than letting a dead session linger.
+/// request reaches the BFF proxy — using the identity provider's <c>refresh_token</c> grant. A failed
+/// refresh signs the session out rather than letting a dead session linger.
 /// </summary>
-internal sealed class CookieRefreshEvents(
+public sealed class CookieRefreshEvents(
     IOptionsMonitor<OpenIdConnectOptions> oidcOptionsMonitor,
     IHttpClientFactory httpClientFactory,
     TimeProvider timeProvider,
     ILogger<CookieRefreshEvents> logger) : CookieAuthenticationEvents
 {
+    /// <summary>
+    /// The name of the <see cref="IHttpClientFactory"/> client this class uses for the
+    /// <c>refresh_token</c> grant. The host registers a client under this name — typically the same
+    /// one that carries any Development-only certificate relaxation the host's OIDC backchannel uses,
+    /// so both calls to the identity provider trust the same certificate.
+    /// </summary>
+    public const string HttpClientName = "Tnosc.Lib.Web.Bff.CookieRefresh";
+
     private static readonly TimeSpan RefreshMargin = TimeSpan.FromMinutes(value: 2);
 
     /// <summary>
@@ -67,7 +74,7 @@ internal sealed class CookieRefreshEvents(
         }
 
         OpenIdConnectOptions oidcOptions = oidcOptionsMonitor.Get(name: OpenIdConnectDefaults.AuthenticationScheme);
-#pragma warning disable S8969 // ConfigurationManager is annotated nullable but AddKeycloakOpenIdConnect always assigns one; the compiler's own flow analysis (CS8602) disagrees with Sonar here.
+#pragma warning disable S8969 // ConfigurationManager is annotated nullable but AddKeycloakOpenIdConnect (or equivalent) always assigns one; the compiler's own flow analysis (CS8602) disagrees with Sonar here.
         OpenIdConnectConfiguration configuration = await oidcOptions.ConfigurationManager!.GetConfigurationAsync(
             cancel: context.HttpContext.RequestAborted);
 #pragma warning restore S8969
@@ -79,7 +86,7 @@ internal sealed class CookieRefreshEvents(
             new KeyValuePair<string, string>("refresh_token", refreshToken),
         ]);
 
-        using HttpClient client = httpClientFactory.CreateClient(name: WebAuthenticationExtensions.KeycloakHttpClientName);
+        using HttpClient client = httpClientFactory.CreateClient(name: HttpClientName);
         using HttpResponseMessage response = await client.PostAsync(
             requestUri: configuration.TokenEndpoint,
             content: content,

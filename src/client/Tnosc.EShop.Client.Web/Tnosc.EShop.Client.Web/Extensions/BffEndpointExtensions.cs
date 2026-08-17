@@ -6,6 +6,8 @@
 
 using Microsoft.AspNetCore.Builder;
 using Tnosc.EShop.Client.Web.Bff;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.Lib.Web.Bff;
 
 namespace Tnosc.EShop.Client.Web.Extensions;
 
@@ -24,6 +26,9 @@ internal static class BffEndpointExtensions
         LoginEndpoint.MapLogin(app: app);
         LogoutEndpoint.MapLogout(app: app);
         UserInfoEndpoint.MapUserInfo(app: app);
-        BffProxy.MapProxy(app: app);
+        BffProxy.MapProxy(
+            app: app,
+            downstreamClientName: ApiClientNames.Downstream,
+            anonymousGetCatchAll: EShopBffRoutes.CatalogCatchAll);
     }
 }

@@ -16,6 +16,7 @@ using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Api;
+using Tnosc.Lib.Web.Errors;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog;
 
@@ -90,7 +91,8 @@ public partial class UpdateProductPriceDialog : ComponentBase
             await NotificationExtensions.NotifyFailureAsync(
                 problem: result.Problem!,
                 notifications: Notifications,
-                navigation: Navigation);
+                navigation: Navigation,
+                humanize: ErrorCodeMessages.Humanize);
         }
         finally
         {
