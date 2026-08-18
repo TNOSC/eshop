@@ -14,7 +14,9 @@ IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(ar
 // therefore require dropping the volume manually before the next run picks it up.
 IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres(name: "postgres")
     .WithDataVolume()
-    .WithPgAdmin();
+    .WithUrlForEndpoint(endpointName: "tcp", callback: url => url.DisplayText = "Postgres")
+    .WithPgAdmin(configureContainer: pgAdmin =>
+        pgAdmin.WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "pgAdmin"));
 
 IResourceBuilder<PostgresDatabaseResource> db = postgres.AddDatabase(name: "eshopdb");
 
@@ -24,7 +26,9 @@ IResourceBuilder<PostgresDatabaseResource> db = postgres.AddDatabase(name: "esho
 // need the volume dropped before the next run behaves.
 IResourceBuilder<RedisResource> cache = builder.AddRedis(name: "cache")
     .WithDataVolume()
-    .WithRedisInsight();
+    .WithUrlForEndpoint(endpointName: "tcp", callback: url => url.DisplayText = "Redis")
+    .WithRedisInsight(configureContainer: redisInsight =>
+        redisInsight.WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "RedisInsight"));
 
 // Keycloak gets its OWN database on this same Postgres server rather than a schema inside eshopdb.
 // Same server, same volume, same credentials — but its ~90 Liquibase-managed tables never appear in
@@ -67,7 +71,8 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
     .WithEnvironment(name: "KC_DB_PASSWORD", value: ReferenceExpression.Create($"{postgresPassword}"))
     .WithEnvironment(name: "KC_HOSTNAME", value: "localhost")
     .WithEnvironment(name: "KC_HOSTNAME_PORT", value: "8080")
-    .WaitFor(dependency: keycloakDb);
+    .WaitFor(dependency: keycloakDb)
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "Keycloak Admin Console");
 
 IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
     .WithReference(source: db)
@@ -75,13 +80,15 @@ IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_
     .WithReference(source: cache)
     .WaitFor(dependency: db)
     .WaitFor(dependency: keycloak)
-    .WaitFor(dependency: cache);
+    .WaitFor(dependency: cache)
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "API (Scalar)");
 
 builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
     .WithReference(source: eshopHost)
     .WithReference(source: keycloak)
     .WaitFor(dependency: eshopHost)
     .WaitFor(dependency: keycloak)
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "eShop Web");
 
 await builder.Build().RunAsync();
