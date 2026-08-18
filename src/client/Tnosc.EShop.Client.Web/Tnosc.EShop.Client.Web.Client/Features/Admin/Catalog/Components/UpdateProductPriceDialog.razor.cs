@@ -5,27 +5,27 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Errors;
 using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components;
 
-/// <summary>Changes an existing product's price. Does not require an idempotency key.</summary>
+/// <summary>Changes an existing product's price. Does not require an idempotency key. Validation and
+/// mapping are <see cref="IUpdateProductPriceService"/>'s responsibility.</summary>
 public partial class UpdateProductPriceDialog : ComponentBase
 {
     private static readonly string[] Currencies = ["USD", "EUR", "TND"];
 
-    private readonly FormModel _model = new();
+    private readonly UpdateProductPriceViewModel _model = new();
 
     private EditContext _editContext = default!;
     private bool _isSubmitting;
@@ -34,7 +34,7 @@ public partial class UpdateProductPriceDialog : ComponentBase
     public IDialogInstance Dialog { get; set; } = default!;
 
     [Inject]
-    public ICatalogApi CatalogApi { get; set; } = null!;
+    public IUpdateProductPriceService Service { get; set; } = null!;
 
     [Inject]
     public INotificationService Notifications { get; set; } = null!;
@@ -76,9 +76,9 @@ public partial class UpdateProductPriceDialog : ComponentBase
 
         try
         {
-            ClientResult result = await CatalogApi.UpdateProductPriceAsync(
+            ClientResult result = await Service.SubmitAsync(
                 productId: ProductId,
-                request: new UpdateProductPriceRequest(Amount: _model.Amount, Currency: _model.Currency),
+                viewModel: _model,
                 cancellationToken: CancellationToken.None);
 
             if (result.IsSuccess)
@@ -101,13 +101,4 @@ public partial class UpdateProductPriceDialog : ComponentBase
     }
 
     private async Task CancelAsync() => await Dialog.CancelAsync();
-
-    private sealed class FormModel
-    {
-        [Range(minimum: 0, maximum: double.MaxValue, ErrorMessage = "The amount cannot be negative.")]
-        public decimal Amount { get; set; }
-
-        [Required]
-        public string Currency { get; set; } = string.Empty;
-    }
 }

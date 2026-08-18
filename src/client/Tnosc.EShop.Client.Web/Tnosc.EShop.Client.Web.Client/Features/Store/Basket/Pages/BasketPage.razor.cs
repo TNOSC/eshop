@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
@@ -20,7 +20,8 @@ using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Pages;
 
-/// <summary>The caller's basket: quantities and totals track the server, never local arithmetic.</summary>
+/// <summary>The caller's basket: quantities and totals track the server, never local arithmetic.
+/// Fetching and mapping are <see cref="IBasketPageService"/>'s responsibility.</summary>
 public partial class BasketPage : ComponentBase
 {
     private BasketDto? _basket;
@@ -28,7 +29,7 @@ public partial class BasketPage : ComponentBase
     private ComponentState _state = ComponentState.Loading;
 
     [Inject]
-    public IBasketApi BasketApi { get; set; } = null!;
+    public IBasketPageService Service { get; set; } = null!;
 
     [Inject]
     public BasketState BasketState { get; set; } = null!;
@@ -48,7 +49,7 @@ public partial class BasketPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<BasketDto> result = await BasketApi.GetBasketAsync(cancellationToken: CancellationToken.None);
+        ClientResult<BasketDto> result = await Service.GetBasketAsync(cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -71,9 +72,9 @@ public partial class BasketPage : ComponentBase
             return;
         }
 
-        ClientResult<BasketDto> result = await BasketApi.ChangeItemQuantityAsync(
+        ClientResult<BasketDto> result = await Service.ChangeQuantityAsync(
             itemId: item.ItemId,
-            request: new ChangeBasketItemQuantityRequest(Quantity: quantity),
+            quantity: quantity,
             cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
@@ -102,7 +103,7 @@ public partial class BasketPage : ComponentBase
             return;
         }
 
-        ClientResult result = await BasketApi.RemoveItemAsync(
+        ClientResult result = await Service.RemoveItemAsync(
             itemId: item.ItemId,
             cancellationToken: CancellationToken.None);
 

@@ -9,10 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
@@ -22,7 +21,8 @@ using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Pages;
 
-/// <summary>A single product's detail page, reached from <see cref="ProductsPage"/>.</summary>
+/// <summary>A single product's detail page, reached from <see cref="ProductsPage"/>. Fetching and
+/// adding to basket are <see cref="IProductDetailService"/>'s responsibility.</summary>
 public partial class ProductDetailPage : ComponentBase
 {
     private Product? _product;
@@ -32,10 +32,7 @@ public partial class ProductDetailPage : ComponentBase
     private int _quantity = 1;
 
     [Inject]
-    public ICatalogApi CatalogApi { get; set; } = null!;
-
-    [Inject]
-    public IBasketApi BasketApi { get; set; } = null!;
+    public IProductDetailService Service { get; set; } = null!;
 
     [Inject]
     public BasketState BasketState { get; set; } = null!;
@@ -54,7 +51,7 @@ public partial class ProductDetailPage : ComponentBase
         _state = ComponentState.Loading;
         _problem = null;
 
-        ClientResult<Product> result = await CatalogApi.GetProductAsync(
+        ClientResult<Product> result = await Service.GetProductAsync(
             id: Id,
             cancellationToken: CancellationToken.None);
 
@@ -83,8 +80,9 @@ public partial class ProductDetailPage : ComponentBase
 
         try
         {
-            ClientResult<BasketDto> result = await BasketApi.AddItemAsync(
-                request: new AddItemToBasketRequest(ProductId: _product.Id, Quantity: _quantity),
+            ClientResult<BasketDto> result = await Service.AddToBasketAsync(
+                productId: _product.Id,
+                quantity: _quantity,
                 cancellationToken: CancellationToken.None);
 
             if (result.IsSuccess)

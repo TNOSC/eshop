@@ -5,13 +5,13 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Components.Shared;
@@ -21,11 +21,12 @@ using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Pages;
 
-/// <summary>An operator's view of one customer: profile, addresses and deactivation.</summary>
+/// <summary>An operator's view of one customer: profile, addresses and deactivation. Fetching and
+/// mutation are <see cref="IAdminCustomerDetailService"/>'s responsibility.</summary>
 public partial class AdminCustomerDetailPage : ComponentBase
 {
-    private readonly ProfileFormModel _profileModel = new();
-    private readonly AddressFormModel _addressModel = new();
+    private readonly CustomerProfileViewModel _profileModel = new();
+    private readonly CustomerAddressViewModel _addressModel = new();
 
     private EditContext _profileEditContext = default!;
     private EditContext _addressEditContext = default!;
@@ -36,7 +37,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
     private bool _isAddingAddress;
 
     [Inject]
-    public IIdentityApi IdentityApi { get; set; } = null!;
+    public IAdminCustomerDetailService Service { get; set; } = null!;
 
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
@@ -62,7 +63,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<Customer> result = await IdentityApi.GetCustomerByIdAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult<Customer> result = await Service.GetCustomerByIdAsync(id: Id, cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -87,12 +88,9 @@ public partial class AdminCustomerDetailPage : ComponentBase
 
         try
         {
-            ClientResult result = await IdentityApi.UpdateCustomerProfileAsync(
+            ClientResult result = await Service.SaveProfileAsync(
                 id: Id,
-                request: new UpdateCustomerProfileRequest(
-                    FirstName: _profileModel.FirstName,
-                    LastName: _profileModel.LastName,
-                    PhoneNumber: _profileModel.PhoneNumber),
+                viewModel: _profileModel,
                 cancellationToken: CancellationToken.None);
 
             if (result.IsSuccess)
@@ -116,13 +114,9 @@ public partial class AdminCustomerDetailPage : ComponentBase
 
         try
         {
-            ClientResult<Guid> result = await IdentityApi.AddCustomerAddressAsync(
+            ClientResult<Guid> result = await Service.AddAddressAsync(
                 id: Id,
-                request: new AddCustomerAddressRequest(
-                    Street: _addressModel.Street,
-                    City: _addressModel.City,
-                    PostalCode: _addressModel.PostalCode,
-                    Country: _addressModel.Country),
+                viewModel: _addressModel,
                 cancellationToken: CancellationToken.None);
 
             if (result.IsSuccess)
@@ -146,7 +140,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
 
     private async Task SetDefaultAddressAsync(CustomerAddress address)
     {
-        ClientResult result = await IdentityApi.SetDefaultCustomerAddressAsync(
+        ClientResult result = await Service.SetDefaultAddressAsync(
             id: Id,
             addressId: address.Id,
             cancellationToken: CancellationToken.None);
@@ -171,7 +165,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
             return;
         }
 
-        ClientResult result = await IdentityApi.RemoveCustomerAddressAsync(
+        ClientResult result = await Service.RemoveAddressAsync(
             id: Id,
             addressId: address.Id,
             cancellationToken: CancellationToken.None);
@@ -196,7 +190,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
             return;
         }
 
-        ClientResult result = await IdentityApi.DeactivateCustomerAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult result = await Service.DeactivateCustomerAsync(id: Id, cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -214,31 +208,5 @@ public partial class AdminCustomerDetailPage : ComponentBase
         }
 
         await NotificationExtensions.NotifyFailureAsync(problem: result.Problem, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
-    }
-
-    private sealed class ProfileFormModel
-    {
-        [Required]
-        public string FirstName { get; set; } = string.Empty;
-
-        [Required]
-        public string LastName { get; set; } = string.Empty;
-
-        public string? PhoneNumber { get; set; }
-    }
-
-    private sealed class AddressFormModel
-    {
-        [Required]
-        public string Street { get; set; } = string.Empty;
-
-        [Required]
-        public string City { get; set; } = string.Empty;
-
-        [Required]
-        public string PostalCode { get; set; } = string.Empty;
-
-        [Required]
-        public string Country { get; set; } = string.Empty;
     }
 }

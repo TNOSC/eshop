@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
@@ -18,7 +18,8 @@ using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Pages;
 
-/// <summary>The admin product console: a server-paged grid plus create/price/stock dialogs.</summary>
+/// <summary>The admin product console: a server-paged grid plus create/price/stock dialogs. Fetching
+/// is <see cref="IAdminProductsService"/>'s responsibility.</summary>
 public partial class AdminProductsPage : ComponentBase
 {
     private const int PageSize = 20;
@@ -34,7 +35,7 @@ public partial class AdminProductsPage : ComponentBase
     private ClientProblem? _problem;
 
     [Inject]
-    public ICatalogApi CatalogApi { get; set; } = null!;
+    public IAdminProductsService Service { get; set; } = null!;
 
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
@@ -46,10 +47,9 @@ public partial class AdminProductsPage : ComponentBase
     {
         int page = (request.StartIndex / PageSize) + 1;
 
-        SearchProductsQuery query = new(Search: null, CategoryId: null, Page: page, PageSize: PageSize);
-
-        ClientResult<PagedResult<ProductSummary>> result = await CatalogApi.SearchProductsAsync(
-            query: query,
+        ClientResult<PagedResult<ProductSummary>> result = await Service.SearchAsync(
+            page: page,
+            pageSize: PageSize,
             cancellationToken: request.CancellationToken);
 
         if (!result.IsSuccess)

@@ -7,7 +7,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
@@ -15,7 +15,8 @@ using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Pages;
 
-/// <summary>The admin customer console: a server-paged grid, one row per customer.</summary>
+/// <summary>The admin customer console: a server-paged grid, one row per customer. Fetching is
+/// <see cref="IAdminCustomersService"/>'s responsibility.</summary>
 public partial class AdminCustomersPage : ComponentBase
 {
     private const int PageSize = 20;
@@ -30,7 +31,7 @@ public partial class AdminCustomersPage : ComponentBase
     private ClientProblem? _problem;
 
     [Inject]
-    public IIdentityApi IdentityApi { get; set; } = null!;
+    public IAdminCustomersService Service { get; set; } = null!;
 
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;
@@ -42,9 +43,7 @@ public partial class AdminCustomersPage : ComponentBase
     {
         int page = (request.StartIndex / PageSize) + 1;
 
-        ClientResult<PagedResult<CustomerSummary>> result = await IdentityApi.SearchCustomersAsync(
-            search: null,
-            isActive: null,
+        ClientResult<PagedResult<CustomerSummary>> result = await Service.SearchAsync(
             page: page,
             pageSize: PageSize,
             cancellationToken: request.CancellationToken);

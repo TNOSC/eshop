@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Components.Shared;
@@ -20,7 +20,8 @@ using Tnosc.Lib.Web.Results;
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Pages;
 
 /// <summary>One of the caller's own orders, reached from <c>MyOrdersPage</c> or straight from
-/// checkout when <see cref="Placed"/> is set.</summary>
+/// checkout when <see cref="Placed"/> is set. Fetching and mutation are
+/// <see cref="IOrderDetailService"/>'s responsibility.</summary>
 public partial class OrderDetailPage : ComponentBase
 {
     private Order? _order;
@@ -28,7 +29,7 @@ public partial class OrderDetailPage : ComponentBase
     private ComponentState _state = ComponentState.Loading;
 
     [Inject]
-    public IOrderingApi OrderingApi { get; set; } = null!;
+    public IOrderDetailService Service { get; set; } = null!;
 
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
@@ -52,7 +53,7 @@ public partial class OrderDetailPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<Order> result = await OrderingApi.GetOrderByIdAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult<Order> result = await Service.GetOrderByIdAsync(id: Id, cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -79,7 +80,7 @@ public partial class OrderDetailPage : ComponentBase
             return;
         }
 
-        ClientResult result = await OrderingApi.ConfirmOrderAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult result = await Service.ConfirmOrderAsync(id: Id, cancellationToken: CancellationToken.None);
         await HandleActionResultAsync(result: result);
     }
 
@@ -94,7 +95,7 @@ public partial class OrderDetailPage : ComponentBase
             return;
         }
 
-        ClientResult result = await OrderingApi.CancelOrderAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult result = await Service.CancelOrderAsync(id: Id, cancellationToken: CancellationToken.None);
         await HandleActionResultAsync(result: result);
     }
 

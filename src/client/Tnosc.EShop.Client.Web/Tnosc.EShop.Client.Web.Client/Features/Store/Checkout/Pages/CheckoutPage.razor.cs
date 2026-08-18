@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
@@ -27,7 +27,8 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Pages;
 /// Turns the caller's basket into an order. Requires an <c>Idempotency-Key</c> — see
 /// <see cref="_submissionKey"/> for why it lives in component state rather than a
 /// <c>DelegatingHandler</c>. Getting this wrong here is the most expensive case in the whole app: a
-/// duplicate order is a duplicate charge.
+/// duplicate order is a duplicate charge. Fetching and mapping are <see cref="ICheckoutService"/>'s
+/// responsibility.
 /// </summary>
 public partial class CheckoutPage : ComponentBase
 {
@@ -43,13 +44,7 @@ public partial class CheckoutPage : ComponentBase
     private Guid _submissionKey = Guid.CreateVersion7();
 
     [Inject]
-    public IBasketApi BasketApi { get; set; } = null!;
-
-    [Inject]
-    public IIdentityApi IdentityApi { get; set; } = null!;
-
-    [Inject]
-    public IOrderingApi OrderingApi { get; set; } = null!;
+    public ICheckoutService Service { get; set; } = null!;
 
     [Inject]
     public BasketState BasketState { get; set; } = null!;
@@ -66,19 +61,11 @@ public partial class CheckoutPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<BasketDto> basketResult = await BasketApi.GetBasketAsync(cancellationToken: CancellationToken.None);
-        ClientResult<Customer> customerResult = await IdentityApi.GetMeAsync(cancellationToken: CancellationToken.None);
+        CheckoutLoadResult result = await Service.LoadAsync(cancellationToken: CancellationToken.None);
 
-        if (basketResult.IsSuccess && customerResult.IsSuccess)
-        {
-            _basket = basketResult.Value;
-            _customer = customerResult.Value;
-            _problem = null;
-        }
-        else
-        {
-            _problem = basketResult.Problem ?? customerResult.Problem;
-        }
+        _basket = result.Basket;
+        _customer = result.Customer;
+        _problem = result.Problem;
 
         _state = ComponentState.Content;
     }
@@ -89,7 +76,7 @@ public partial class CheckoutPage : ComponentBase
 
         try
         {
-            ClientResult<Guid> result = await OrderingApi.PlaceOrderAsync(
+            ClientResult<Guid> result = await Service.PlaceOrderAsync(
                 idempotencyKey: _submissionKey,
                 cancellationToken: CancellationToken.None);
 

@@ -7,7 +7,12 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.Lib.Web.Api;
@@ -46,7 +51,18 @@ public static class ClientServiceCollectionExtensions
         services.AddTransient<RequestedWithHandler>();
         services.AddScoped<BasketState>();
         services.AddScoped<IProductsService, ProductsService>();
+        services.AddScoped<IProductDetailService, ProductDetailService>();
         services.AddScoped<ICreateProductService, CreateProductService>();
+        services.AddScoped<IAdminProductsService, AdminProductsService>();
+        services.AddScoped<IUpdateProductPriceService, UpdateProductPriceService>();
+        services.AddScoped<IAdjustStockService, AdjustStockService>();
+        services.AddScoped<IBasketPageService, BasketPageService>();
+        services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IMyOrdersService, MyOrdersService>();
+        services.AddScoped<IOrderDetailService, OrderDetailService>();
+        services.AddScoped<IAdminCustomersService, AdminCustomersService>();
+        services.AddScoped<IAdminCustomerDetailService, AdminCustomerDetailService>();
+        services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
         IHttpClientBuilder catalog = services.AddHttpClient<ICatalogApi, CatalogApi>(
             name: ApiClientNames.Catalog,

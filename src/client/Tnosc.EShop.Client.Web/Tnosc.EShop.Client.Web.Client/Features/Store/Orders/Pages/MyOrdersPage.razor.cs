@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
@@ -20,7 +20,8 @@ using Tnosc.Lib.Web.Results;
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Pages;
 
 /// <summary>The caller's own order history: a paged list, newest first, with the page reflected in
-/// the URL so a shared link and the back button reproduce the same view.</summary>
+/// the URL so a shared link and the back button reproduce the same view. Fetching is
+/// <see cref="IMyOrdersService"/>'s responsibility.</summary>
 public partial class MyOrdersPage : ComponentBase
 {
     private const int PageSize = 20;
@@ -32,7 +33,7 @@ public partial class MyOrdersPage : ComponentBase
     private ComponentState _state = ComponentState.Loading;
 
     [Inject]
-    public IOrderingApi OrderingApi { get; set; } = null!;
+    public IMyOrdersService Service { get; set; } = null!;
 
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;
@@ -58,7 +59,7 @@ public partial class MyOrdersPage : ComponentBase
         _state = ComponentState.Loading;
         _problem = null;
 
-        ClientResult<PagedResult<OrderSummary>> result = await OrderingApi.GetMyOrdersAsync(
+        ClientResult<PagedResult<OrderSummary>> result = await Service.GetMyOrdersAsync(
             page: _pagination.CurrentPageIndex + 1,
             pageSize: PageSize,
             cancellationToken: CancellationToken.None);

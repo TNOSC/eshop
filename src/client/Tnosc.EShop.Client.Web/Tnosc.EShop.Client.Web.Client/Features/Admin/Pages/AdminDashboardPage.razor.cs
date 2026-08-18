@@ -7,16 +7,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Services;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
-using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Pages;
 
-/// <summary>The back-office landing page: tiles linking to the Catalog and Identity consoles.</summary>
+/// <summary>The back-office landing page: tiles linking to the Catalog and Identity consoles.
+/// Fetching the tile counts is <see cref="IAdminDashboardService"/>'s responsibility.</summary>
 public partial class AdminDashboardPage : ComponentBase
 {
     private ComponentState _state = ComponentState.Loading;
@@ -26,43 +24,16 @@ public partial class AdminDashboardPage : ComponentBase
     private ClientProblem? _customersProblem;
 
     [Inject]
-    public ICatalogApi CatalogApi { get; set; } = null!;
-
-    [Inject]
-    public IIdentityApi IdentityApi { get; set; } = null!;
+    public IAdminDashboardService Service { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        SearchProductsQuery query = new(Search: null, CategoryId: null, Page: 1, PageSize: 1);
+        AdminDashboardCounts counts = await Service.LoadCountsAsync(cancellationToken: CancellationToken.None);
 
-        ClientResult<PagedResult<ProductSummary>> products = await CatalogApi.SearchProductsAsync(
-            query: query,
-            cancellationToken: CancellationToken.None);
-
-        if (products.IsSuccess)
-        {
-            _productCount = products.Value.TotalCount;
-        }
-        else
-        {
-            _productsProblem = products.Problem;
-        }
-
-        ClientResult<PagedResult<CustomerSummary>> customers = await IdentityApi.SearchCustomersAsync(
-            search: null,
-            isActive: null,
-            page: 1,
-            pageSize: 1,
-            cancellationToken: CancellationToken.None);
-
-        if (customers.IsSuccess)
-        {
-            _customerCount = customers.Value.TotalCount;
-        }
-        else
-        {
-            _customersProblem = customers.Problem;
-        }
+        _productCount = counts.ProductCount;
+        _productsProblem = counts.ProductsProblem;
+        _customerCount = counts.CustomerCount;
+        _customersProblem = counts.CustomersProblem;
 
         _state = ComponentState.Content;
     }
