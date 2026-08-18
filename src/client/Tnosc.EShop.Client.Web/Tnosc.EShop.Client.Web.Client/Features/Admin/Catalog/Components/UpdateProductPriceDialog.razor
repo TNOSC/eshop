@@ -1,0 +1,29 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components
+
+<EditForm EditContext="@_editContext" OnValidSubmit="@SubmitAsync">
+    <DataAnnotationsValidator />
+
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+        <FluentText>Reprice @Sku, currently @FormattedCurrentPrice.</FluentText>
+
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="12">
+            <FluentNumberInput TValue="decimal" Label="New price" Step="@(0.01m)" Min="0" @bind-Value="_model.Amount" />
+            <FluentSelect TOption="string"
+                          TValue="string"
+                          Label="Currency"
+                          Items="@Currencies"
+                          OptionText="@(currency => currency)"
+                          OptionValue="@(currency => currency)"
+                          @bind-Value="_model.Currency" />
+        </FluentStack>
+        <ValidationMessage For="@(() => _model.Amount)" />
+        <ValidationMessage For="@(() => _model.Currency)" />
+    </FluentStack>
+
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8" Margin="Margin.Top3">
+        <FluentButton Type="ButtonType.Submit" Appearance="ButtonAppearance.Primary" Loading="@_isSubmitting" Disabled="@_isSubmitting">
+            Save
+        </FluentButton>
+        <FluentButton OnClick="@CancelAsync" Disabled="@_isSubmitting">Cancel</FluentButton>
+    </FluentStack>
+</EditForm>

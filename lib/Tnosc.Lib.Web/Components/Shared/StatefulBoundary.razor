@@ -1,0 +1,32 @@
+@namespace Tnosc.Lib.Web.Components.Shared
+
+<LoggingErrorBoundary @ref="_errorBoundary">
+    <ChildContent>
+        @if (State == ComponentState.Loading)
+        {
+            @(LoadingContent ?? DefaultLoading)
+        }
+        else
+        {
+            @ChildContent
+        }
+    </ChildContent>
+    <ErrorContent Context="exception">
+        @if (ErrorContent is not null)
+        {
+            @ErrorContent(exception)
+        }
+        else
+        {
+            <ErrorPanel Message="Something went wrong displaying this." />
+        }
+    </ErrorContent>
+</LoggingErrorBoundary>
+
+@code {
+    private static readonly RenderFragment DefaultLoading = builder =>
+    {
+        builder.OpenComponent<LoadingPanel>(0);
+        builder.CloseComponent();
+    };
+}

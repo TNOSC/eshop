@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
-using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
@@ -20,18 +20,18 @@ public interface ICatalogApi
     /// <summary>Searches the product catalog.</summary>
     /// <param name="query">The search parameters.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<PagedResult<ProductSummary>>> SearchProductsAsync(
+    Task<ClientResult<PagedResult<ProductSummary>>> SearchProductsAsync(
         SearchProductsQuery query,
         CancellationToken cancellationToken);
 
     /// <summary>Retrieves a single product by id.</summary>
     /// <param name="id">The product id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Product>> GetProductAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<Product>> GetProductAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Retrieves every catalog category.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken);
+    Task<ClientResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken);
 
     /// <summary>Adds a product to the catalogue.</summary>
     /// <param name="request">The product to create.</param>
@@ -41,7 +41,7 @@ public interface ICatalogApi
     /// business failure) actually arrives, never per HTTP send.
     /// </param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Guid>> CreateProductAsync(
+    Task<ClientResult<Guid>> CreateProductAsync(
         CreateProductRequest request,
         Guid idempotencyKey,
         CancellationToken cancellationToken);
@@ -50,7 +50,7 @@ public interface ICatalogApi
     /// <param name="productId">The product to reprice.</param>
     /// <param name="request">The new price.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> UpdateProductPriceAsync(
+    Task<ClientResult> UpdateProductPriceAsync(
         Guid productId,
         UpdateProductPriceRequest request,
         CancellationToken cancellationToken);
@@ -59,7 +59,7 @@ public interface ICatalogApi
     /// <param name="productId">The product to adjust.</param>
     /// <param name="request">The signed stock delta.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> AdjustStockAsync(
+    Task<ClientResult> AdjustStockAsync(
         Guid productId,
         AdjustStockRequest request,
         CancellationToken cancellationToken);

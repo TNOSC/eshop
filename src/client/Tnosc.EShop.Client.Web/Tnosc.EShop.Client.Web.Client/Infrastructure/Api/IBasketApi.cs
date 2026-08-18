@@ -8,7 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
-using Tnosc.Lib.Web.Api;
+using Tnosc.Lib.Web.Results;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
@@ -18,18 +18,18 @@ public interface IBasketApi
 {
     /// <summary>Reads the caller's own basket. Never 404s — an empty basket is a valid response.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<BasketDto>> GetBasketAsync(CancellationToken cancellationToken);
+    Task<ClientResult<BasketDto>> GetBasketAsync(CancellationToken cancellationToken);
 
     /// <summary>Adds an item to the caller's basket.</summary>
     /// <param name="request">The product and quantity to add.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<BasketDto>> AddItemAsync(AddItemToBasketRequest request, CancellationToken cancellationToken);
+    Task<ClientResult<BasketDto>> AddItemAsync(AddItemToBasketRequest request, CancellationToken cancellationToken);
 
     /// <summary>Changes a basket item's quantity.</summary>
     /// <param name="itemId">The basket item to change.</param>
     /// <param name="request">The new quantity.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<BasketDto>> ChangeItemQuantityAsync(
+    Task<ClientResult<BasketDto>> ChangeItemQuantityAsync(
         Guid itemId,
         ChangeBasketItemQuantityRequest request,
         CancellationToken cancellationToken);
@@ -37,9 +37,9 @@ public interface IBasketApi
     /// <summary>Removes an item from the caller's basket.</summary>
     /// <param name="itemId">The basket item to remove.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> RemoveItemAsync(Guid itemId, CancellationToken cancellationToken);
+    Task<ClientResult> RemoveItemAsync(Guid itemId, CancellationToken cancellationToken);
 
     /// <summary>Clears every item from the caller's basket.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> ClearAsync(CancellationToken cancellationToken);
+    Task<ClientResult> ClearAsync(CancellationToken cancellationToken);
 }

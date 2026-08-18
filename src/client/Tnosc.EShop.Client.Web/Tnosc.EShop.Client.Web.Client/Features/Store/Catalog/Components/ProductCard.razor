@@ -1,0 +1,22 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Contracts.Catalog
+
+<div class="eshop-card" data-testid="product-card">
+    <a class="eshop-card-link" href="@Routes.Store.ProductDetail(Product.Id)">
+        <span class="eshop-card-image">
+            <ProductImage Sku="@Product.Sku" Alt="@Product.Name" />
+        </span>
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Class="eshop-card-content">
+            <span class="eshop-card-name" data-testid="product-card-name">@Product.Name</span>
+            <FluentSpacer />
+            <span class="eshop-card-price">
+                <MoneyDisplay Amount="@Product.PriceAmount" Currency="@Product.PriceCurrency" />
+            </span>
+        </FluentStack>
+    </a>
+    @if (Product.StockQuantity <= 0)
+    {
+        <span class="eshop-card-flag">Out of stock</span>
+    }
+</div>

@@ -1,0 +1,23 @@
+.eshop-orders-row {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--eshop-rule);
+}
+
+.eshop-orders-row > div { flex: 1 0 0; }
+
+.eshop-orders-row.header {
+    color: var(--eshop-ink);
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+    padding-top: 0;
+    padding-bottom: 0.5rem;
+}
+
+.eshop-orders-row .right { text-align: right; }
+
+.eshop-orders-row a { color: var(--eshop-ink); text-decoration: none; font-weight: var(--eshop-weight-semibold); }
+.eshop-orders-row a:hover { text-decoration: underline; }
+
+@media only screen and (max-width: 480px) {
+    .eshop-orders-row.header { display: none; }
+}

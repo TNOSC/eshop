@@ -1,0 +1,77 @@
+@* Routes.Store.Checkout *@
+@page "/checkout"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Components
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Contracts.Basket
+@using Tnosc.EShop.Client.Web.Contracts.Identity
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<PageTitle>Checkout — Tnosc EShop</PageTitle>
+
+<StoreHero Title="Checkout" />
+
+<div class="eshop-page">
+<StatefulBoundary State="_state">
+@if (_problem is not null)
+{
+    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+}
+else if (_basket is null || _customer is null)
+{
+    <LoadingPanel />
+}
+else if (_basket.Items.Count == 0)
+{
+    <p>Your shopping bag is empty — there is nothing to check out. <a href="@Routes.Store.Products">Continue shopping.</a></p>
+}
+else if (_customer.DefaultAddressId is null)
+{
+    <p>You need a default delivery address before you can place an order. Contact support to have one added.</p>
+}
+else
+{
+    CustomerAddress address = _customer.Addresses.First(a => a.Id == _customer.DefaultAddressId);
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="40px" Class="eshop-checkout">
+        <DeliveryAddress Street="@address.Street"
+                         PostalCode="@address.PostalCode"
+                         City="@address.City"
+                         Country="@address.Country" />
+
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="20px" Class="eshop-form-section">
+            <h2 class="eshop-h2">Items</h2>
+            @foreach (BasketItem item in _basket.Items)
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line">
+                    <span>@item.ProductName × @item.Quantity</span>
+                    <MoneyDisplay Amount="@(item.UnitPriceAmount * item.Quantity)" Currency="@item.UnitPriceCurrency" />
+                </FluentStack>
+            }
+            @if (_basket.TotalAmount is { } totalAmount && _basket.TotalCurrency is { } totalCurrency)
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line total">
+                    <span>Total</span>
+                    <MoneyDisplay Amount="@totalAmount" Currency="@totalCurrency" />
+                </FluentStack>
+            }
+        </FluentStack>
+
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-form-buttons">
+            <a class="eshop-button eshop-button-secondary" href="@Routes.Store.Basket">
+                <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" />
+                Back to the shopping bag
+            </a>
+            <FluentButton Appearance="ButtonAppearance.Primary"
+                          Loading="@_isPlacingOrder"
+                          Disabled="@_isPlacingOrder"
+                          OnClick="@PlaceOrderAsync">
+                Place order
+            </FluentButton>
+        </FluentStack>
+    </FluentStack>
+}
+</StatefulBoundary>
+</div>

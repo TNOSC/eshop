@@ -129,22 +129,9 @@ body {
     margin: 0;
 }
 
-/* Vertical form/detail layout — shared by checkout and order detail. */
-.eshop-checkout { display: flex; flex-direction: column; gap: 2.5rem; }
-
-.eshop-form-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    align-self: stretch;
-}
-
-.eshop-checkout-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
+/* Vertical form/detail layout — shared by checkout and order detail. Positioning is owned by the
+   FluentStack wrapping each of these classes in CheckoutPage.razor/OrderDetail.razor; these rules
+   are cosmetic only. */
 .eshop-checkout-line.total {
     border-top: 1px solid var(--eshop-rule);
     padding-top: 0.75rem;
@@ -152,11 +139,7 @@ body {
 }
 
 .eshop-form-buttons {
-    display: flex;
     padding: 1.5rem 0;
-    justify-content: space-between;
-    align-items: center;
-    align-self: stretch;
     border-top: 1px solid var(--eshop-ink);
 }
 

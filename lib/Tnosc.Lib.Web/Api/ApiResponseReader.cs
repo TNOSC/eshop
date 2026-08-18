@@ -11,12 +11,13 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.Lib.Web.Api;
 
 /// <summary>
-/// Reads an <see cref="HttpResponseMessage"/> into an <see cref="ApiResult"/> or
-/// <see cref="ApiResult{TValue}"/> — the one place that knows about the server's four response
+/// Reads an <see cref="HttpResponseMessage"/> into an <see cref="ClientResult"/> or
+/// <see cref="ClientResult{TValue}"/> — the one place that knows about the server's four response
 /// shapes, so no typed client duplicates this logic.
 /// </summary>
 public static class ApiResponseReader
@@ -27,52 +28,52 @@ public static class ApiResponseReader
     /// </summary>
     /// <param name="response">The response to read.</param>
     /// <param name="cancellationToken">The token observed while reading the response body.</param>
-    public static async Task<ApiResult<TValue>> ReadAsync<TValue>(
+    public static async Task<ClientResult<TValue>> ReadAsync<TValue>(
         HttpResponseMessage response,
         CancellationToken cancellationToken)
     {
         if (response.IsSuccessStatusCode)
         {
             return response.StatusCode is HttpStatusCode.NoContent
-                ? ApiResult<TValue>.Success(value: default!)
-                : ApiResult<TValue>.Success(
+                ? ClientResult<TValue>.Success(value: default!)
+                : ClientResult<TValue>.Success(
                     value: (await response.Content.ReadFromJsonAsync<TValue>(
                         cancellationToken: cancellationToken))!);
         }
 
-        ApiProblem problem =
+        ClientProblem problem =
             await ReadProblemAsync(response: response, cancellationToken: cancellationToken)
-            ?? ApiProblem.FromStatus(status: (int)response.StatusCode);
+            ?? ClientProblem.FromStatus(status: (int)response.StatusCode);
 
-        return ApiResult<TValue>.Failure(problem: problem);
+        return ClientResult<TValue>.Failure(problem: problem);
     }
 
     /// <summary>Reads a response expected to carry no value on success — a bare 204.</summary>
     /// <param name="response">The response to read.</param>
     /// <param name="cancellationToken">The token observed while reading the response body.</param>
-    public static async Task<ApiResult> ReadAsync(
+    public static async Task<ClientResult> ReadAsync(
         HttpResponseMessage response,
         CancellationToken cancellationToken)
     {
         if (response.IsSuccessStatusCode)
         {
-            return ApiResult.Success();
+            return ClientResult.Success();
         }
 
-        ApiProblem problem =
+        ClientProblem problem =
             await ReadProblemAsync(response: response, cancellationToken: cancellationToken)
-            ?? ApiProblem.FromStatus(status: (int)response.StatusCode);
+            ?? ClientProblem.FromStatus(status: (int)response.StatusCode);
 
-        return ApiResult.Failure(problem: problem);
+        return ClientResult.Failure(problem: problem);
     }
 
-    private static async Task<ApiProblem?> ReadProblemAsync(
+    private static async Task<ClientProblem?> ReadProblemAsync(
         HttpResponseMessage response,
         CancellationToken cancellationToken)
     {
         try
         {
-            return await response.Content.ReadFromJsonAsync<ApiProblem>(cancellationToken: cancellationToken);
+            return await response.Content.ReadFromJsonAsync<ClientProblem>(cancellationToken: cancellationToken);
         }
         catch (JsonException)
         {

@@ -1,8 +1,19 @@
 @namespace Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <header class="eshop-navbar">
-    <div class="eshop-navbar-inner">
-        <a class="eshop-logo" href="/" aria-label="Tnosc EShop — home">
+    <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="24px" Class="eshop-navbar-inner">
+        <FluentLayoutHamburger Display="HamburgerDisplay.MobileOnly" PanelHeader="Menu">
+            <FluentNav Density="NavDensity.Medium">
+                <FluentNavItem Href="@Routes.Store.Products" Match="NavLinkMatch.All">Catalogue</FluentNavItem>
+                <AuthorizeView>
+                    <Authorized>
+                        <FluentNavItem Href="@Routes.Store.Orders">Orders</FluentNavItem>
+                    </Authorized>
+                </AuthorizeView>
+            </FluentNav>
+        </FluentLayoutHamburger>
+
+        <a class="eshop-logo" href="@Routes.Store.Home" aria-label="Tnosc EShop — home">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" fill="currentColor" role="img" aria-label="TNOSC eShop">
                 <text x="0" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="1">TNOSC</text>
                 <text x="196" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="300">eShop</text>
@@ -10,18 +21,20 @@
         </a>
 
         <nav class="eshop-navlinks">
-            <NavLink href="/products" Match="NavLinkMatch.All" ActiveClass="active">Catalogue</NavLink>
+            <NavLink href="@Routes.Store.Products" Match="NavLinkMatch.All" ActiveClass="active">Catalogue</NavLink>
             <AuthorizeView>
                 <Authorized>
-                    <NavLink href="/orders" ActiveClass="active">Orders</NavLink>
+                    <NavLink href="@Routes.Store.Orders" ActiveClass="active">Orders</NavLink>
                 </Authorized>
             </AuthorizeView>
         </nav>
 
-        <div class="eshop-navbar-actions">
+        <FluentSpacer />
+
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="16px" Width="auto">
             <BasketBadge @rendermode="InteractiveAuto" />
             <UserMenu />
             <ThemeToggle @rendermode="InteractiveAuto" />
-        </div>
-    </div>
+        </FluentStack>
+    </FluentStack>
 </header>

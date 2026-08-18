@@ -8,12 +8,12 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 
 /// <summary>
-/// Maps a server error code to the <see cref="CreateProductModel"/> field it belongs to.
+/// Maps a server error code to the <see cref="CreateProductViewModel"/> field it belongs to.
 /// <c>CustomResults</c> on the server keys its <c>errors</c> dictionary by error code, not field
 /// name, so <c>ValidationMessage</c> cannot resolve one on its own — this bridges the two vocabularies.
 /// A code with no entry here is not a bug: the caller falls back to showing it in a message bar
@@ -24,20 +24,20 @@ internal static class ValidationCodeFieldMap
     private static readonly FrozenDictionary<string, string> CodeToField =
         new Dictionary<string, string>(comparer: StringComparer.Ordinal)
         {
-            ["Sku.Empty"] = nameof(CreateProductModel.Sku),
-            ["Sku.TooLong"] = nameof(CreateProductModel.Sku),
-            ["Sku.InvalidFormat"] = nameof(CreateProductModel.Sku),
-            ["Product.SkuAlreadyExists"] = nameof(CreateProductModel.Sku),
-            ["Product.NameRequired"] = nameof(CreateProductModel.Name),
-            ["Product.NameTooLong"] = nameof(CreateProductModel.Name),
-            ["Product.DescriptionTooLong"] = nameof(CreateProductModel.Description),
-            ["Product.BrandRequired"] = nameof(CreateProductModel.BrandId),
-            ["Brand.NotFound"] = nameof(CreateProductModel.BrandId),
-            ["Product.CategoryRequired"] = nameof(CreateProductModel.CategoryId),
-            ["Category.NotFound"] = nameof(CreateProductModel.CategoryId),
-            ["Money.NegativeAmount"] = nameof(CreateProductModel.PriceAmount),
-            ["Money.InvalidCurrency"] = nameof(CreateProductModel.PriceCurrency),
-            ["StockQuantity.Negative"] = nameof(CreateProductModel.StockQuantity),
+            ["Sku.Empty"] = nameof(CreateProductViewModel.Sku),
+            ["Sku.TooLong"] = nameof(CreateProductViewModel.Sku),
+            ["Sku.InvalidFormat"] = nameof(CreateProductViewModel.Sku),
+            ["Product.SkuAlreadyExists"] = nameof(CreateProductViewModel.Sku),
+            ["Product.NameRequired"] = nameof(CreateProductViewModel.Name),
+            ["Product.NameTooLong"] = nameof(CreateProductViewModel.Name),
+            ["Product.DescriptionTooLong"] = nameof(CreateProductViewModel.Description),
+            ["Product.BrandRequired"] = nameof(CreateProductViewModel.BrandId),
+            ["Brand.NotFound"] = nameof(CreateProductViewModel.BrandId),
+            ["Product.CategoryRequired"] = nameof(CreateProductViewModel.CategoryId),
+            ["Category.NotFound"] = nameof(CreateProductViewModel.CategoryId),
+            ["Money.NegativeAmount"] = nameof(CreateProductViewModel.PriceAmount),
+            ["Money.InvalidCurrency"] = nameof(CreateProductViewModel.PriceCurrency),
+            ["StockQuantity.Negative"] = nameof(CreateProductViewModel.StockQuantity),
         }.ToFrozenDictionary(comparer: StringComparer.Ordinal);
 
     /// <summary>Resolves a server error code to the form field it applies to.</summary>

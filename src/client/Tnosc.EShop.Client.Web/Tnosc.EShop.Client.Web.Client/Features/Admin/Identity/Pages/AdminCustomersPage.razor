@@ -1,0 +1,41 @@
+@* Routes.Admin.Customers *@
+@page "/admin/customers"
+@rendermode InteractiveAuto
+@attribute [Authorize(Policy = Permissions.Identity.Write)]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Contracts.Identity
+
+<PageTitle>Customers — Back office</PageTitle>
+
+<PageHeader Title="Customers" Subtitle="Manage customer profiles." />
+
+<StatefulBoundary State="_state">
+    @if (_problem is not null)
+    {
+        <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+    }
+
+    <FluentDataGrid TGridItem="CustomerSummary"
+                    ItemsProvider="@_customersProvider"
+                    Pagination="@_pagination"
+                    ResizableColumns="true"
+                    ShowHover="true"
+                    OnRowClick="@(row => { if (row.Item is not null) { Navigation.NavigateTo(Routes.Admin.CustomerDetail(row.Item.Id)); } })">
+        <ChildContent>
+            <PropertyColumn Property="@(c => c.Email)" Title="Email" />
+            <PropertyColumn Property="@(c => c.FirstName)" Title="First name" />
+            <PropertyColumn Property="@(c => c.LastName)" Title="Last name" />
+            <TemplateColumn Title="Status">
+                <FluentBadge Color="@(context.IsActive ? BadgeColor.Success : BadgeColor.Warning)">
+                    @(context.IsActive ? "Active" : "Inactive")
+                </FluentBadge>
+            </TemplateColumn>
+        </ChildContent>
+        <EmptyContent><FluentLabel>No customers match the current filter.</FluentLabel></EmptyContent>
+    </FluentDataGrid>
+
+    <FluentPaginator State="@_pagination" />
+</StatefulBoundary>

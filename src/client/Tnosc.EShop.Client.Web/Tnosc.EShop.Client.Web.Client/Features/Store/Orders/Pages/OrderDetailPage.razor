@@ -1,0 +1,74 @@
+@* Routes.Store.OrderDetail *@
+@page "/orders/{Id:guid}"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Components
+@using Tnosc.EShop.Client.Web.Contracts.Ordering
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<PageTitle>@(_order?.OrderNumber ?? "Order") — Tnosc EShop</PageTitle>
+
+@if (Placed == true)
+{
+    <OrderPlacedNotice />
+}
+
+<StatefulBoundary State="_state">
+    <LoadingContent>
+        <StoreHero Title="Order" />
+        <div class="eshop-page">
+            <LoadingPanel />
+        </div>
+    </LoadingContent>
+    <ChildContent>
+@if (_problem is not null)
+{
+    <StoreHero Title="Order" />
+    <div class="eshop-page">
+        <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+    </div>
+}
+else if (_order is not null)
+{
+    <StoreHero Title="@($"Order {_order.OrderNumber}")" />
+
+    <div class="eshop-page">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="40px" Class="eshop-checkout">
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="12px" Class="eshop-order-status">
+            <OrderStatusPill Status="@_order.Status" />
+            <span>Placed @_order.PlacedOnUtc.ToLocalTime()</span>
+        </FluentStack>
+
+        <DeliveryAddress Street="@_order.ShippingStreet"
+                         PostalCode="@_order.ShippingPostalCode"
+                         City="@_order.ShippingCity"
+                         Country="@_order.ShippingCountry" />
+
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="20px" Class="eshop-form-section">
+            <h2 class="eshop-h2">Items</h2>
+            @foreach (OrderLine line in _order.Lines)
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line">
+                    <span>@line.ProductName (@line.Sku) × @line.Quantity</span>
+                    <MoneyDisplay Amount="@line.LineTotalAmount" Currency="@line.UnitPriceCurrency" />
+                </FluentStack>
+            }
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line total">
+                <span>Total</span>
+                <MoneyDisplay Amount="@_order.TotalAmount" Currency="@_order.TotalCurrency" />
+            </FluentStack>
+        </FluentStack>
+
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-form-buttons">
+            <FluentButton Appearance="ButtonAppearance.Outline" OnClick="@CancelOrderAsync">Cancel</FluentButton>
+            <FluentButton Appearance="ButtonAppearance.Primary" OnClick="@ConfirmOrderAsync">Confirm</FluentButton>
+        </FluentStack>
+    </FluentStack>
+    </div>
+}
+    </ChildContent>
+</StatefulBoundary>

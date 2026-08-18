@@ -3,10 +3,14 @@
 
 <div class="eshop-shell">
     <StoreHeader />
-    <main class="eshop-main">
-        @Body
-    </main>
-    <StoreFooter />
+    <FluentLayout>
+        <FluentLayoutItem Area="LayoutArea.Content">
+            @Body
+        </FluentLayoutItem>
+        <FluentLayoutItem Area="LayoutArea.Footer">
+            <StoreFooter />
+        </FluentLayoutItem>
+    </FluentLayout>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>

@@ -8,8 +8,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
-using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
@@ -18,7 +18,7 @@ public interface IIdentityApi
 {
     /// <summary>Reads the caller's own profile.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Customer>> GetMeAsync(CancellationToken cancellationToken);
+    Task<ClientResult<Customer>> GetMeAsync(CancellationToken cancellationToken);
 
     /// <summary>Lists customers, one page at a time. Requires the <c>identity:read</c> permission.</summary>
     /// <param name="search">An optional free-text search term.</param>
@@ -26,7 +26,7 @@ public interface IIdentityApi
     /// <param name="page">The requested page.</param>
     /// <param name="pageSize">The requested page size.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<PagedResult<CustomerSummary>>> SearchCustomersAsync(
+    Task<ClientResult<PagedResult<CustomerSummary>>> SearchCustomersAsync(
         string? search,
         bool? isActive,
         int page,
@@ -36,13 +36,13 @@ public interface IIdentityApi
     /// <summary>Reads any customer's profile by identifier. Requires the <c>identity:read</c> permission.</summary>
     /// <param name="id">The customer id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Customer>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<Customer>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Updates a customer's name and phone number. Requires the <c>identity:write</c> permission.</summary>
     /// <param name="id">The customer id.</param>
     /// <param name="request">The new name and phone number.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> UpdateCustomerProfileAsync(
+    Task<ClientResult> UpdateCustomerProfileAsync(
         Guid id,
         UpdateCustomerProfileRequest request,
         CancellationToken cancellationToken);
@@ -51,7 +51,7 @@ public interface IIdentityApi
     /// <param name="id">The customer id.</param>
     /// <param name="request">The address to add.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Guid>> AddCustomerAddressAsync(
+    Task<ClientResult<Guid>> AddCustomerAddressAsync(
         Guid id,
         AddCustomerAddressRequest request,
         CancellationToken cancellationToken);
@@ -61,7 +61,7 @@ public interface IIdentityApi
     /// <param name="addressId">The address id.</param>
     /// <param name="request">The new address content.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> UpdateCustomerAddressAsync(
+    Task<ClientResult> UpdateCustomerAddressAsync(
         Guid id,
         Guid addressId,
         UpdateCustomerAddressRequest request,
@@ -71,16 +71,16 @@ public interface IIdentityApi
     /// <param name="id">The customer id.</param>
     /// <param name="addressId">The address id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> RemoveCustomerAddressAsync(Guid id, Guid addressId, CancellationToken cancellationToken);
+    Task<ClientResult> RemoveCustomerAddressAsync(Guid id, Guid addressId, CancellationToken cancellationToken);
 
     /// <summary>Sets a customer's default address. Requires the <c>identity:write</c> permission.</summary>
     /// <param name="id">The customer id.</param>
     /// <param name="addressId">The address id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> SetDefaultCustomerAddressAsync(Guid id, Guid addressId, CancellationToken cancellationToken);
+    Task<ClientResult> SetDefaultCustomerAddressAsync(Guid id, Guid addressId, CancellationToken cancellationToken);
 
     /// <summary>Deactivates a customer's profile. Requires the <c>identity:write</c> permission.</summary>
     /// <param name="id">The customer id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> DeactivateCustomerAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult> DeactivateCustomerAsync(Guid id, CancellationToken cancellationToken);
 }

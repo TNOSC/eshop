@@ -12,15 +12,9 @@
     margin-inline: auto;
     padding-inline: var(--eshop-gutter);
     min-height: var(--eshop-navbar-height);
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1.5rem;
 }
 
 .eshop-logo {
-    margin-right: auto;
     color: var(--eshop-ink);
     width: 20vw;
     max-width: 250px;
@@ -43,12 +37,6 @@
 .eshop-navlinks a.active {
     text-decoration: underline;
     text-underline-offset: 0.4rem;
-}
-
-.eshop-navbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
 }
 
 @media only screen and (max-width: 480px) {

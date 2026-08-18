@@ -12,7 +12,7 @@ using Tnosc.Lib.Web.Contracts;
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 
 /// <summary>
-/// Maps a server error code (<see cref="ApiProblem.Title"/>) to human-readable text. The codes are a
+/// Maps a server error code (<see cref="ClientProblem.Title"/>) to human-readable text. The codes are a
 /// machine vocabulary — <c>Product.NotFound</c> — and are never shown to a shopper directly.
 /// </summary>
 public static class ErrorCodeMessages
@@ -43,7 +43,7 @@ public static class ErrorCodeMessages
 
     /// <summary>Resolves a problem to human-readable text.</summary>
     /// <param name="problem">The problem returned by a failed API call.</param>
-    public static string Humanize(ApiProblem problem) =>
+    public static string Humanize(ClientProblem problem) =>
         Messages.TryGetValue(key: problem.Title ?? string.Empty, value: out string? text)
             ? text
             : problem.Detail ?? "Something went wrong.";

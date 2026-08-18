@@ -1,0 +1,39 @@
+@* Routes.Admin.Dashboard *@
+@page "/admin"
+@rendermode InteractiveAuto
+@attribute [Authorize(Roles = "admin")]
+@using Microsoft.AspNetCore.Authorization
+@using System.Globalization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+
+<PageTitle>Back office — Tnosc EShop</PageTitle>
+
+<PageHeader Title="Back office" Subtitle="Manage products and customers." />
+
+<StatefulBoundary State="_state">
+    <div class="eshop-admin-tiles">
+        <a class="eshop-admin-tile" href="@Routes.Admin.Products">
+            <span class="label">Products</span>
+            @if (_productsProblem is not null)
+            {
+                <ErrorPanel Message="@ErrorCodeMessages.Humanize(_productsProblem)" />
+            }
+            else
+            {
+                <span class="value">@(_productCount?.ToString(provider: CultureInfo.InvariantCulture) ?? "—")</span>
+            }
+        </a>
+        <a class="eshop-admin-tile" href="@Routes.Admin.Customers">
+            <span class="label">Customers</span>
+            @if (_customersProblem is not null)
+            {
+                <ErrorPanel Message="@ErrorCodeMessages.Humanize(_customersProblem)" />
+            }
+            else
+            {
+                <span class="value">@(_customerCount?.ToString(provider: CultureInfo.InvariantCulture) ?? "—")</span>
+            }
+        </a>
+    </div>
+</StatefulBoundary>

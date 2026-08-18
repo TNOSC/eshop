@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
-using Tnosc.Lib.Web.Api;
+using Tnosc.Lib.Web.Results;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Layout.Store;
@@ -48,7 +48,7 @@ public partial class BasketBadge : ComponentBase, IDisposable
             return;
         }
 
-        ApiResult<BasketDto> result = await BasketApi.GetBasketAsync(cancellationToken: CancellationToken.None);
+        ClientResult<BasketDto> result = await BasketApi.GetBasketAsync(cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {

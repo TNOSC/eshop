@@ -6,6 +6,8 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.Lib.Web.Api;
@@ -43,6 +45,8 @@ public static class ClientServiceCollectionExtensions
     {
         services.AddTransient<RequestedWithHandler>();
         services.AddScoped<BasketState>();
+        services.AddScoped<IProductsService, ProductsService>();
+        services.AddScoped<ICreateProductService, CreateProductService>();
 
         IHttpClientBuilder catalog = services.AddHttpClient<ICatalogApi, CatalogApi>(
             name: ApiClientNames.Catalog,

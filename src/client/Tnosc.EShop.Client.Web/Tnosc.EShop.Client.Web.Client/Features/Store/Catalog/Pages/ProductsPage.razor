@@ -1,0 +1,63 @@
+@* Routes.Store.Home / Routes.Store.Products *@
+@page "/"
+@page "/products"
+@rendermode InteractiveAuto
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+@using Tnosc.EShop.Client.Web.Contracts.Catalog
+
+<PageTitle>Catalogue — Tnosc EShop</PageTitle>
+
+<StoreHero Title="Catalogue" Subtitle="Browse everything in the store." />
+
+<div class="eshop-page">
+    <FluentGrid Spacing="4">
+        <FluentGridItem Xs="12" Md="3">
+            <ProductFilters Search="@Search"
+                            SearchChanged="@OnSearchChangedAsync"
+                            CategoryId="@CategoryId"
+                            Categories="@_categories" />
+        </FluentGridItem>
+        <FluentGridItem Xs="12" Md="9">
+            <StatefulBoundary State="_state">
+                <LoadingContent>
+                    <FluentGrid Spacing="4">
+                        @for (int i = 0; i < PageSize; i++)
+                        {
+                            <FluentGridItem Xs="12" Sm="6" Md="4">
+                                <FluentSkeleton Height="220px" />
+                            </FluentGridItem>
+                        }
+                    </FluentGrid>
+                </LoadingContent>
+                <ChildContent>
+                    @if (_problem is not null)
+                    {
+                        <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+                    }
+                    else if (_products.Count == 0)
+                    {
+                        <p class="eshop-catalog-empty">No products found. Try a different search or category.</p>
+                    }
+                    else
+                    {
+                        <FluentGrid Spacing="4">
+                            @foreach (ProductSummary product in _products)
+                            {
+                                <FluentGridItem Xs="12" Sm="6" Md="4">
+                                    <ProductCard Product="@product" />
+                                </FluentGridItem>
+                            }
+                        </FluentGrid>
+
+                        <Pagination CurrentPageIndex="@_pagination.CurrentPageIndex"
+                                    LastPageIndex="@_pagination.LastPageIndex"
+                                    PageUriFactory="@PageUri" />
+                    }
+                </ChildContent>
+            </StatefulBoundary>
+        </FluentGridItem>
+    </FluentGrid>
+</div>

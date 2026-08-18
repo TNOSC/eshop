@@ -1,0 +1,48 @@
+@* Routes.Store.Orders *@
+@page "/orders"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Components
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Contracts.Ordering
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<PageTitle>Your orders — Tnosc EShop</PageTitle>
+
+<StoreHero Title="My orders" />
+
+<div class="eshop-page">
+<StatefulBoundary State="_state">
+@if (_problem is not null)
+{
+    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+}
+else if (_orders.Count == 0)
+{
+    <p>You have not placed any orders yet. <a href="@Routes.Store.Products">Continue shopping.</a></p>
+}
+else
+{
+    <FluentStack Orientation="Orientation.Vertical" Class="eshop-orders">
+        <FluentStack Orientation="Orientation.Horizontal" Wrap="true" HorizontalGap="28px" VerticalAlignment="VerticalAlignment.Center" Class="eshop-orders-row header">
+            <div>Number</div><div>Date</div><div class="right">Total</div><div>Status</div>
+        </FluentStack>
+        @foreach (OrderSummary order in _orders)
+        {
+            <FluentStack Orientation="Orientation.Horizontal" Wrap="true" HorizontalGap="28px" VerticalAlignment="VerticalAlignment.Center" Class="eshop-orders-row">
+                <div><a href="@Routes.Store.OrderDetail(order.Id)">@order.OrderNumber</a></div>
+                <div>@order.PlacedOnUtc.ToString("g")</div>
+                <div class="right"><MoneyDisplay Amount="@order.TotalAmount" Currency="@order.TotalCurrency" /></div>
+                <div><OrderStatusPill Status="@order.Status" /></div>
+            </FluentStack>
+        }
+    </FluentStack>
+
+    <Pagination CurrentPageIndex="@_pagination.CurrentPageIndex"
+                LastPageIndex="@_pagination.LastPageIndex"
+                PageUriFactory="@PageUri" />
+}
+</StatefulBoundary>
+</div>

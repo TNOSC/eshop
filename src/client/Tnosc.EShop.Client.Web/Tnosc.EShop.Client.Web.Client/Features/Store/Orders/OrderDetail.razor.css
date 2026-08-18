@@ -1,6 +1,0 @@
-.eshop-order-status {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--eshop-muted);
-}

@@ -13,6 +13,7 @@ using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.EShop.Client.Web.Contracts.Routes;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
@@ -23,7 +24,7 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 /// </summary>
 internal sealed class OrderingApi(HttpClient httpClient) : IOrderingApi
 {
-    public async Task<ApiResult<PagedResult<OrderSummary>>> GetMyOrdersAsync(
+    public async Task<ClientResult<PagedResult<OrderSummary>>> GetMyOrdersAsync(
         int page,
         int pageSize,
         CancellationToken cancellationToken)
@@ -37,7 +38,7 @@ internal sealed class OrderingApi(HttpClient httpClient) : IOrderingApi
             cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult<Order>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ClientResult<Order>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.GetAsync(
             requestUri: ApiRoutes.Ordering.OrderById(id: id),
@@ -46,7 +47,7 @@ internal sealed class OrderingApi(HttpClient httpClient) : IOrderingApi
         return await ApiResponseReader.ReadAsync<Order>(response: response, cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult<Guid>> PlaceOrderAsync(Guid idempotencyKey, CancellationToken cancellationToken)
+    public async Task<ClientResult<Guid>> PlaceOrderAsync(Guid idempotencyKey, CancellationToken cancellationToken)
     {
         using HttpRequestMessage message = new(method: HttpMethod.Post, requestUri: ApiRoutes.Ordering.Orders);
         message.Headers.Add(name: IdempotencyHeader.Name, value: idempotencyKey.ToString());
@@ -58,7 +59,7 @@ internal sealed class OrderingApi(HttpClient httpClient) : IOrderingApi
         return await ApiResponseReader.ReadAsync<Guid>(response: response, cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult> ConfirmOrderAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ClientResult> ConfirmOrderAsync(Guid id, CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.PostAsync(
             requestUri: ApiRoutes.Ordering.OrderConfirm(id: id),
@@ -68,7 +69,7 @@ internal sealed class OrderingApi(HttpClient httpClient) : IOrderingApi
         return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult> CancelOrderAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ClientResult> CancelOrderAsync(Guid id, CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.PostAsync(
             requestUri: ApiRoutes.Ordering.OrderCancel(id: id),

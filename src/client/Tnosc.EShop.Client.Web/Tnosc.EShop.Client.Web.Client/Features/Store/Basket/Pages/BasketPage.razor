@@ -1,0 +1,70 @@
+@* Routes.Store.Basket *@
+@page "/basket"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Components
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Contracts.Basket
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<PageTitle>Basket — Tnosc EShop</PageTitle>
+
+<StoreHero Title="Your shopping bag" />
+
+<div class="eshop-page">
+<StatefulBoundary State="_state">
+@if (_problem is not null)
+{
+    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+}
+else if (_basket is null)
+{
+    <LoadingPanel />
+}
+else if (_basket.Items.Count == 0)
+{
+    <p>Your shopping bag is empty. <a href="@Routes.Store.Products">Continue shopping.</a></p>
+}
+else
+{
+    <FluentGrid Spacing="4">
+        <FluentGridItem Xs="12" Md="8">
+            <FluentStack Orientation="Orientation.Vertical">
+                @foreach (BasketItem item in _basket.Items)
+                {
+                    <BasketLineRow Item="@item"
+                                   QuantityChanged="@(quantity => ChangeQuantityAsync(item: item, quantity: quantity))"
+                                   Remove="@(() => RemoveItemAsync(item: item))"
+                                   @key="item.Sku" />
+                }
+            </FluentStack>
+        </FluentGridItem>
+
+        <FluentGridItem Xs="12" Md="4">
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16px" Class="eshop-cart-summary-inner">
+                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Class="eshop-cart-summary-header">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Cart())" />
+                    Your shopping bag
+                    <FluentSpacer />
+                    <span class="eshop-cart-count">@_basket.Items.Count</span>
+                </FluentStack>
+                @if (_basket.TotalAmount is { } totalAmount && _basket.TotalCurrency is { } totalCurrency)
+                {
+                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween">
+                        <div>Total</div>
+                        <div><MoneyDisplay Amount="@totalAmount" Currency="@totalCurrency" /></div>
+                    </FluentStack>
+                }
+                <a class="eshop-button eshop-button-primary" href="@Routes.Store.Checkout">Check out</a>
+                <a class="eshop-cart-summary-link" href="@Routes.Store.Products">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.ArrowLeft())" />
+                    Continue shopping
+                </a>
+            </FluentStack>
+        </FluentGridItem>
+    </FluentGrid>
+}
+</StatefulBoundary>
+</div>

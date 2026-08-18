@@ -1,0 +1,33 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Contracts.Basket
+
+<FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="20px" Class="eshop-cart-row">
+    <span class="eshop-cart-row-image">
+        <ProductImage Sku="@Item.Sku" Alt="@Item.ProductName" />
+    </span>
+
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="4px" Width="auto" Class="eshop-cart-row-info">
+        <span class="eshop-cart-row-name">@Item.ProductName</span>
+        <span class="eshop-cart-row-price">
+            <MoneyDisplay Amount="@Item.UnitPriceAmount" Currency="@Item.UnitPriceCurrency" /> each
+        </span>
+    </FluentStack>
+
+    <FluentSpacer />
+
+    <FluentNumberInput TValue="int" Min="1"
+                       Value="@Item.Quantity"
+                       ValueChanged="@(quantity => QuantityChanged.InvokeAsync(quantity))"
+                       StepButtons="NumberInputStepVisibility.Visible"
+                       Width="6rem" />
+
+    <span class="eshop-cart-row-total">
+        <MoneyDisplay Amount="@(Item.UnitPriceAmount * Item.Quantity)" Currency="@Item.UnitPriceCurrency" />
+    </span>
+
+    <FluentButton Appearance="ButtonAppearance.Transparent"
+                  IconStart="@(new Icons.Regular.Size20.Delete())"
+                  Title="Remove"
+                  OnClick="@(() => Remove.InvokeAsync())" />
+</FluentStack>

@@ -1,0 +1,10 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Shared
+
+<div class="eshop-pages">
+    @for (int i = 0; i < (LastPageIndex ?? 0) + 1; i++)
+    {
+        int pageIndex = i;
+        <a class="@(pageIndex == CurrentPageIndex ? "active" : "")"
+           href="@PageUriFactory(pageIndex)">@(pageIndex + 1)</a>
+    }
+</div>

@@ -8,8 +8,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
-using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
@@ -20,7 +20,7 @@ public interface IOrderingApi
     /// <param name="page">The requested page.</param>
     /// <param name="pageSize">The requested page size.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<PagedResult<OrderSummary>>> GetMyOrdersAsync(
+    Task<ClientResult<PagedResult<OrderSummary>>> GetMyOrdersAsync(
         int page,
         int pageSize,
         CancellationToken cancellationToken);
@@ -28,7 +28,7 @@ public interface IOrderingApi
     /// <summary>Reads one of the caller's own orders, with its lines.</summary>
     /// <param name="id">The order id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Order>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<Order>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Turns the caller's basket into an order.</summary>
     /// <param name="idempotencyKey">
@@ -37,15 +37,15 @@ public interface IOrderingApi
     /// business failure) actually arrives, never per HTTP send.
     /// </param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult<Guid>> PlaceOrderAsync(Guid idempotencyKey, CancellationToken cancellationToken);
+    Task<ClientResult<Guid>> PlaceOrderAsync(Guid idempotencyKey, CancellationToken cancellationToken);
 
     /// <summary>Confirms one of the caller's own orders.</summary>
     /// <param name="id">The order id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> ConfirmOrderAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult> ConfirmOrderAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Cancels one of the caller's own orders.</summary>
     /// <param name="id">The order id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ApiResult> CancelOrderAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult> CancelOrderAsync(Guid id, CancellationToken cancellationToken);
 }

@@ -30,10 +30,10 @@ public static class NotificationExtensions
     /// override when a host uses a different path.
     /// </param>
     public static async Task NotifyFailureAsync(
-        ApiProblem problem,
+        ClientProblem problem,
         INotificationService notifications,
         NavigationManager navigation,
-        Func<ApiProblem, string> humanize,
+        Func<ClientProblem, string> humanize,
         string loginRoute = "bff/login")
     {
         ArgumentNullException.ThrowIfNull(argument: humanize);

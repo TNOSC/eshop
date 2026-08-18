@@ -1,0 +1,38 @@
+.eshop-cart-summary-inner {
+    padding: 1rem 1.5rem;
+    background: var(--eshop-panel);
+}
+
+.eshop-cart-summary-header {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--eshop-ink);
+    color: var(--eshop-ink);
+    font-size: var(--eshop-h2-size);
+    font-weight: var(--eshop-weight-semibold);
+    line-height: 120%;
+}
+
+.eshop-cart-count {
+    background: var(--eshop-ink);
+    color: var(--eshop-on-ink);
+    border-radius: var(--eshop-radius-badge);
+    min-width: 3.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--eshop-body-size);
+    font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-cart-summary-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--eshop-ink);
+    text-decoration: none;
+}
+
+.eshop-button {
+    align-self: stretch;
+}

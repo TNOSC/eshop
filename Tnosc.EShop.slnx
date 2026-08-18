@@ -43,6 +43,9 @@
     <Project Path="src/server/Tnosc.EShop.Server.Shared/Tnosc.EShop.Server.Shared.csproj" Id="bc067331-949b-4883-b404-e86863a6ce88" />
   </Folder>
   <Folder Name="/tests/" />
+  <Folder Name="/tests/client/">
+    <Project Path="tests/client/Tnosc.EShop.Client.Web.Tests.Unit/Tnosc.EShop.Client.Web.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/server/">
     <Project Path="tests/server/Tnosc.EShop.Server.Tests.Acceptance/Tnosc.EShop.Server.Tests.Acceptance.csproj" Id="05ccabcc-2531-4f86-8191-3f09affb8e46" />
     <Project Path="tests/server/Tnosc.EShop.Server.Tests.Architecture/Tnosc.EShop.Server.Tests.Architecture.csproj" Id="3414e588-dd5c-4e8c-9f87-2059ab7a5d1c" />

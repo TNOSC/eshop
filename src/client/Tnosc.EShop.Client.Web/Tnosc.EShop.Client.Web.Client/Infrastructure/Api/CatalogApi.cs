@@ -14,6 +14,7 @@ using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.EShop.Client.Web.Contracts.Routes;
 using Tnosc.Lib.Web.Api;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 
@@ -24,7 +25,7 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 /// </summary>
 internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
 {
-    public async Task<ApiResult<PagedResult<ProductSummary>>> SearchProductsAsync(
+    public async Task<ClientResult<PagedResult<ProductSummary>>> SearchProductsAsync(
         SearchProductsQuery query,
         CancellationToken cancellationToken)
     {
@@ -37,7 +38,7 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
             cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult<Product>> GetProductAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ClientResult<Product>> GetProductAsync(Guid id, CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.GetAsync(
             requestUri: ApiRoutes.Catalog.ProductById(id: id),
@@ -48,7 +49,7 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
             cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken)
+    public async Task<ClientResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.GetAsync(
             requestUri: ApiRoutes.Catalog.Categories,
@@ -59,7 +60,7 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
             cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult<Guid>> CreateProductAsync(
+    public async Task<ClientResult<Guid>> CreateProductAsync(
         CreateProductRequest request,
         Guid idempotencyKey,
         CancellationToken cancellationToken)
@@ -77,7 +78,7 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
         return await ApiResponseReader.ReadAsync<Guid>(response: response, cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult> UpdateProductPriceAsync(
+    public async Task<ClientResult> UpdateProductPriceAsync(
         Guid productId,
         UpdateProductPriceRequest request,
         CancellationToken cancellationToken)
@@ -90,7 +91,7 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
         return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
     }
 
-    public async Task<ApiResult> AdjustStockAsync(
+    public async Task<ClientResult> AdjustStockAsync(
         Guid productId,
         AdjustStockRequest request,
         CancellationToken cancellationToken)
