@@ -8,9 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
-using Tnosc.Lib.Web.Results;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
+using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
 
@@ -24,7 +23,7 @@ public interface ICreateProductService
 {
     /// <summary>Loads the categories the dialog's category picker offers.</summary>
     /// <param name="cancellationToken">A token to cancel the request.</param>
-    Task<ClientResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken);
+    Task<ClientResult<IReadOnlyList<CategoryViewModel>>> GetCategoriesAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Validates <paramref name="viewModel"/>, maps it to a <c>CreateProductRequest</c> and submits

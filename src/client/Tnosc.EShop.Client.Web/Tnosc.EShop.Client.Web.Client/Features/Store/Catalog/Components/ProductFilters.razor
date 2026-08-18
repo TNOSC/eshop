@@ -1,5 +1,5 @@
 @namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
-@using Tnosc.EShop.Client.Web.Contracts.Catalog
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels
 
 <div class="eshop-filters">
     <div class="eshop-filters-header">
@@ -26,7 +26,7 @@
         <h3>Category</h3>
         <FluentStack Wrap="true" HorizontalGap="4px" Class="eshop-filters-tags">
             <a class="eshop-tag @(CategoryId is null ? "active" : "")" href="@CategoryUri(null)">All</a>
-            @foreach (Category category in Categories)
+            @foreach (CategoryViewModel category in Categories)
             {
                 <a class="eshop-tag @(CategoryId == category.Id ? "active" : "")"
                    href="@CategoryUri(category.Id)">@category.Name</a>

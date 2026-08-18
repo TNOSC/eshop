@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
@@ -48,10 +49,18 @@ public sealed class ProductDetailServiceTests
             .Returns(returnThis: Task.FromResult(ClientResult<Product>.Success(value: product)));
 
         // Act
-        ClientResult<Product> result = await _sut.GetProductAsync(id: id, cancellationToken: CancellationToken.None);
+        ClientResult<ProductDetailViewModel> result = await _sut.GetProductAsync(id: id, cancellationToken: CancellationToken.None);
 
         // Assert
-        result.Value.ShouldBe(expected: product);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.Id.ShouldBe(expected: product.Id);
+        result.Value.Sku.ShouldBe(expected: product.Sku);
+        result.Value.Name.ShouldBe(expected: product.Name);
+        result.Value.Description.ShouldBe(expected: product.Description);
+        result.Value.PriceAmount.ShouldBe(expected: product.PriceAmount);
+        result.Value.PriceCurrency.ShouldBe(expected: product.PriceCurrency);
+        result.Value.StockQuantity.ShouldBe(expected: product.StockQuantity);
+        result.Value.BrandName.ShouldBe(expected: product.BrandName);
         await _catalogApi.Received(requiredNumberOfCalls: 1).GetProductAsync(id: id, cancellationToken: Arg.Any<CancellationToken>());
     }
 
@@ -60,15 +69,25 @@ public sealed class ProductDetailServiceTests
     {
         // Arrange
         var productId = Guid.CreateVersion7();
-        var basket = new BasketDto(BasketId: Guid.CreateVersion7(), CustomerId: Guid.CreateVersion7(), Items: [], TotalAmount: null, TotalCurrency: null);
+        var basketItem = new BasketItem(
+            ItemId: Guid.CreateVersion7(),
+            ProductId: productId,
+            Sku: "SKU-1",
+            ProductName: "Widget",
+            UnitPriceAmount: 9.99m,
+            UnitPriceCurrency: "USD",
+            Quantity: 2);
+        var basket = new BasketDto(BasketId: Guid.CreateVersion7(), CustomerId: Guid.CreateVersion7(), Items: [basketItem], TotalAmount: null, TotalCurrency: null);
 
         _basketApi.AddItemAsync(request: Arg.Any<AddItemToBasketRequest>(), cancellationToken: Arg.Any<CancellationToken>())
             .Returns(returnThis: Task.FromResult(ClientResult<BasketDto>.Success(value: basket)));
 
         // Act
-        await _sut.AddToBasketAsync(productId: productId, quantity: 2, cancellationToken: CancellationToken.None);
+        ClientResult<int> result = await _sut.AddToBasketAsync(productId: productId, quantity: 2, cancellationToken: CancellationToken.None);
 
         // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(expected: basket.Items.Count);
         await _basketApi.Received(requiredNumberOfCalls: 1).AddItemAsync(
             request: Arg.Is<AddItemToBasketRequest>(predicate: r => r.ProductId == productId && r.Quantity == 2),
             cancellationToken: Arg.Any<CancellationToken>());

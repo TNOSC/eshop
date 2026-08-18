@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
@@ -19,8 +20,17 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
 /// <inheritdoc cref="IAdminCustomerDetailService" />
 internal sealed class AdminCustomerDetailService(IIdentityApi identityApi) : IAdminCustomerDetailService
 {
-    public Task<ClientResult<Customer>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken) =>
-        identityApi.GetCustomerByIdAsync(id: id, cancellationToken: cancellationToken);
+    public async Task<ClientResult<CustomerDetailViewModel>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        ClientResult<Customer> result = await identityApi.GetCustomerByIdAsync(id: id, cancellationToken: cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ClientResult<CustomerDetailViewModel>.Failure(problem: result.Problem!);
+        }
+
+        return ClientResult<CustomerDetailViewModel>.Success(value: ToViewModel(customer: result.Value));
+    }
 
     public Task<ClientResult> SaveProfileAsync(Guid id, CustomerProfileViewModel viewModel, CancellationToken cancellationToken)
     {
@@ -67,4 +77,27 @@ internal sealed class AdminCustomerDetailService(IIdentityApi identityApi) : IAd
 
     public Task<ClientResult> DeactivateCustomerAsync(Guid id, CancellationToken cancellationToken) =>
         identityApi.DeactivateCustomerAsync(id: id, cancellationToken: cancellationToken);
+
+    private static CustomerDetailViewModel ToViewModel(Customer customer) =>
+        new()
+        {
+            Id = customer.Id,
+            Email = customer.Email,
+            FirstName = customer.FirstName,
+            LastName = customer.LastName,
+            PhoneNumber = customer.PhoneNumber,
+            IsActive = customer.IsActive,
+            DefaultAddressId = customer.DefaultAddressId,
+            Addresses = [.. customer.Addresses.Select(ToViewModel)],
+        };
+
+    private static CustomerAddressListItemViewModel ToViewModel(CustomerAddress address) =>
+        new()
+        {
+            Id = address.Id,
+            Street = address.Street,
+            City = address.City,
+            PostalCode = address.PostalCode,
+            Country = address.Country,
+        };
 }

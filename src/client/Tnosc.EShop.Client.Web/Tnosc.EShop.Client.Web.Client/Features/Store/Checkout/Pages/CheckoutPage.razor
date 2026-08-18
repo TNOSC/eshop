@@ -5,9 +5,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Basket
-@using Tnosc.EShop.Client.Web.Contracts.Identity
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Checkout — Tnosc EShop</PageTitle>
@@ -34,7 +33,7 @@ else if (_customer.DefaultAddressId is null)
 }
 else
 {
-    CustomerAddress address = _customer.Addresses.First(a => a.Id == _customer.DefaultAddressId);
+    CheckoutAddressViewModel address = _customer.Addresses.First(a => a.Id == _customer.DefaultAddressId);
     <FluentStack Orientation="Orientation.Vertical" VerticalGap="40px" Class="eshop-checkout">
         <DeliveryAddress Street="@address.Street"
                          PostalCode="@address.PostalCode"
@@ -43,7 +42,7 @@ else
 
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="20px" Class="eshop-form-section">
             <h2 class="eshop-h2">Items</h2>
-            @foreach (BasketItem item in _basket.Items)
+            @foreach (CheckoutBasketItemViewModel item in _basket.Items)
             {
                 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line">
                     <span>@item.ProductName × @item.Quantity</span>

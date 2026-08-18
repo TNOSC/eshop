@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
@@ -24,7 +24,7 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Pages;
 /// <see cref="IOrderDetailService"/>'s responsibility.</summary>
 public partial class OrderDetailPage : ComponentBase
 {
-    private Order? _order;
+    private OrderDetailViewModel? _order;
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
 
@@ -53,7 +53,7 @@ public partial class OrderDetailPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<Order> result = await Service.GetOrderByIdAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult<OrderDetailViewModel> result = await Service.GetOrderByIdAsync(id: Id, cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {

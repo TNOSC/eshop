@@ -13,7 +13,6 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
@@ -30,7 +29,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
 
     private EditContext _profileEditContext = default!;
     private EditContext _addressEditContext = default!;
-    private Customer? _customer;
+    private CustomerDetailViewModel? _customer;
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
     private bool _isSavingProfile;
@@ -63,7 +62,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<Customer> result = await Service.GetCustomerByIdAsync(id: Id, cancellationToken: CancellationToken.None);
+        ClientResult<CustomerDetailViewModel> result = await Service.GetCustomerByIdAsync(id: Id, cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -138,7 +137,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
         }
     }
 
-    private async Task SetDefaultAddressAsync(CustomerAddress address)
+    private async Task SetDefaultAddressAsync(CustomerAddressListItemViewModel address)
     {
         ClientResult result = await Service.SetDefaultAddressAsync(
             id: Id,
@@ -154,7 +153,7 @@ public partial class AdminCustomerDetailPage : ComponentBase
         await NotificationExtensions.NotifyFailureAsync(problem: result.Problem!, notifications: Notifications, navigation: Navigation, humanize: ErrorCodeMessages.Humanize);
     }
 
-    private async Task RemoveAddressAsync(CustomerAddress address)
+    private async Task RemoveAddressAsync(CustomerAddressListItemViewModel address)
     {
         DialogResult confirmation = await DialogService.ShowConfirmationAsync(
             message: $"Remove the address at {address.Street}?",

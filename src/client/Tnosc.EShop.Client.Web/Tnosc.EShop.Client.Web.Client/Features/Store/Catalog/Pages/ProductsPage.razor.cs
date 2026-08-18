@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
@@ -32,8 +31,8 @@ public partial class ProductsPage : ComponentBase
     private readonly PaginationState _pagination = new() { ItemsPerPage = PageSize };
     private readonly ProductsViewModel _viewModel = new();
 
-    private IReadOnlyList<ProductSummary> _products = [];
-    private IReadOnlyList<Category> _categories = [];
+    private IReadOnlyList<ProductSummaryViewModel> _products = [];
+    private IReadOnlyList<CategoryViewModel> _categories = [];
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
 
@@ -57,7 +56,7 @@ public partial class ProductsPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        ClientResult<IReadOnlyList<Category>> categories = await Service.GetCategoriesAsync(
+        ClientResult<IReadOnlyList<CategoryViewModel>> categories = await Service.GetCategoriesAsync(
             cancellationToken: CancellationToken.None);
 
         if (categories.IsSuccess)
@@ -86,7 +85,7 @@ public partial class ProductsPage : ComponentBase
         _viewModel.CategoryId = CategoryId;
         _viewModel.Page = _pagination.CurrentPageIndex + 1;
 
-        ClientResult<PagedResult<ProductSummary>> result = await Service.SearchAsync(
+        ClientResult<PagedResult<ProductSummaryViewModel>> result = await Service.SearchAsync(
             viewModel: _viewModel,
             pageSize: PageSize,
             cancellationToken: CancellationToken.None);

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
@@ -26,8 +26,8 @@ public partial class AdminProductsPage : ComponentBase
 
     private readonly PaginationState _pagination = new() { ItemsPerPage = PageSize };
 
-    private FluentDataGrid<ProductSummary> _grid = default!;
-    private GridItemsProvider<ProductSummary> _productsProvider = default!;
+    private FluentDataGrid<ProductRowViewModel> _grid = default!;
+    private GridItemsProvider<ProductRowViewModel> _productsProvider = default!;
     // The grid mounts and shows its own built-in loading spinner immediately, so there is no
     // separate "not yet mounted" state to gate on here — ComponentState only ever reaches Content
     // (or Error, if rendering the grid itself throws).
@@ -42,12 +42,12 @@ public partial class AdminProductsPage : ComponentBase
 
     protected override void OnInitialized() => _productsProvider = ProvideProductsAsync;
 
-    private async ValueTask<GridItemsProviderResult<ProductSummary>> ProvideProductsAsync(
-        GridItemsProviderRequest<ProductSummary> request)
+    private async ValueTask<GridItemsProviderResult<ProductRowViewModel>> ProvideProductsAsync(
+        GridItemsProviderRequest<ProductRowViewModel> request)
     {
         int page = (request.StartIndex / PageSize) + 1;
 
-        ClientResult<PagedResult<ProductSummary>> result = await Service.SearchAsync(
+        ClientResult<PagedResult<ProductRowViewModel>> result = await Service.SearchAsync(
             page: page,
             pageSize: PageSize,
             cancellationToken: request.CancellationToken);
@@ -55,11 +55,11 @@ public partial class AdminProductsPage : ComponentBase
         if (!result.IsSuccess)
         {
             _problem = result.Problem;
-            return GridItemsProviderResult.From<ProductSummary>(items: [], totalItemCount: 0);
+            return GridItemsProviderResult.From<ProductRowViewModel>(items: [], totalItemCount: 0);
         }
 
         _problem = null;
-        return GridItemsProviderResult.From<ProductSummary>(
+        return GridItemsProviderResult.From<ProductRowViewModel>(
             items: [.. result.Value.Items],
             totalItemCount: (int)result.Value.TotalCount);
     }
@@ -82,7 +82,7 @@ public partial class AdminProductsPage : ComponentBase
         }
     }
 
-    private async Task OpenPriceDialogAsync(ProductSummary product)
+    private async Task OpenPriceDialogAsync(ProductRowViewModel product)
     {
         DialogOptions options = new()
         {
@@ -107,7 +107,7 @@ public partial class AdminProductsPage : ComponentBase
         }
     }
 
-    private async Task OpenStockDialogAsync(ProductSummary product)
+    private async Task OpenStockDialogAsync(ProductRowViewModel product)
     {
         DialogOptions options = new()
         {

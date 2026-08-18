@@ -8,7 +8,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
@@ -23,7 +22,7 @@ public interface IAdminCustomerDetailService
     /// <summary>Reads any customer's profile by identifier.</summary>
     /// <param name="id">The customer id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<Customer>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<CustomerDetailViewModel>> GetCustomerByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Validates and saves a customer's profile.</summary>
     /// <param name="id">The customer id.</param>

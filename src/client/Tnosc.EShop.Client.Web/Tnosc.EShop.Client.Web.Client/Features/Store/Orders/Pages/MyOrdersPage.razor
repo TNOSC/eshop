@@ -5,8 +5,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Ordering
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Your orders — Tnosc EShop</PageTitle>
@@ -29,7 +29,7 @@ else
         <FluentStack Orientation="Orientation.Horizontal" Wrap="true" HorizontalGap="28px" VerticalAlignment="VerticalAlignment.Center" Class="eshop-orders-row header">
             <div>Number</div><div>Date</div><div class="right">Total</div><div>Status</div>
         </FluentStack>
-        @foreach (OrderSummary order in _orders)
+        @foreach (OrderSummaryViewModel order in _orders)
         {
             <FluentStack Orientation="Orientation.Horizontal" Wrap="true" HorizontalGap="28px" VerticalAlignment="VerticalAlignment.Center" Class="eshop-orders-row">
                 <div><a href="@Routes.Store.OrderDetail(order.Id)">@order.OrderNumber</a></div>

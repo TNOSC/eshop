@@ -3,10 +3,10 @@
 @rendermode InteractiveAuto
 @attribute [Authorize(Policy = Permissions.Identity.Write)]
 @using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Identity
 
 <PageTitle>@(_customer?.Email ?? "Customer") — Back office</PageTitle>
 
@@ -49,7 +49,7 @@ else if (_customer is not null)
     <FluentCard Margin="Margin.Top3">
         <FluentText As="TextTag.H2" Class="eshop-h2">Addresses</FluentText>
 
-        <FluentDataGrid TGridItem="CustomerAddress" Items="@_customer.Addresses.AsQueryable()" ResizableColumns="true">
+        <FluentDataGrid TGridItem="CustomerAddressListItemViewModel" Items="@_customer.Addresses.AsQueryable()" ResizableColumns="true">
             <ChildContent>
                 <PropertyColumn Property="@(a => a.Street)" Title="Street" />
                 <PropertyColumn Property="@(a => a.City)" Title="City" />

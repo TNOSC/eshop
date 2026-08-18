@@ -7,9 +7,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 using Tnosc.Lib.Web.Results;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 
@@ -23,11 +22,12 @@ public interface IProductDetailService
     /// <summary>Retrieves a single product by id.</summary>
     /// <param name="id">The product id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<Product>> GetProductAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<ProductDetailViewModel>> GetProductAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Adds a quantity of a product to the caller's basket.</summary>
     /// <param name="productId">The product to add.</param>
     /// <param name="quantity">The quantity to add.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<BasketDto>> AddToBasketAsync(Guid productId, int quantity, CancellationToken cancellationToken);
+    /// <returns>The resulting basket's total item count, on success.</returns>
+    Task<ClientResult<int>> AddToBasketAsync(Guid productId, int quantity, CancellationToken cancellationToken);
 }

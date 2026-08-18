@@ -22,7 +22,10 @@ touches an `IXxxApi` client, validates, or maps to a request contract.
    - **Behavior component** — fetches data, submits a form, or otherwise owns state.
    - **Presentational component** — renders `[Parameter]`s only, no state, no API call (e.g.
      `ProductCard`, `Pagination`, `MoneyDisplay`). Stop after the markup step — no ViewModel, no
-     service. Adding either here is ceremony, not architecture.
+     service. Adding either here is ceremony, not architecture. Its `[Parameter]`s are never a
+     `Tnosc.EShop.Client.Web.Contracts` type though — if it displays DTO-derived data, the parent's
+     own service maps that DTO into a small colocated display ViewModel first
+     (`.claude/rules/blazor-client-mvvm.md`, "No DTO past the service").
 
 2. **Place it**, mirroring `Features/Store/Catalog/`:
    ```
@@ -115,7 +118,10 @@ touches an `IXxxApi` client, validates, or maps to a request contract.
    ```
 
    A mutating method always calls `ClientValidation.Validate` first and short-circuits on failure —
-   this is what makes the service unit-testable with a substituted `IXxxApi` and nothing else.
+   this is what makes the service unit-testable with a substituted `IXxxApi` and nothing else. A
+   **read-only** `GetAsync`/`SearchAsync` maps its DTO response into a ViewModel too, before
+   returning it — the mapping obligation isn't limited to the validate-then-map example above; no
+   `Tnosc.EShop.Client.Web.Contracts` type is ever returned to a caller.
 
 7. **Wire validation into the component, if it's a form.** Own an `EditContext`, a
    `ValidationMessageStore`, and a `List<string>` for unmapped messages. On submit: clear the message
@@ -163,7 +169,11 @@ If the component needs an API endpoint that doesn't exist yet, that's server-sid
 - `ComponentState.Error` is never set by component code — only `StatefulBoundary`'s `ErrorBoundary`
   sets it; a `ClientProblem` failure still renders as `Content` via `ErrorPanel`.
 - Presentational components (no state, no API call of their own) get no ViewModel and no service —
-  don't add either as ceremony.
+  don't add either as ceremony. Their `[Parameter]`s are never a `Tnosc.EShop.Client.Web.Contracts`
+  type either — take a colocated display ViewModel the parent's service maps for them.
+- No type from `Tnosc.EShop.Client.Web.Contracts` appears in a page's fields, a component's
+  `[Parameter]`s, or a `GridItemsProvider<T>`/`FluentDataGrid<T>` type argument — the owning service
+  maps every DTO to a colocated ViewModel before returning it, including read-only display data.
 - Every call with 3+ arguments is one per line, every argument named at every call site
   (`.claude/rules/code-style.md`).
 - `IConfiguration`/`IOptions<T>` never appear in a component or service constructor

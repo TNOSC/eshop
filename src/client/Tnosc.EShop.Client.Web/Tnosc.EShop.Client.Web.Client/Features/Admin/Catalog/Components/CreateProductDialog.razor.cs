@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Validation;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
@@ -38,7 +37,7 @@ public partial class CreateProductDialog : ComponentBase
 
     private EditContext _editContext = default!;
     private ValidationMessageStore _messageStore = default!;
-    private IReadOnlyList<Category> _categories = [];
+    private IReadOnlyList<CategoryViewModel> _categories = [];
     private ComponentState _state = ComponentState.Loading;
     private ClientProblem? _categoriesProblem;
     private bool _isSubmitting;
@@ -68,7 +67,7 @@ public partial class CreateProductDialog : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        ClientResult<IReadOnlyList<Category>> result = await Service.GetCategoriesAsync(
+        ClientResult<IReadOnlyList<CategoryViewModel>> result = await Service.GetCategoriesAsync(
             cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)

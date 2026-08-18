@@ -7,7 +7,7 @@
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Components
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Components
-@using Tnosc.EShop.Client.Web.Contracts.Ordering
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>@(_order?.OrderNumber ?? "Order") — Tnosc EShop</PageTitle>
@@ -50,7 +50,7 @@ else if (_order is not null)
 
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="20px" Class="eshop-form-section">
             <h2 class="eshop-h2">Items</h2>
-            @foreach (OrderLine line in _order.Lines)
+            @foreach (OrderLineViewModel line in _order.Lines)
             {
                 <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.SpaceBetween" VerticalAlignment="VerticalAlignment.Center" Class="eshop-checkout-line">
                     <span>@line.ProductName (@line.Sku) × @line.Quantity</span>

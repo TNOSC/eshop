@@ -11,15 +11,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Basket;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
 using Tnosc.Lib.Web.Results;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Pages;
 
@@ -32,8 +30,8 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Pages;
 /// </summary>
 public partial class CheckoutPage : ComponentBase
 {
-    private BasketDto? _basket;
-    private Customer? _customer;
+    private CheckoutBasketViewModel? _basket;
+    private CheckoutCustomerViewModel? _customer;
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
     private bool _isPlacingOrder;

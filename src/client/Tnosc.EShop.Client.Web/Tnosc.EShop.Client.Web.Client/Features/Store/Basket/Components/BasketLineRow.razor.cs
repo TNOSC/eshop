@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Contracts.Basket;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.ViewModels;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Components;
 
@@ -13,7 +13,7 @@ public partial class BasketLineRow : ComponentBase
 {
     [Parameter]
     [EditorRequired]
-    public required BasketItem Item { get; set; }
+    public required BasketItemViewModel Item { get; set; }
 
     [Parameter]
     public EventCallback<int> QuantityChanged { get; set; }

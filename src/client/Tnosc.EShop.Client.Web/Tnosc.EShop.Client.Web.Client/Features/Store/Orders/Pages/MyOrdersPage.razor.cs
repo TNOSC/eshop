@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
-using Tnosc.EShop.Client.Web.Contracts.Ordering;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
@@ -28,7 +28,7 @@ public partial class MyOrdersPage : ComponentBase
 
     private readonly PaginationState _pagination = new() { ItemsPerPage = PageSize };
 
-    private IReadOnlyList<OrderSummary> _orders = [];
+    private IReadOnlyList<OrderSummaryViewModel> _orders = [];
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
 
@@ -59,7 +59,7 @@ public partial class MyOrdersPage : ComponentBase
         _state = ComponentState.Loading;
         _problem = null;
 
-        ClientResult<PagedResult<OrderSummary>> result = await Service.GetMyOrdersAsync(
+        ClientResult<PagedResult<OrderSummaryViewModel>> result = await Service.GetMyOrdersAsync(
             page: _pagination.CurrentPageIndex + 1,
             pageSize: PageSize,
             cancellationToken: CancellationToken.None);

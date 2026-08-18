@@ -45,11 +45,16 @@ and nothing else — no DOM, no `EditContext`, no rendering.
   response back. Registered scoped in `ClientServiceCollectionExtensions.cs`, alongside the typed
   API clients it wraps.
 
-**Presentational components are exempt.** `ProductCard`, `BasketLineRow`, `OrderStatusPill`,
-`MoneyDisplay`, `PageHeader`, `Pagination`, `DeliveryAddress`, etc. take `[Parameter]`s and render —
-no ViewModel, no service. Adding either to a component with no state or API call of its own is pure
-ceremony. `StatefulBoundary` itself (below) is exempt for the same reason — it is a shared framework
-component, not a per-feature one.
+**Presentational components take no `[Parameter]` and no service — but never a Contracts type
+either.** `ProductCard`, `BasketLineRow`, `OrderStatusPill`, `MoneyDisplay`, `PageHeader`,
+`Pagination`, `DeliveryAddress`, etc. still get no ViewModel and no service of their own — adding
+either to a component with no state or API call of its own is pure ceremony. What changes: none of
+their `[Parameter]`s may be a type from `Tnosc.EShop.Client.Web.Contracts`, including read-only
+display data. A component whose parameters are already primitives (`DeliveryAddress`'s
+`Street`/`City`/`PostalCode`/`Country`) needs nothing new. A component whose parameters currently take
+a DTO (`ProductCard.Product`, `BasketLineRow.Item`, `ProductFilters.Categories`) takes a colocated
+display ViewModel instead — see "No DTO past the service" below. `StatefulBoundary` itself (below) is
+exempt for the same reason — it is a shared framework component, not a per-feature one.
 
 ### State — one enum, three members, wrapped in `StatefulBoundary`
 
@@ -117,6 +122,39 @@ code path regardless of whether the rejection was client-side (never left the br
 server-side (a 400/409 response): clear the message store → call `Service.SubmitAsync(...)` → on
 failure, `ClientValidation.ApplyFieldErrors(...)`.
 
+### No DTO past the service — read-only display data is mapped too
+
+A type from `Tnosc.EShop.Client.Web.Contracts` (`Product`, `ProductSummary`, `Category`, `Order`,
+`OrderLine`, `OrderSummary`, `Basket`, `BasketItem`, `Customer`, `CustomerAddress`,
+`CustomerSummary`, …) never appears in a page's private fields, a component's `[Parameter]`s, or a
+`GridItemsProvider<T>`/`FluentDataGrid<T>` type argument — a read-only display value is mapped
+exactly as a request contract already is, not just a form submission. The `I<Name>Service` that owns
+the `IXxxApi` client for that page/component maps every DTO it returns into a colocated ViewModel
+before returning it; nothing downstream of the service ever sees the DTO shape.
+
+- A page's private display field (`ProductsPage._products`, `OrderDetailPage._order`,
+  `CheckoutPage._basket`, …) holds the mapped ViewModel type.
+- A presentational component's `[Parameter]` (`ProductCard.Product`, `BasketLineRow.Item`,
+  `ProductFilters.Categories`) takes the mapped ViewModel type. When the same DTO shape reaches more
+  than one component from the same page (`ProductsPage` → `ProductCard`), it is **one** ViewModel
+  colocated in that feature's `ViewModels/` folder, shared by both — not duplicated per component.
+- A `GridItemsProvider<T>`/`FluentDataGrid<T>`, server-paged or in-memory (`AdminProductsPage`,
+  `AdminCustomersPage`, `AdminCustomerDetailPage`'s address grid), is typed to a colocated
+  row/list-item ViewModel, never the DTO; the service performs the DTO → ViewModel mapping in the same
+  call that already builds the `PagedResult<T>`/list.
+- A DTO's nested collection (`Order.Lines`, `Basket.Items`, `Customer.Addresses`) gets its own nested
+  ViewModel, colocated with the parent, mapped in the same service method.
+- Name the ViewModel after the DTO it replaces, not the component consuming it
+  (`ProductSummaryViewModel`, not `ProductCardViewModel`) — several DTOs already flow through more
+  than one component in the same slice, and naming after the first consumer misleads the next. Use
+  `<Dto>RowViewModel` for a grid-only shape (`ProductRowViewModel`, `CustomerRowViewModel`). A
+  display ViewModel that would collide with an existing user-editable ViewModel for the same DTO
+  (`AdminCustomerDetailPage`'s add-address form already owns `CustomerAddressViewModel`) is
+  disambiguated explicitly (`CustomerAddressListItemViewModel`).
+- This does not touch a user-editable ViewModel already mapped to a request contract on submit
+  (`CreateProductViewModel`, `CustomerProfileViewModel`, `CustomerAddressViewModel`) — those never
+  held a DTO to begin with.
+
 ### Naming and placement
 
 `<Name>ViewModel.cs`, `I<Name>Service.cs`/`<Name>Service.cs` — colocated with `<Name>.razor` in the
@@ -138,3 +176,6 @@ same `Features/**` folder, not centralized. Mirrors how `configuration-options.m
       `StatefulBoundary`, instead of a private `bool _isLoading`.
 - [ ] A `ClientProblem` failure still renders as `Content` (via `ErrorPanel`); `_state` is never set
       to `Error` by component code — only `StatefulBoundary`'s wrapped `ErrorBoundary` does that.
+- [ ] No type from `Tnosc.EShop.Client.Web.Contracts` appears in a page's fields, a component's
+      `[Parameter]`s, or a `GridItemsProvider<T>`/`FluentDataGrid<T>` type argument — the owning
+      service maps every DTO to a colocated ViewModel before returning it.

@@ -5,13 +5,16 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Contracts.Identity;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
 using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
+using BasketItemDto = Tnosc.EShop.Client.Web.Contracts.Basket.BasketItem;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
 
@@ -25,7 +28,10 @@ internal sealed class CheckoutService(IBasketApi basketApi, IIdentityApi identit
 
         if (basketResult.IsSuccess && customerResult.IsSuccess)
         {
-            return new CheckoutLoadResult(Basket: basketResult.Value, Customer: customerResult.Value, Problem: null);
+            return new CheckoutLoadResult(
+                Basket: ToViewModel(basket: basketResult.Value),
+                Customer: ToViewModel(customer: customerResult.Value),
+                Problem: null);
         }
 
         ClientProblem? problem = basketResult.Problem ?? customerResult.Problem;
@@ -34,4 +40,39 @@ internal sealed class CheckoutService(IBasketApi basketApi, IIdentityApi identit
 
     public Task<ClientResult<Guid>> PlaceOrderAsync(Guid idempotencyKey, CancellationToken cancellationToken) =>
         orderingApi.PlaceOrderAsync(idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
+
+    private static CheckoutBasketViewModel ToViewModel(BasketDto basket) =>
+        new()
+        {
+            Items = [.. basket.Items.Select(ToViewModel)],
+            TotalAmount = basket.TotalAmount,
+            TotalCurrency = basket.TotalCurrency,
+        };
+
+    private static CheckoutBasketItemViewModel ToViewModel(BasketItemDto item) =>
+        new()
+        {
+            ItemId = item.ItemId,
+            ProductName = item.ProductName,
+            UnitPriceAmount = item.UnitPriceAmount,
+            UnitPriceCurrency = item.UnitPriceCurrency,
+            Quantity = item.Quantity,
+        };
+
+    private static CheckoutCustomerViewModel ToViewModel(Customer customer) =>
+        new()
+        {
+            DefaultAddressId = customer.DefaultAddressId,
+            Addresses = [.. customer.Addresses.Select(ToViewModel)],
+        };
+
+    private static CheckoutAddressViewModel ToViewModel(CustomerAddress address) =>
+        new()
+        {
+            Id = address.Id,
+            Street = address.Street,
+            City = address.City,
+            PostalCode = address.PostalCode,
+            Country = address.Country,
+        };
 }

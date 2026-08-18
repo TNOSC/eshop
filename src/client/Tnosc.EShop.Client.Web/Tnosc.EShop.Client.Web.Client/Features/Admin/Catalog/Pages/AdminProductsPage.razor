@@ -4,10 +4,10 @@
 @attribute [Authorize(Policy = Permissions.Catalog.Write)]
 @using Microsoft.AspNetCore.Authorization
 @using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Catalog
 
 <PageTitle>Products — Back office</PageTitle>
 
@@ -26,7 +26,7 @@
         <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
     }
 
-    <FluentDataGrid TGridItem="ProductSummary"
+    <FluentDataGrid TGridItem="ProductRowViewModel"
                     @ref="_grid"
                     ItemsProvider="@_productsProvider"
                     Pagination="@_pagination"

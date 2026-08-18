@@ -3,10 +3,10 @@
 @rendermode InteractiveAuto
 @attribute [Authorize(Policy = Permissions.Identity.Write)]
 @using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Auth.Authorization
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Identity
 
 <PageTitle>Customers — Back office</PageTitle>
 
@@ -18,7 +18,7 @@
         <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
     }
 
-    <FluentDataGrid TGridItem="CustomerSummary"
+    <FluentDataGrid TGridItem="CustomerRowViewModel"
                     ItemsProvider="@_customersProvider"
                     Pagination="@_pagination"
                     ResizableColumns="true"

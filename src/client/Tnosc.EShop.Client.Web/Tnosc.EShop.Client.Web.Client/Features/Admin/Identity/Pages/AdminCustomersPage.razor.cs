@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
@@ -27,7 +27,7 @@ public partial class AdminCustomersPage : ComponentBase
     // separate "not yet mounted" state to gate on here — ComponentState only ever reaches Content
     // (or Error, if rendering the grid itself throws).
     private readonly ComponentState _state = ComponentState.Content;
-    private GridItemsProvider<CustomerSummary> _customersProvider = default!;
+    private GridItemsProvider<CustomerRowViewModel> _customersProvider = default!;
     private ClientProblem? _problem;
 
     [Inject]
@@ -38,12 +38,12 @@ public partial class AdminCustomersPage : ComponentBase
 
     protected override void OnInitialized() => _customersProvider = ProvideCustomersAsync;
 
-    private async ValueTask<GridItemsProviderResult<CustomerSummary>> ProvideCustomersAsync(
-        GridItemsProviderRequest<CustomerSummary> request)
+    private async ValueTask<GridItemsProviderResult<CustomerRowViewModel>> ProvideCustomersAsync(
+        GridItemsProviderRequest<CustomerRowViewModel> request)
     {
         int page = (request.StartIndex / PageSize) + 1;
 
-        ClientResult<PagedResult<CustomerSummary>> result = await Service.SearchAsync(
+        ClientResult<PagedResult<CustomerRowViewModel>> result = await Service.SearchAsync(
             page: page,
             pageSize: PageSize,
             cancellationToken: request.CancellationToken);
@@ -51,11 +51,11 @@ public partial class AdminCustomersPage : ComponentBase
         if (!result.IsSuccess)
         {
             _problem = result.Problem;
-            return GridItemsProviderResult.From<CustomerSummary>(items: [], totalItemCount: 0);
+            return GridItemsProviderResult.From<CustomerRowViewModel>(items: [], totalItemCount: 0);
         }
 
         _problem = null;
-        return GridItemsProviderResult.From<CustomerSummary>(
+        return GridItemsProviderResult.From<CustomerRowViewModel>(
             items: [.. result.Value.Items],
             totalItemCount: (int)result.Value.TotalCount);
     }

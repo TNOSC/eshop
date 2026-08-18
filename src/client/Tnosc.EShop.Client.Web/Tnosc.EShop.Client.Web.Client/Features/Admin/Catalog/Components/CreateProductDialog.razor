@@ -1,7 +1,6 @@
 @namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components
 @using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Catalog
 
 <StatefulBoundary State="_state">
 <EditForm EditContext="@_editContext" OnSubmit="@SubmitAsync">
@@ -45,7 +44,7 @@
         <FluentNumberInput TValue="int" Label="Initial stock" Min="0" @bind-Value="_viewModel.StockQuantity" />
         <ValidationMessage For="@(() => _viewModel.StockQuantity)" />
 
-        <FluentSelect TOption="Category"
+        <FluentSelect TOption="CategoryViewModel"
                       TValue="Guid?"
                       Label="Category"
                       Placeholder="Select a category"

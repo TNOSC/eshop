@@ -7,8 +7,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.ViewModels;
 using Tnosc.Lib.Web.Results;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
 
@@ -20,13 +20,13 @@ public interface IBasketPageService
 {
     /// <summary>Reads the caller's own basket.</summary>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<BasketDto>> GetBasketAsync(CancellationToken cancellationToken);
+    Task<ClientResult<BasketViewModel>> GetBasketAsync(CancellationToken cancellationToken);
 
     /// <summary>Changes a basket item's quantity.</summary>
     /// <param name="itemId">The basket item to change.</param>
     /// <param name="quantity">The new quantity.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<BasketDto>> ChangeQuantityAsync(Guid itemId, int quantity, CancellationToken cancellationToken);
+    Task<ClientResult<BasketViewModel>> ChangeQuantityAsync(Guid itemId, int quantity, CancellationToken cancellationToken);
 
     /// <summary>Removes an item from the caller's basket.</summary>
     /// <param name="itemId">The basket item to remove.</param>

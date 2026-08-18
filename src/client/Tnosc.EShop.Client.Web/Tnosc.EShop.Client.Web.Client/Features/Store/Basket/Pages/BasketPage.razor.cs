@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
 using Tnosc.Lib.Web.Results;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Pages;
 
@@ -24,7 +23,7 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Pages;
 /// Fetching and mapping are <see cref="IBasketPageService"/>'s responsibility.</summary>
 public partial class BasketPage : ComponentBase
 {
-    private BasketDto? _basket;
+    private BasketViewModel? _basket;
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
 
@@ -49,7 +48,7 @@ public partial class BasketPage : ComponentBase
     {
         _state = ComponentState.Loading;
 
-        ClientResult<BasketDto> result = await Service.GetBasketAsync(cancellationToken: CancellationToken.None);
+        ClientResult<BasketViewModel> result = await Service.GetBasketAsync(cancellationToken: CancellationToken.None);
 
         if (result.IsSuccess)
         {
@@ -65,14 +64,14 @@ public partial class BasketPage : ComponentBase
         _state = ComponentState.Content;
     }
 
-    private async Task ChangeQuantityAsync(BasketItem item, int quantity)
+    private async Task ChangeQuantityAsync(BasketItemViewModel item, int quantity)
     {
         if (quantity == item.Quantity || quantity < 1)
         {
             return;
         }
 
-        ClientResult<BasketDto> result = await Service.ChangeQuantityAsync(
+        ClientResult<BasketViewModel> result = await Service.ChangeQuantityAsync(
             itemId: item.ItemId,
             quantity: quantity,
             cancellationToken: CancellationToken.None);
@@ -92,7 +91,7 @@ public partial class BasketPage : ComponentBase
         }
     }
 
-    private async Task RemoveItemAsync(BasketItem item)
+    private async Task RemoveItemAsync(BasketItemViewModel item)
     {
         DialogResult confirmation = await DialogService.ShowConfirmationAsync(
             message: $"Remove {item.ProductName} from your basket?",

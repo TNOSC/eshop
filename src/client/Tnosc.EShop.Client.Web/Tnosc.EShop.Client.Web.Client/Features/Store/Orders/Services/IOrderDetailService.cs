@@ -7,7 +7,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Client.Web.Contracts.Ordering;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels;
 using Tnosc.Lib.Web.Results;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
@@ -21,7 +21,7 @@ public interface IOrderDetailService
     /// <summary>Reads one of the caller's own orders, with its lines.</summary>
     /// <param name="id">The order id.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<Order>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<ClientResult<OrderDetailViewModel>> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Confirms one of the caller's own orders.</summary>
     /// <param name="id">The order id.</param>

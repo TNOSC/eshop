@@ -4,9 +4,8 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
-using Tnosc.EShop.Client.Web.Contracts.Identity;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.ViewModels;
 using Tnosc.Lib.Web.Contracts;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
 
@@ -14,7 +13,7 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
 /// <param name="Basket">The caller's basket, when the load succeeded.</param>
 /// <param name="Customer">The caller's profile, when the load succeeded.</param>
 /// <param name="Problem">The failure, when either call failed.</param>
-public sealed record CheckoutLoadResult(BasketDto? Basket, Customer? Customer, ClientProblem? Problem)
+public sealed record CheckoutLoadResult(CheckoutBasketViewModel? Basket, CheckoutCustomerViewModel? Customer, ClientProblem? Problem)
 {
     /// <summary>Gets a value indicating whether both calls succeeded.</summary>
     public bool IsSuccess => Basket is not null && Customer is not null;

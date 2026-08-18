@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components;
 
@@ -27,7 +27,7 @@ public partial class ProductFilters : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public IReadOnlyList<Category> Categories { get; set; } = [];
+    public IReadOnlyList<CategoryViewModel> Categories { get; set; } = [];
 
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;

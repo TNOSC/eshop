@@ -4,9 +4,9 @@
 @rendermode InteractiveAuto
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
-@using Tnosc.EShop.Client.Web.Contracts.Catalog
 
 <PageTitle>Catalogue — Tnosc EShop</PageTitle>
 
@@ -44,7 +44,7 @@
                     else
                     {
                         <FluentGrid Spacing="4">
-                            @foreach (ProductSummary product in _products)
+                            @foreach (ProductSummaryViewModel product in _products)
                             {
                                 <FluentGridItem Xs="12" Sm="6" Md="4">
                                     <ProductCard Product="@product" />

@@ -4,11 +4,13 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Contracts;
@@ -39,5 +41,41 @@ public sealed class MyOrdersServiceTests
             page: 2,
             pageSize: 20,
             cancellationToken: Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetMyOrdersAsync_Should_MapEachOrderSummaryIntoAViewModel()
+    {
+        // Arrange
+        var orderId = Guid.CreateVersion7();
+        var placedOnUtc = DateTime.UtcNow;
+        var order = new OrderSummary(
+            Id: orderId,
+            OrderNumber: "ORD-1",
+            Status: "Pending",
+            TotalAmount: 10m,
+            TotalCurrency: "USD",
+            PlacedOnUtc: placedOnUtc,
+            LineCount: 2);
+
+        _orderingApi.GetMyOrdersAsync(page: Arg.Any<int>(), pageSize: Arg.Any<int>(), cancellationToken: Arg.Any<CancellationToken>())
+            .Returns(returnThis: Task.FromResult(ClientResult<PagedResult<OrderSummary>>.Success(
+                value: new PagedResult<OrderSummary>(Items: [order], Page: 1, PageSize: 20, TotalCount: 1, TotalPages: 1))));
+
+        // Act
+        ClientResult<PagedResult<OrderSummaryViewModel>> result = await _sut.GetMyOrdersAsync(
+            page: 1,
+            pageSize: 20,
+            cancellationToken: CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        OrderSummaryViewModel mapped = result.Value.Items.ShouldHaveSingleItem();
+        mapped.Id.ShouldBe(expected: orderId);
+        mapped.OrderNumber.ShouldBe(expected: "ORD-1");
+        mapped.Status.ShouldBe(expected: "Pending");
+        mapped.TotalAmount.ShouldBe(expected: 10m);
+        mapped.TotalCurrency.ShouldBe(expected: "USD");
+        mapped.PlacedOnUtc.ShouldBe(expected: placedOnUtc);
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Contracts.Ordering;
 using Tnosc.Lib.Web.Results;
@@ -28,6 +29,15 @@ public sealed class OrderDetailServiceTests
     {
         // Arrange
         var id = Guid.CreateVersion7();
+        var line = new OrderLine(
+            Id: Guid.CreateVersion7(),
+            ProductId: Guid.CreateVersion7(),
+            Sku: "SKU-1",
+            ProductName: "Widget",
+            UnitPriceAmount: 5m,
+            UnitPriceCurrency: "USD",
+            Quantity: 2,
+            LineTotalAmount: 10m);
         var order = new Order(
             Id: id,
             OrderNumber: "ORD-1",
@@ -40,16 +50,33 @@ public sealed class OrderDetailServiceTests
             ShippingCity: "City",
             ShippingPostalCode: "0000",
             ShippingCountry: "US",
-            Lines: []);
+            Lines: [line]);
 
         _orderingApi.GetOrderByIdAsync(id: Arg.Any<Guid>(), cancellationToken: Arg.Any<CancellationToken>())
             .Returns(returnThis: Task.FromResult(ClientResult<Order>.Success(value: order)));
 
         // Act
-        ClientResult<Order> result = await _sut.GetOrderByIdAsync(id: id, cancellationToken: CancellationToken.None);
+        ClientResult<OrderDetailViewModel> result = await _sut.GetOrderByIdAsync(id: id, cancellationToken: CancellationToken.None);
 
         // Assert
-        result.Value.ShouldBe(expected: order);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.Id.ShouldBe(expected: order.Id);
+        result.Value.OrderNumber.ShouldBe(expected: order.OrderNumber);
+        result.Value.Status.ShouldBe(expected: order.Status);
+        result.Value.TotalAmount.ShouldBe(expected: order.TotalAmount);
+        result.Value.TotalCurrency.ShouldBe(expected: order.TotalCurrency);
+        result.Value.PlacedOnUtc.ShouldBe(expected: order.PlacedOnUtc);
+        result.Value.ShippingStreet.ShouldBe(expected: order.ShippingStreet);
+        result.Value.ShippingCity.ShouldBe(expected: order.ShippingCity);
+        result.Value.ShippingPostalCode.ShouldBe(expected: order.ShippingPostalCode);
+        result.Value.ShippingCountry.ShouldBe(expected: order.ShippingCountry);
+        OrderLineViewModel mappedLine = result.Value.Lines.ShouldHaveSingleItem();
+        mappedLine.Id.ShouldBe(expected: line.Id);
+        mappedLine.Sku.ShouldBe(expected: line.Sku);
+        mappedLine.ProductName.ShouldBe(expected: line.ProductName);
+        mappedLine.UnitPriceCurrency.ShouldBe(expected: line.UnitPriceCurrency);
+        mappedLine.Quantity.ShouldBe(expected: line.Quantity);
+        mappedLine.LineTotalAmount.ShouldBe(expected: line.LineTotalAmount);
         await _orderingApi.Received(requiredNumberOfCalls: 1).GetOrderByIdAsync(id: id, cancellationToken: Arg.Any<CancellationToken>());
     }
 

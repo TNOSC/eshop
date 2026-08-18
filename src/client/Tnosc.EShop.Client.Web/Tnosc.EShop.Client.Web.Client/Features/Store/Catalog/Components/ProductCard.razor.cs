@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.AspNetCore.Components;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components;
 
@@ -13,5 +13,5 @@ public partial class ProductCard : ComponentBase
 {
     [Parameter]
     [EditorRequired]
-    public required ProductSummary Product { get; set; }
+    public required ProductSummaryViewModel Product { get; set; }
 }

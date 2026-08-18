@@ -10,14 +10,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
-using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Errors;
 using Tnosc.Lib.Web.Results;
-using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Pages;
 
@@ -25,7 +24,7 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Pages;
 /// adding to basket are <see cref="IProductDetailService"/>'s responsibility.</summary>
 public partial class ProductDetailPage : ComponentBase
 {
-    private Product? _product;
+    private ProductDetailViewModel? _product;
     private ClientProblem? _problem;
     private ComponentState _state = ComponentState.Loading;
     private bool _isAddingToBasket;
@@ -51,7 +50,7 @@ public partial class ProductDetailPage : ComponentBase
         _state = ComponentState.Loading;
         _problem = null;
 
-        ClientResult<Product> result = await Service.GetProductAsync(
+        ClientResult<ProductDetailViewModel> result = await Service.GetProductAsync(
             id: Id,
             cancellationToken: CancellationToken.None);
 
@@ -80,14 +79,14 @@ public partial class ProductDetailPage : ComponentBase
 
         try
         {
-            ClientResult<BasketDto> result = await Service.AddToBasketAsync(
+            ClientResult<int> result = await Service.AddToBasketAsync(
                 productId: _product.Id,
                 quantity: _quantity,
                 cancellationToken: CancellationToken.None);
 
             if (result.IsSuccess)
             {
-                BasketState.SetItemCount(itemCount: result.Value.Items.Count);
+                BasketState.SetItemCount(itemCount: result.Value);
                 await Notifications.ShowSuccessToastAsync(title: "Added to basket", message: _product.Name);
                 return;
             }

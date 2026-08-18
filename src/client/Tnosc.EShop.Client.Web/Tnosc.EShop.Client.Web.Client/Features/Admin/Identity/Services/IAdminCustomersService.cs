@@ -6,7 +6,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Client.Web.Contracts.Identity;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.ViewModels;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
 
@@ -22,5 +22,5 @@ public interface IAdminCustomersService
     /// <param name="page">The requested page.</param>
     /// <param name="pageSize">The requested page size.</param>
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
-    Task<ClientResult<PagedResult<CustomerSummary>>> SearchAsync(int page, int pageSize, CancellationToken cancellationToken);
+    Task<ClientResult<PagedResult<CustomerRowViewModel>>> SearchAsync(int page, int pageSize, CancellationToken cancellationToken);
 }

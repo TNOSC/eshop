@@ -6,14 +6,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Validation;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
-using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.ViewModels;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
 
@@ -33,8 +34,18 @@ internal sealed class CreateProductService(ICatalogApi catalogApi) : ICreateProd
         ErrorCode: ClientValidation.ValidationErrorCode,
         TraceId: null);
 
-    public Task<ClientResult<IReadOnlyList<Category>>> GetCategoriesAsync(CancellationToken cancellationToken) =>
-        catalogApi.GetCategoriesAsync(cancellationToken: cancellationToken);
+    public async Task<ClientResult<IReadOnlyList<CategoryViewModel>>> GetCategoriesAsync(CancellationToken cancellationToken)
+    {
+        ClientResult<IReadOnlyList<Category>> result = await catalogApi.GetCategoriesAsync(cancellationToken: cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ClientResult<IReadOnlyList<CategoryViewModel>>.Failure(problem: result.Problem!);
+        }
+
+        IReadOnlyList<CategoryViewModel> categories = [.. result.Value.Select(ToViewModel)];
+        return ClientResult<IReadOnlyList<CategoryViewModel>>.Success(value: categories);
+    }
 
     public async Task<ClientResult<Guid>> SubmitAsync(
         CreateProductViewModel viewModel,
@@ -68,4 +79,7 @@ internal sealed class CreateProductService(ICatalogApi catalogApi) : ICreateProd
             idempotencyKey: idempotencyKey,
             cancellationToken: cancellationToken);
     }
+
+    private static CategoryViewModel ToViewModel(Category category) =>
+        new() { Id = category.Id, Name = category.Name };
 }

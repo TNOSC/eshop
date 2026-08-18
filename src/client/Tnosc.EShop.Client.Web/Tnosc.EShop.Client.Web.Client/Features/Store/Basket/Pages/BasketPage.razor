@@ -5,8 +5,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Tnosc.EShop.Client.Web.Client.Features.Shared
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.ViewModels
 @using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
-@using Tnosc.EShop.Client.Web.Contracts.Basket
 @using Tnosc.EShop.Client.Web.Client.Layout.Store
 
 <PageTitle>Basket — Tnosc EShop</PageTitle>
@@ -32,7 +32,7 @@ else
     <FluentGrid Spacing="4">
         <FluentGridItem Xs="12" Md="8">
             <FluentStack Orientation="Orientation.Vertical">
-                @foreach (BasketItem item in _basket.Items)
+                @foreach (BasketItemViewModel item in _basket.Items)
                 {
                     <BasketLineRow Item="@item"
                                    QuantityChanged="@(quantity => ChangeQuantityAsync(item: item, quantity: quantity))"
