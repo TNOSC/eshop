@@ -15,6 +15,7 @@ decorator pipeline, the outbox, and the test split. They are the executable vers
 | **add-tests** | `/add-tests UpdateProductPriceCommandHandler` | Backfills domain, handler and query-handler tests into the right suite. |
 | **ca-review** | `/ca-review` | Reviews pending changes against the layer, domain, handler, persistence and test rules. |
 | **fluentui-blazor-usage** | automatic | Provides accurate coding patterns for Blazor with Fluent UI v5 — covers setup, theming, layout, dialogs, forms, data grid, icons, and common pitfalls. |
+| **add-blazor-component** | `/add-blazor-component a page to list a customer's orders` | Scaffolds a Blazor client page or feature component: page composition, component + ViewModel, and the `I<Name>Service` that owns the API client. |
 
 You don't have to invoke them explicitly — once installed, Claude Code picks the right skill when you
 say things like "add an endpoint to discontinue a product".
@@ -33,14 +34,15 @@ Tnosc.EShop/
         ├── add-context/
         ├── add-tests/
         ├── ca-review/
-        └── fluentui-blazor-usage/
+        ├── fluentui-blazor-usage/
+        └── add-blazor-component/
 ```
 
 ```bash
 mkdir -p .claude/skills && cp -r skills/*/ .claude/skills/
 ```
 
-Verify with `/skills` — all six should be listed.
+Verify with `/skills` — all seven should be listed.
 
 ## How they relate to the `CLAUDE.md` files
 
