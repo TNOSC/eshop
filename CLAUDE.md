@@ -15,9 +15,9 @@ policies and [`docs/decisions/`](./docs/decisions) for the reasoning behind them
 
 | | Version | | Version |
 |---|---|---|---|
-| TFM / SDK | `net10.0` / 10.0.400-preview (no `global.json`) | Aspire | 13.4.6 (+ Hosting.PostgreSQL, Npgsql.EFCore) |
+| TFM / SDK | `net10.0` / 10.0.400-preview (no `global.json`) | Aspire | 13.5.0 (+ Hosting.PostgreSQL, Npgsql.EFCore) |
 | ASP.NET Core | 10.0.10 — Minimal APIs only, no MVC | Scrutor | 7.0.0 (`Scan` + `TryDecorate`) |
-| Keycloak | 26.6 — the only identity provider; owns users, credentials and realm roles | Aspire Keycloak | `Hosting.Keycloak` + `Keycloak.Authentication`, `13.4.6-preview.1.26319.6` (no stable build exists) |
+| Keycloak | 26.6 — the only identity provider; owns users, credentials and realm roles | Aspire Keycloak | `Hosting.Keycloak` + `Keycloak.Authentication`, `13.5.0-preview.1.26417.10` (no stable build exists) |
 | EF Core | 10.0.10 (+ `.Relational`, `.Design`) | HybridCache | 10.8.0 |
 | Npgsql EFCore | 10.0.3 — Postgres is the only database | OpenAPI | AspNetCore.OpenApi 10.0.10, Scalar 2.10.0 |
 | xUnit / Shouldly | 2.9.3 / 4.3.0 | OpenTelemetry | 1.17.0 (via `ServiceDefaults`) |
