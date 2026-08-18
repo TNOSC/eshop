@@ -6,7 +6,10 @@ policies and [`docs/decisions/`](./docs/decisions) for the reasoning behind them
 
 **Scoped rules live in nested `CLAUDE.md` files — read the one for the tree you are editing:**
 `lib/` · `src/server/Tnosc.EShop.Server.Domain/` · `…Server.Application/` ·
-`…Server.Infrastructure.Persistence/` · `…Server.Api/` · `…Server.Shared/` · `tests/`
+`…Server.Infrastructure.Persistence/` · `…Server.Api/` · `…Server.Shared/` ·
+`src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web/` (BFF + host) ·
+`…Tnosc.EShop.Client.Web.Client/` (Blazor MVVM) · `…Tnosc.EShop.Client.Web.Contracts/` (shared DTOs) ·
+`tests/`
 
 ## Tech stack
 
