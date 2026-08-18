@@ -48,7 +48,7 @@ public sealed class MyOrdersServiceTests
     {
         // Arrange
         var orderId = Guid.CreateVersion7();
-        var placedOnUtc = DateTime.UtcNow;
+        DateTime placedOnUtc = DateTime.UtcNow;
         var order = new OrderSummary(
             Id: orderId,
             OrderNumber: "ORD-1",
