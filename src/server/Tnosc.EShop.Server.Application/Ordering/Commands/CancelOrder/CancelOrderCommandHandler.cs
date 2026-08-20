@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.Lib.Application.Abstractions.Persistence;
+using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
 using Tnosc.Lib.Domain.Results;
 
@@ -23,6 +24,7 @@ namespace Tnosc.EShop.Server.Application.Ordering.Commands.CancelOrder;
 /// </remarks>
 /// <param name="repository">The order repository.</param>
 /// <param name="unitOfWork">The unit of work this handler commits through.</param>
+[Retry(5)]
 internal sealed class CancelOrderCommandHandler(
     IOrderRepository repository,
     IUnitOfWork unitOfWork)

@@ -124,6 +124,23 @@ public class Result<TValue> : Result, IResult<TValue>
     }
 
     /// <summary>
+    /// Creates a successful <see cref="Result{TValue}"/> from a value of type <typeparamref name="TValue"/>.
+    /// </summary>
+    /// <param name="value">The value of type <typeparamref name="TValue"/> used to create a successful result.</param>
+    /// <returns>A new <see cref="Result{TValue}"/> instance representing a successful outcome with the provided value.</returns>
+    /// <remarks>
+    /// Prefer this over the implicit conversion operator below when <typeparamref name="TValue"/> is an
+    /// interface type (e.g. <c>IReadOnlyCollection&lt;T&gt;</c>) and the value in hand is statically typed as
+    /// that interface: the C# compiler will not resolve a user-defined conversion whose source is an
+    /// interface type, so <c>(Result&lt;IReadOnlyCollection&lt;T&gt;&gt;)value</c> silently compiles as a plain
+    /// reference cast instead — one that throws <see cref="InvalidCastException"/> at runtime. Calling this
+    /// generic factory method sidesteps the issue because, inside it, <typeparamref name="TValue"/> is still
+    /// an open type parameter when the implicit operator is resolved.
+    /// </remarks>
+    public static Result<TValue> Success(TValue value)
+        => value;
+
+    /// <summary>
     /// Defines an implicit conversion operator that constructs a <see cref="Result{TValue}"/>
     /// from a value of type <typeparamref name="TValue"/>.
     /// </summary>

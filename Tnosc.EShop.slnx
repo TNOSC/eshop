@@ -9,8 +9,8 @@
     <Project Path="lib/Tnosc.Lib.Domain/Tnosc.Lib.Domain.csproj" Id="7662c2e5-3a3f-4b38-9a19-2b1f32dd97f7" />
     <Project Path="lib/Tnosc.Lib.Host/Tnosc.Lib.Host.csproj" Id="7b7d4852-7e5d-47bc-9ff6-2e28cbe61162" />
     <Project Path="lib/Tnosc.Lib.Infrastructure.Persistence/Tnosc.Lib.Infrastructure.Persistence.csproj" Id="13e82821-77d3-41c7-8c18-b1e7669ba3d5" />
-    <Project Path="lib/Tnosc.Lib.Web/Tnosc.Lib.Web.csproj" Id="27722e50-b9e9-4067-ab91-f2273fde7bea" />
     <Project Path="lib/Tnosc.Lib.Web.Bff/Tnosc.Lib.Web.Bff.csproj" />
+    <Project Path="lib/Tnosc.Lib.Web/Tnosc.Lib.Web.csproj" Id="27722e50-b9e9-4067-ab91-f2273fde7bea" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
@@ -23,6 +23,12 @@
     <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.Client/Tnosc.EShop.Client.Web.Client.csproj" Id="8e55823b-3bba-4ec3-aed3-5c2f2d714a5e" />
     <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.Contracts/Tnosc.EShop.Client.Web.Contracts.csproj" />
     <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.csproj" Id="dc23b549-7d4b-4c23-89a7-9f511d7d8fce" />
+  </Folder>
+  <Folder Name="/src/mcp/">
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Application/Tnosc.EShop.Mcp.Application.csproj" />
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Infrastructure.External/Tnosc.EShop.Mcp.Infrastructure.External.csproj" />
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Tool/Tnosc.EShop.Mcp.Tool.csproj" />
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Host/Tnosc.EShop.Mcp.Host.csproj" Id="c10a4051-285a-4748-b063-155a97502499" />
   </Folder>
   <Folder Name="/src/server/">
     <Project Path="src/server/Tnosc.EShop.Server.Host/Tnosc.EShop.Server.Host.csproj" />

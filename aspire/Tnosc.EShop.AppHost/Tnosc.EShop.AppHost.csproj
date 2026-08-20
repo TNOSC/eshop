@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\client\Tnosc.EShop.Client.Web\Tnosc.EShop.Client.Web\Tnosc.EShop.Client.Web.csproj" />
+    <ProjectReference Include="..\..\src\mcp\Tnosc.EShop.Mcp.Host\Tnosc.EShop.Mcp.Host.csproj" />
     <ProjectReference Include="..\..\src\server\Tnosc.EShop.Server.Host\Tnosc.EShop.Server.Host.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
   </ItemGroup>
@@ -15,6 +16,7 @@
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="Aspire.Hosting.Keycloak" />
     <PackageReference Include="Aspire.Hosting.Redis" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" />
   </ItemGroup>
 
   <ItemGroup>

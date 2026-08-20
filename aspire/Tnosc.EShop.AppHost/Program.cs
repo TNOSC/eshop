@@ -81,7 +81,9 @@ IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_
     .WaitFor(dependency: db)
     .WaitFor(dependency: keycloak)
     .WaitFor(dependency: cache)
-    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "API (Scalar)");
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:API")
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:API")
+    .WithHttpHealthCheck("/health");
 
 builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
     .WithReference(source: eshopHost)
@@ -89,6 +91,19 @@ builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
     .WaitFor(dependency: eshopHost)
     .WaitFor(dependency: keycloak)
     .WithExternalHttpEndpoints()
-    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "eShop Web");
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:Web")
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:Web")
+    .WithHttpHealthCheck("/health");
+
+IResourceBuilder<ProjectResource> mcpHost = builder.AddProject<Projects.Tnosc_EShop_Mcp_Host>("mcp")
+    .WithReference(eshopHost)
+    .WithExternalHttpEndpoints()
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:MCP")
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:MCP")
+    .WithHttpHealthCheck("/health");
+
+builder.AddMcpInspector(name: "mcp-inspector", new McpInspectorOptions() { InspectorVersion = "latest" })
+    .WithMcpServer(mcpHost)
+    .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();
