@@ -29,7 +29,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Outbox;
 /// <c>Retry</c> wraps <c>Idempotency</c> rather than the other way round. Constructed directly, the
 /// ordering bug this guards against would be invisible.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class DomainEventRetryTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = false };

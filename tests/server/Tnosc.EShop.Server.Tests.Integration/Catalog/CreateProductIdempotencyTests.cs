@@ -35,7 +35,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Catalog;
 /// chain — and therefore the real transaction — between the assertion and Postgres. Constructing the
 /// handler directly would test the handler and skip the entire feature.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class CreateProductIdempotencyTests(PostgresFixture fixture) : CatalogIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = CatalogFaker.New();

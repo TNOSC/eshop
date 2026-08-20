@@ -39,7 +39,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 /// integration test starts from an empty, migrated schema.
 /// </summary>
 /// <remarks>
-/// One instance is shared by every test via <see cref="PostgresCollection"/>. xUnit 2.9.3's
+/// One instance is shared by every test via <see cref="SharedInfrastructureCollection"/>. xUnit 2.9.3's
 /// <see cref="IAsyncLifetime"/> is <see cref="Task"/>-based, not the xUnit v3 <c>ValueTask</c> shape.
 /// </remarks>
 public sealed class PostgresFixture : IAsyncLifetime, IAsyncDisposable

@@ -28,7 +28,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Outbox;
 /// a crash between publishing and marking the message processed leaves behind — the one window the
 /// processor cannot close on its own.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class InboxIdempotencyTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = false };

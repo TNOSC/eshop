@@ -32,7 +32,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Outbox;
 /// through the real <c>OutboxProcessor</c> and the real decorator chain, which is what makes the
 /// isolation claim mean something.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class DeadLetterTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     private const int MaxAttempts = 5;

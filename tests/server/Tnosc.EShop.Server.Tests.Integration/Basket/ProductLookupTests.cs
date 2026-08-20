@@ -23,7 +23,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Basket;
 /// infrastructure performs, kept in <c>Server.Infrastructure.Persistence</c> rather than moving to
 /// <c>Server.Infrastructure.External</c> alongside the rest of Basket's plumbing.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class ProductLookupTests(PostgresFixture fixture) : BasketIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = BasketFaker.New();

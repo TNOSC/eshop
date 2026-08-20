@@ -27,7 +27,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Payment;
 /// The full order → payment → order loop through the outbox, in both directions, against real
 /// Postgres. This is what T4–T6's outbox and T2's decorator ordering were ultimately built to carry.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class PaymentOutboxTests(PostgresFixture fixture) : PaymentIntegrationTestBase(fixture)
 {
     [Fact]

@@ -19,7 +19,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Regression;
 /// <c>IAuditable</c>'s <c>DateTime</c> properties, throwing on every write. The fix injects
 /// <c>TimeProvider</c> and uses <c>GetUtcNow().UtcDateTime</c>.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class AuditableStampingTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     [Fact]

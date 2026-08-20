@@ -32,7 +32,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Ordering;
 /// most: delivery is at-least-once, so a stock handler that is not genuinely idempotent silently
 /// double-decrements, and nothing else in the suite would notice.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class PlaceOrderOutboxTests(PostgresFixture fixture) : OrderingIntegrationTestBase(fixture)
 {
     private const string OrderPlacedContractName = "ordering.order-placed.v1";

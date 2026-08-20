@@ -34,7 +34,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Catalog;
 /// meant to pin. Values the assertions don't key off (price, stock) are drawn from
 /// <see cref="CatalogFaker"/> instead.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class SearchProductsQueryHandlerTests(PostgresFixture fixture) : CatalogIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = CatalogFaker.New();

@@ -25,7 +25,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Outbox;
 /// exponential backoff on failure, dead-lettering past <c>MaxAttempts</c>, poison-message isolation,
 /// and the <c>FOR UPDATE SKIP LOCKED</c> concurrency guarantee.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class OutboxProcessorTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = false };

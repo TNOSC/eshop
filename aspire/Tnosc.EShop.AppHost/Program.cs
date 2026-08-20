@@ -97,6 +97,7 @@ builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
 
 IResourceBuilder<ProjectResource> mcpHost = builder.AddProject<Projects.Tnosc_EShop_Mcp_Host>("mcp")
     .WithReference(eshopHost)
+    .WaitFor(dependency: eshopHost)
     .WithExternalHttpEndpoints()
     .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:MCP")
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:MCP")

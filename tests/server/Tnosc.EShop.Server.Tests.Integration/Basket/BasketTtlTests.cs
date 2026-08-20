@@ -22,7 +22,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Basket;
 /// A basket document carries a sliding TTL: set on the first write, and refreshed by every
 /// subsequent one.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class BasketTtlTests(PostgresFixture fixture) : BasketIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = BasketFaker.New();

@@ -18,7 +18,7 @@ namespace Tnosc.EShop.Server.Tests.Integration;
 /// <see cref="NotSupportedException"/> rather than silently succeed, across all four
 /// <c>SaveChanges</c>/<c>SaveChangesAsync</c> overloads inherited from <c>ReadDbContextBase</c>.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class ReadDbContextTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     [Fact]

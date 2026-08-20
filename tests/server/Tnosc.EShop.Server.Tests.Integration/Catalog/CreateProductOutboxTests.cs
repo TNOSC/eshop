@@ -30,7 +30,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Catalog;
 /// creation event lands in the outbox under its durable contract name with the whole payload, and
 /// the processor drains it.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class CreateProductOutboxTests(PostgresFixture fixture) : CatalogIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = CatalogFaker.New();

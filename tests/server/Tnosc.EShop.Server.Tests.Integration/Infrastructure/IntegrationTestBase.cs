@@ -22,8 +22,8 @@ namespace Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 /// <see cref="IServiceScope"/> so every test gets its own <see cref="EShopWriteDbContext"/> and
 /// <see cref="EShopReadDbContext"/> instance.
 /// </summary>
-/// <param name="fixture">The shared Postgres fixture, injected by <see cref="PostgresCollection"/>.</param>
-[Collection(nameof(PostgresCollection))]
+/// <param name="fixture">The shared Postgres fixture, injected by <see cref="SharedInfrastructureCollection"/>.</param>
+[Collection(nameof(SharedInfrastructureCollection))]
 public abstract class IntegrationTestBase(PostgresFixture fixture) : IAsyncLifetime
 {
     private AsyncServiceScope? _scope;

@@ -25,7 +25,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Catalog;
 /// the read model's projection, and a missing identifier is a <c>NotFound</c> result rather than an
 /// exception or a null.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class GetProductByIdQueryHandlerTests(PostgresFixture fixture) : CatalogIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = CatalogFaker.New();

@@ -31,7 +31,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Catalog;
 /// handler serves the second call without touching Postgres, and <c>[CacheTag("catalog")]</c> on a
 /// write handler makes a successful command drop that entry.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class GetCategoriesCachingTests(PostgresFixture fixture) : CatalogIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = CatalogFaker.New();

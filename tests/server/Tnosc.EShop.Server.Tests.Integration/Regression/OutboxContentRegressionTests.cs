@@ -25,7 +25,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Regression;
 /// against <c>domainEvent.GetType()</c>. Also covers T4's requirement that <c>OutboxMessage.Type</c>
 /// holds the <c>[DomainEventName]</c> registry contract name, never the CLR short name.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class OutboxContentRegressionTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     [Fact]

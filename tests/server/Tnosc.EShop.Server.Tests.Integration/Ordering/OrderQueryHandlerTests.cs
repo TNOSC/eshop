@@ -25,7 +25,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Ordering;
 /// The Ordering query handlers against real Postgres — projection correctness, paging, the ownership
 /// scoping that makes another customer's order simply not exist, and the raw-SQL summary.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class OrderQueryHandlerTests(PostgresFixture fixture) : OrderingIntegrationTestBase(fixture)
 {
     [Fact]

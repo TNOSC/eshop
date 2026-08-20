@@ -26,7 +26,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Basket;
 /// rejected as a conflict, and the repository and <see cref="Server.Infrastructure.External.Redis.Basket.RedisBasketReader"/>
 /// agree on the same key so a write is visible to the very next read.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class RedisBasketRepositoryTests(PostgresFixture fixture) : BasketIntegrationTestBase(fixture)
 {
     private readonly Faker _faker = BasketFaker.New();

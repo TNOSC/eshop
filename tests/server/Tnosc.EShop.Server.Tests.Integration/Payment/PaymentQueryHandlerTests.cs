@@ -21,7 +21,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Payment;
 /// <summary>
 /// <c>GetPaymentByOrderQueryHandler</c> against real Postgres.
 /// </summary>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class PaymentQueryHandlerTests(PostgresFixture fixture) : PaymentIntegrationTestBase(fixture)
 {
     [Fact]

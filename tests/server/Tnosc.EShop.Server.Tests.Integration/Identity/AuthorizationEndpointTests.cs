@@ -26,7 +26,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Identity;
 /// only the token's signing key is a test one. That is what makes them evidence rather than a restatement
 /// of the fixture.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class AuthorizationEndpointTests(PostgresFixture fixture) : IAsyncLifetime, IDisposable
 {
     private const string CatalogWriteRoute = "/api/catalog/products";

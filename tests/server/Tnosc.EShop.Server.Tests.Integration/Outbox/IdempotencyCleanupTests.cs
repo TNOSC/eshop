@@ -24,7 +24,7 @@ namespace Tnosc.EShop.Server.Tests.Integration.Outbox;
 /// Drives <see cref="IdempotencyCleanupBackgroundService{TContext}.CollectAsync"/> directly rather
 /// than waiting on the hosted service's timer, so the pass is deterministic.
 /// </remarks>
-[Collection(nameof(PostgresCollection))]
+[Collection(nameof(SharedInfrastructureCollection))]
 public sealed class IdempotencyCleanupTests(PostgresFixture fixture) : IntegrationTestBase(fixture)
 {
     private const string Handler = "Tests.SomeCommandHandler";
