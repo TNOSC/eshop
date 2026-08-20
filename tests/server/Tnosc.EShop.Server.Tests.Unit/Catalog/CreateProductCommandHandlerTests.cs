@@ -13,7 +13,7 @@ using Shouldly;
 using Tnosc.EShop.Server.Application.Catalog.Commands.CreateProduct;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.Lib.Application.Abstractions.Persistence;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Catalog;

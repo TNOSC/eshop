@@ -1,10 +1,12 @@
 # lib/ — the reusable framework
 
-Five projects with **no eShop knowledge**. Anything context-specific belongs in `src/server/`.
+Six projects with **no eShop knowledge**. Anything context-specific belongs in `src/server/`.
 
 ```
+Tnosc.Lib.Shared                      Result/Error/ErrorType/IResult — depended on by every other
+                                      layer, so it carries no dependency of its own
 Tnosc.Lib.Domain                      Entity, AggregateRoot, IEntityId/GuidEntityId, ValueObject,
-                                      Result/Error/ErrorType, IRepository, IDomainEvent
+                                      IRepository, IDomainEvent
 Tnosc.Lib.Application                 ICommand(Handler), IQuery(Handler), IValidator, IUnitOfWork,
                                       decorators, attributes, exceptions, PagedResult
 Tnosc.Lib.Api                         IApiEndpoint, CustomResults, Result → HTTP extensions
@@ -13,9 +15,12 @@ Tnosc.Lib.Infrastructure.Persistence  Read/Write DbContext bases, UnitOfWork, Re
 Tnosc.Lib.Host                        HttpUserContext, GlobalExceptionHandler, RequestContextMiddleware
 ```
 
+`Tnosc.Lib.Domain` project-references `Tnosc.Lib.Shared` so every consumer of Domain gets `Result` /
+`Error` transitively — no other project needs its own direct reference to `Tnosc.Lib.Shared`.
+
 ## XML documentation is mandatory here
 
-All five projects set `GenerateDocumentationFile=true`, and warnings are errors ⇒ **`CS1591` fails
+All six projects set `GenerateDocumentationFile=true`, and warnings are errors ⇒ **`CS1591` fails
 the build**. Every public type and member needs `<summary>`, plus `<param>`, `<returns>`,
 `<typeparam>` and `<exception>` where they apply. Use `<inheritdoc />` on interface implementations.
 Document *why*, not just *what* — the existing files explain the reasoning behind a design, and that

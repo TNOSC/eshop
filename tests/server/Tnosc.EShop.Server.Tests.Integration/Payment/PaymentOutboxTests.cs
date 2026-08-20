@@ -17,7 +17,7 @@ using Tnosc.EShop.Server.Domain.Payment.Payments;
 using Tnosc.EShop.Server.Infrastructure.External.Payment;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 

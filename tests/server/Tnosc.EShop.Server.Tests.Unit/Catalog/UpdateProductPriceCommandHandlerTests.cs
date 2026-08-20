@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Application.Catalog.Commands.UpdateProductPrice;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.Lib.Application.Abstractions.Persistence;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Catalog;

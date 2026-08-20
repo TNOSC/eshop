@@ -7,7 +7,7 @@
 using System.Globalization;
 using System.Linq;
 using Tnosc.Lib.Domain;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Domain.Identity.Customers;
 

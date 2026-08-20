@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Shared.Catalog;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Catalog.Commands.CreateProduct;
 

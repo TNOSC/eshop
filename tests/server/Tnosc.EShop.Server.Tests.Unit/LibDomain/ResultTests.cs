@@ -6,7 +6,7 @@
 
 using System;
 using Shouldly;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.LibDomain;

@@ -6,7 +6,7 @@
 
 using Shouldly;
 using Tnosc.EShop.Server.Domain.Identity.Customers;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Identity;

@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Server.Domain.Identity.Customers;
 using Tnosc.Lib.Application.Validations;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Identity.Commands.UpdateCustomerAddress;
 

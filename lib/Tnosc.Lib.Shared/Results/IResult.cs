@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Tnosc.Lib.Domain.Results;
+namespace Tnosc.Lib.Shared.Results;
 
 /// <summary>
 /// Represents a result of an operation which encapsulates either a success or an error state.

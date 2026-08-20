@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Application.Catalog.Queries.GetProductById;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace Tnosc.EShop.Server.Api.Catalog.GetProductById;

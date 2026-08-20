@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using ModelContextProtocol;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Tool.Extensions;
 

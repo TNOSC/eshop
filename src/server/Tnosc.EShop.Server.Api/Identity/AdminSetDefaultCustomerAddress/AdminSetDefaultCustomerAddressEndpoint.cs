@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Shared.Authorization;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace Tnosc.EShop.Server.Api.Identity.AdminSetDefaultCustomerAddress;

@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Catalog;

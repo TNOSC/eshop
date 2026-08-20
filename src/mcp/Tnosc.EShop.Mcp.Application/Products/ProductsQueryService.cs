@@ -10,7 +10,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Mcp.Application.Products.Ports;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Application.Products;
 

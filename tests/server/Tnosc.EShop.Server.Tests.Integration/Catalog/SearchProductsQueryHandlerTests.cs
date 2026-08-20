@@ -18,7 +18,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Catalog.ReadModels;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Catalog;

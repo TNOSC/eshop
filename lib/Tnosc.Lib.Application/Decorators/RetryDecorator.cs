@@ -14,7 +14,7 @@ using Tnosc.Lib.Application.DomainEvents;
 using Tnosc.Lib.Application.Exceptions;
 using Tnosc.Lib.Application.Queries;
 using Tnosc.Lib.Domain;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.Lib.Application.Decorators;
 

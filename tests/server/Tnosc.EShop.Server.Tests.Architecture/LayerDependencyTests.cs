@@ -34,6 +34,7 @@ public sealed class LayerDependencyTests
     private static readonly Assembly LibApplicationAssembly = typeof(ICommandHandler<>).Assembly;
     private static readonly Assembly LibApiAssembly = typeof(IApiEndpoint).Assembly;
     private static readonly Assembly LibHostAssembly = Assembly.Load(assemblyString: "Tnosc.Lib.Host");
+    private static readonly Assembly LibSharedAssembly = typeof(Tnosc.Lib.Shared.Results.IResult).Assembly;
 
     private static readonly string[] EfCorePatterns = ["Microsoft.EntityFrameworkCore"];
 
@@ -138,6 +139,7 @@ public sealed class LayerDependencyTests
             ("Lib.Application", LibApplicationAssembly),
             ("Lib.Api", LibApiAssembly),
             ("Lib.Host", LibHostAssembly),
+            ("Lib.Shared", LibSharedAssembly),
         ];
 
         List<string> violations = [];
@@ -176,6 +178,7 @@ public sealed class LayerDependencyTests
             ("Lib.Application", LibApplicationAssembly),
             ("Lib.Api", LibApiAssembly),
             ("Lib.Host", LibHostAssembly),
+            ("Lib.Shared", LibSharedAssembly),
         ];
 
         List<string> violations = [];

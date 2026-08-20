@@ -11,7 +11,7 @@ using Shouldly;
 using Tnosc.EShop.Server.Domain.Basket.Baskets;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using BasketAggregate = Tnosc.EShop.Server.Domain.Basket.Baskets.Basket;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Basket;

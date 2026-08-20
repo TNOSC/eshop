@@ -12,7 +12,7 @@ using Tnosc.EShop.Server.Domain.Payment.Payments.Events;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.DomainEvents;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Ordering.EventHandlers;
 

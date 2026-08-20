@@ -19,7 +19,7 @@ namespace Tnosc.EShop.Server.Application.Payment.Ports;
 /// <strong>The exception rule is the whole point of this boundary.</strong> An implementation throws
 /// on a technical failure — a timeout or a 5xx becomes <c>TransientFailureException</c>
 /// (<c>IsRetriable = true</c>), a 4xx becomes <c>InvalidRequestException</c> — and must never return
-/// a <see cref="Tnosc.Lib.Domain.Results.Result"/> for one. <c>ExceptionDecorator</c> maps whatever
+/// a <see cref="Tnosc.Lib.Shared.Results.Result"/> for one. <c>ExceptionDecorator</c> maps whatever
 /// escapes a command handler into <c>Result.Failure(ErrorType.Unexpected)</c>, and
 /// <c>[Retry(3)]</c> on the payment command handlers retries the retriable ones.
 /// </para>

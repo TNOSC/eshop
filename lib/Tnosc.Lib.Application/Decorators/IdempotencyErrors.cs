@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using Tnosc.Lib.Application.Attributes;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.Lib.Application.Decorators;
 

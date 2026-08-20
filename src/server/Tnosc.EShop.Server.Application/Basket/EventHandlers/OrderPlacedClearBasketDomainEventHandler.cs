@@ -11,7 +11,7 @@ using Tnosc.EShop.Server.Application.Basket.Commands.ClearBasket;
 using Tnosc.EShop.Server.Domain.Ordering.Orders.Events;
 using Tnosc.Lib.Application.Commands;
 using Tnosc.Lib.Application.DomainEvents;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Basket.EventHandlers;
 

@@ -13,7 +13,7 @@ using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 using Tnosc.EShop.Server.Shared.Basket;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Infrastructure.Persistence.Basket.Queries;
 

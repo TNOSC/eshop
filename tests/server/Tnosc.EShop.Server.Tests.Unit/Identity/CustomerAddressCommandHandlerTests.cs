@@ -16,7 +16,7 @@ using Tnosc.EShop.Server.Application.Identity.Commands.SetDefaultCustomerAddress
 using Tnosc.EShop.Server.Application.Identity.Commands.UpdateCustomerProfile;
 using Tnosc.EShop.Server.Domain.Identity.Customers;
 using Tnosc.Lib.Application.Abstractions.Persistence;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Identity;

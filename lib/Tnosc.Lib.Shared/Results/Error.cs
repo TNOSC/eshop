@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tnosc.Lib.Domain.Results;
+namespace Tnosc.Lib.Shared.Results;
 
 /// <summary>
 /// Represents a domain error with a code, description and type.

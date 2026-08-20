@@ -12,7 +12,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Domain.Catalog.Products.Events;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.Lib.Domain;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Catalog;

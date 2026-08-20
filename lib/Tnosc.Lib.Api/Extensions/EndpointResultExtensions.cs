@@ -6,7 +6,7 @@
 
 using System;
 using Microsoft.AspNetCore.Http;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace Tnosc.Lib.Api.Extensions;
@@ -20,7 +20,7 @@ namespace Tnosc.Lib.Api.Extensions;
 /// <remarks>
 /// Throughout this type, the unqualified name <c>IResult</c> refers to
 /// <see cref="Microsoft.AspNetCore.Http.IResult"/> via an explicit <c>using</c> alias, to disambiguate
-/// it from the domain type <see cref="Tnosc.Lib.Domain.Results.IResult"/> implemented by <see cref="Result"/>.
+/// it from the domain type <see cref="Tnosc.Lib.Shared.Results.IResult"/> implemented by <see cref="Result"/>.
 /// </remarks>
 public static class EndpointResultExtensions
 {

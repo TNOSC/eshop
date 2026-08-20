@@ -8,7 +8,7 @@ using System.Linq;
 using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 using Tnosc.EShop.Server.Domain.Basket.Baskets;
 using Tnosc.EShop.Server.Domain.Shared;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Basket;
 

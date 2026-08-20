@@ -19,7 +19,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Commands;
 using Tnosc.Lib.Application.Contexts;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Xunit;
 

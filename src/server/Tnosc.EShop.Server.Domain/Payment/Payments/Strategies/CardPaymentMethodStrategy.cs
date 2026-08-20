@@ -6,7 +6,7 @@
 
 using System;
 using Tnosc.EShop.Server.Domain.Shared;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Domain.Payment.Payments.Strategies;
 

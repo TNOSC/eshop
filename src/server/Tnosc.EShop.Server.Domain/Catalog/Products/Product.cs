@@ -11,7 +11,7 @@ using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products.Events;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.Lib.Domain;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Domain.Catalog.Products;
 

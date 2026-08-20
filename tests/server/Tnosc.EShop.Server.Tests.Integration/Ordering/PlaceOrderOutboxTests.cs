@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Application.Basket.Ports;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 using Tnosc.Lib.Infrastructure.Persistence.Outbox;
 using Xunit;

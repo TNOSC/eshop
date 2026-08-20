@@ -4,7 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
-namespace Tnosc.Lib.Domain.Results;
+namespace Tnosc.Lib.Shared.Results;
 
 /// <summary>
 /// Defines the kinds of errors that a result can represent.

@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Domain.Payment.Payments;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
 using Tnosc.Lib.Application.DomainEvents;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Payment.EventHandlers;
 

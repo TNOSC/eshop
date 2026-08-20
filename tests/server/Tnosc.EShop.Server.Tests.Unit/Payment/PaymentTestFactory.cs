@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using NSubstitute;
 using Tnosc.EShop.Server.Domain.Payment.Payments;
 using Tnosc.EShop.Server.Domain.Shared;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using PaymentAggregate = Tnosc.EShop.Server.Domain.Payment.Payments.Payment;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Payment;

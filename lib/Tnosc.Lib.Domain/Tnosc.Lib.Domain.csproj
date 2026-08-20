@@ -2,4 +2,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Tnosc.Lib.Shared\Tnosc.Lib.Shared.csproj" />
+	</ItemGroup>
 </Project>

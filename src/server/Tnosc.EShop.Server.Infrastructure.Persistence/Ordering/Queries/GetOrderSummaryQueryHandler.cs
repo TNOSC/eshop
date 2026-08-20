@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Application.Ordering.Queries.GetOrderSummary;
 using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Infrastructure.Persistence.Ordering.Queries;
 

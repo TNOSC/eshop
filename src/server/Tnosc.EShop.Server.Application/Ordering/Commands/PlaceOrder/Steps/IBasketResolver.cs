@@ -8,7 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Server.Application.Ordering.Ports;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Ordering.Commands.PlaceOrder.Steps;
 

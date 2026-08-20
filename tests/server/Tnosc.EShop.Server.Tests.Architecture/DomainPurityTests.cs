@@ -25,7 +25,7 @@ public sealed class DomainPurityTests
     private const string EntityIdInterface = "Tnosc.Lib.Domain.IEntityId";
     private const string EntityIdSelfValueInterface = "Tnosc.Lib.Domain.IEntityId`2";
     private const string ValueObjectBase = "Tnosc.Lib.Domain.ValueObjects.ValueObject";
-    private const string ResultOpenGeneric = "Tnosc.Lib.Domain.Results.Result`1";
+    private const string ResultOpenGeneric = "Tnosc.Lib.Shared.Results.Result`1";
 
     private static readonly string[] ForbiddenCollectionTypes =
     [

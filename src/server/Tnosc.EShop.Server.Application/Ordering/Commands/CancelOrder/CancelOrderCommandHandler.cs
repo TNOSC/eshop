@@ -11,7 +11,7 @@ using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Ordering.Commands.CancelOrder;
 

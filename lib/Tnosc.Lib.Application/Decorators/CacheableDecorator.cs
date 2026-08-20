@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Hybrid;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.Lib.Application.Decorators;
 

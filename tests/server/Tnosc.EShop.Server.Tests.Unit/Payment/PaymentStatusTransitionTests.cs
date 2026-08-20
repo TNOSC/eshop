@@ -7,7 +7,7 @@
 using System.Threading.Tasks;
 using Shouldly;
 using Tnosc.EShop.Server.Domain.Payment.Payments.Events;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using PaymentAggregate = Tnosc.EShop.Server.Domain.Payment.Payments.Payment;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Payment;

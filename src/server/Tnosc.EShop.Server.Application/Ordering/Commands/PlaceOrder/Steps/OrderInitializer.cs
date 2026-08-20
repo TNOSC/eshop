@@ -13,7 +13,7 @@ using Tnosc.EShop.Server.Application.Ordering.Ports;
 using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.EShop.Server.Domain.Ordering.Orders.Discounts;
 using Tnosc.EShop.Server.Domain.Shared;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Application.Ordering.Commands.PlaceOrder.Steps;
 

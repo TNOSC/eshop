@@ -16,7 +16,7 @@ using Tnosc.EShop.Server.Application.Identity.Queries.ListCustomers;
 using Tnosc.EShop.Server.Domain.Identity.Customers;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
 using Tnosc.Lib.Application.Queries;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Identity;

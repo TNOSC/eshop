@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Globalization;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Tnosc.Lib.Domain.ValueObjects;
 
 namespace Tnosc.EShop.Server.Domain.Shared;

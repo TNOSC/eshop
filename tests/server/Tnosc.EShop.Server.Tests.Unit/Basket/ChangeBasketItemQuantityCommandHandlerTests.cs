@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Application.Basket.Commands.ChangeBasketItemQuantity;
 using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 using Tnosc.EShop.Server.Domain.Basket.Baskets;
 using Tnosc.EShop.Server.Domain.Shared;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using BasketAggregate = Tnosc.EShop.Server.Domain.Basket.Baskets.Basket;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Basket;

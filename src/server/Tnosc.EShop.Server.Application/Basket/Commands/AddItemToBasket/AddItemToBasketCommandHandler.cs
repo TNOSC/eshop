@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Shared.Basket;
 using Tnosc.Lib.Application.Attributes;
 using Tnosc.Lib.Application.Commands;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using BasketAggregate = Tnosc.EShop.Server.Domain.Basket.Baskets.Basket;
 
 namespace Tnosc.EShop.Server.Application.Basket.Commands.AddItemToBasket;

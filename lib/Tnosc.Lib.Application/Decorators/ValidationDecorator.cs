@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.Lib.Application.Commands;
 using Tnosc.Lib.Application.Validations;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.Lib.Application.Decorators;
 

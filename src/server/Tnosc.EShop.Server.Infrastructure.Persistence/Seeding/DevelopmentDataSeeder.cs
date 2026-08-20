@@ -19,7 +19,7 @@ using Tnosc.EShop.Server.Domain.Identity.Customers;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Infrastructure.Persistence.Contexts;
 using Tnosc.Lib.Application.Abstractions.Persistence;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Infrastructure.Persistence.Seeding;
 

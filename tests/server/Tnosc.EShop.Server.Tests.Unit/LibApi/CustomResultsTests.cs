@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Tnosc.Lib.Api;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 

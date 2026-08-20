@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Application.Payment.Commands.InitiatePayment.Steps;
 using Tnosc.EShop.Server.Domain.Payment.Payments;
 using Tnosc.Lib.Application.Abstractions.Persistence;
 using Tnosc.Lib.Application.Decorators;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using PaymentAggregate = Tnosc.EShop.Server.Domain.Payment.Payments.Payment;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Payment;

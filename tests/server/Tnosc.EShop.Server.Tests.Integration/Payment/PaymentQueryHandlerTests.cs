@@ -14,7 +14,7 @@ using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.EShop.Server.Domain.Payment.Payments;
 using Tnosc.EShop.Server.Infrastructure.External.Payment;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Payment;
 

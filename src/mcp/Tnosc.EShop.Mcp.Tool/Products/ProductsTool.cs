@@ -12,7 +12,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using Tnosc.EShop.Mcp.Application.Products;
 using Tnosc.EShop.Mcp.Tool.Extensions;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Tool.Products;
 

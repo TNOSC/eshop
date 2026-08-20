@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tnosc.Lib.Domain.Results;
+namespace Tnosc.Lib.Shared.Results;
 
 /// <summary>
 /// Represents a class containing utility methods for handling operation results.

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace Tnosc.Lib.Api;

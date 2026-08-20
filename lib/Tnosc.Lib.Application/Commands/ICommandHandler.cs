@@ -6,7 +6,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.Lib.Application.Commands;
 

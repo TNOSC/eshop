@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.Lib.Domain;
-using Tnosc.Lib.Domain.Results;
+using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Server.Domain.Basket.Baskets;
 
