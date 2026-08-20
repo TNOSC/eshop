@@ -64,27 +64,36 @@ public sealed class Basket : AggregateRoot<BasketId>
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
 
     /// <summary>
-    /// Gets the basket's total, or <see langword="null"/> when it has no lines. Assumes every line
-    /// shares one currency — the only shape a single-storefront checkout in this solution produces.
+    /// Computes the basket's total, or <see langword="null"/> when it has no lines. Fails with
+    /// <c>Money.CurrencyMismatch</c> when the basket's lines do not share one currency — the only
+    /// shape a single-storefront checkout in this solution produces.
     /// </summary>
-    public Money? Total
+    /// <returns>
+    /// <see langword="null"/> for an empty basket; otherwise a <see cref="Result{TValue}"/> holding
+    /// the summed total, or the currency-mismatch error.
+    /// </returns>
+    public Result<Money>? GetTotal()
     {
-        get
+        if (_items.Count == 0)
         {
-            if (_items.Count == 0)
-            {
-                return null;
-            }
-
-            Money total = _items[0].UnitPrice.Multiply(factor: _items[0].Quantity.Value);
-
-            foreach (BasketItem item in _items.Skip(count: 1))
-            {
-                total = total.Add(other: item.UnitPrice.Multiply(factor: item.Quantity.Value)).Value;
-            }
-
-            return total;
+            return null;
         }
+
+        Money total = _items[0].UnitPrice.Multiply(factor: _items[0].Quantity.Value);
+
+        foreach (BasketItem item in _items.Skip(count: 1))
+        {
+            Result<Money> added = total.Add(other: item.UnitPrice.Multiply(factor: item.Quantity.Value));
+
+            if (added.IsError)
+            {
+                return added;
+            }
+
+            total = added.Value;
+        }
+
+        return total;
     }
 
     /// <summary>

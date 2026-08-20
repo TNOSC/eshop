@@ -7,6 +7,8 @@
 using System.Linq;
 using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 using Tnosc.EShop.Server.Domain.Basket.Baskets;
+using Tnosc.EShop.Server.Domain.Shared;
+using Tnosc.Lib.Domain.Results;
 
 namespace Tnosc.EShop.Server.Application.Basket;
 
@@ -21,9 +23,21 @@ internal static class BasketDtoMapper
     /// Projects a basket aggregate into its DTO.
     /// </summary>
     /// <param name="basket">The basket to project.</param>
-    /// <returns>The projected <see cref="BasketDto"/>.</returns>
-    public static BasketDto ToDto(this Tnosc.EShop.Server.Domain.Basket.Baskets.Basket basket) =>
-        new(
+    /// <returns>
+    /// The projected <see cref="BasketDto"/>, or the domain's <c>Money.CurrencyMismatch</c> error
+    /// when <see cref="Tnosc.EShop.Server.Domain.Basket.Baskets.Basket.GetTotal"/> cannot sum the
+    /// basket's lines.
+    /// </returns>
+    public static Result<BasketDto> ToDto(this Tnosc.EShop.Server.Domain.Basket.Baskets.Basket basket)
+    {
+        Result<Money>? total = basket.GetTotal();
+
+        if (total is { IsError: true })
+        {
+            return total.Errors.ToArray();
+        }
+
+        return new BasketDto(
             BasketId: basket.Id.Value,
             CustomerId: basket.CustomerId,
             Items: [.. basket.Items.Select(selector: static item => new BasketItemDto(
@@ -34,6 +48,7 @@ internal static class BasketDtoMapper
                 UnitPriceAmount: item.UnitPrice.Amount,
                 UnitPriceCurrency: item.UnitPrice.Currency,
                 Quantity: item.Quantity.Value))],
-            TotalAmount: basket.Total?.Amount,
-            TotalCurrency: basket.Total?.Currency);
+            TotalAmount: total?.Value.Amount,
+            TotalCurrency: total?.Value.Currency);
+    }
 }

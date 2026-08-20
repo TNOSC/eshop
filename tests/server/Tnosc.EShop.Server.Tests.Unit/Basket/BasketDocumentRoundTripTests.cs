@@ -11,6 +11,7 @@ using Shouldly;
 using Tnosc.EShop.Server.Domain.Basket.Baskets;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
+using Tnosc.Lib.Domain.Results;
 using BasketAggregate = Tnosc.EShop.Server.Domain.Basket.Baskets.Basket;
 
 namespace Tnosc.EShop.Server.Tests.Unit.Basket;
@@ -68,8 +69,10 @@ public sealed class BasketDocumentRoundTripTests
         rehydratedSecond.UnitPrice.Amount.ShouldBe(expected: secondPrice.Amount);
         rehydratedSecond.Quantity.Value.ShouldBe(expected: 1);
 
-        rehydrated.Total.ShouldNotBeNull();
-        rehydrated.Total.Amount.ShouldBe(expected: original.Total!.Amount);
+        Result<Money>? rehydratedTotal = rehydrated.GetTotal();
+        Result<Money>? originalTotal = original.GetTotal();
+        rehydratedTotal.ShouldNotBeNull();
+        rehydratedTotal.Value.Amount.ShouldBe(expected: originalTotal!.Value.Amount);
     }
 
     [Fact]

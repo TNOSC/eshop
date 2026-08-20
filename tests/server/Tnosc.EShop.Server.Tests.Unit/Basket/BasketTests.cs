@@ -37,7 +37,7 @@ public sealed class BasketTests
         basket.CustomerId.ShouldBe(expected: customerId);
         basket.Items.ShouldBeEmpty();
         basket.Version.ShouldBe(expected: 1);
-        basket.Total.ShouldBeNull();
+        basket.GetTotal().ShouldBeNull();
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public sealed class BasketTests
     }
 
     [Fact]
-    public void Total_Should_SumEveryLinesUnitPriceTimesQuantity()
+    public void GetTotal_Should_SumEveryLinesUnitPriceTimesQuantity()
     {
         // Arrange
         var basket = BasketAggregate.CreateFor(customerId: _faker.CustomerId());
@@ -193,22 +193,40 @@ public sealed class BasketTests
         basket.AddItem(productId: _faker.ProductId(), sku: _faker.Sku(), productName: _faker.ProductName(), unitPrice: Money.Create(amount: 5m, currency: currency).Value, quantity: Quantity.Create(value: 3).Value);
 
         // Act
-        Money? total = basket.Total;
+        Result<Money>? total = basket.GetTotal();
 
         // Assert
         total.ShouldNotBeNull();
-        total.Amount.ShouldBe(expected: 35m);
-        total.Currency.ShouldBe(expected: currency);
+        total.IsSuccess.ShouldBeTrue();
+        total.Value.Amount.ShouldBe(expected: 35m);
+        total.Value.Currency.ShouldBe(expected: currency);
     }
 
     [Fact]
-    public void Total_Should_BeNull_When_TheBasketHasNoLines()
+    public void GetTotal_Should_BeNull_When_TheBasketHasNoLines()
     {
         // Arrange
         var basket = BasketAggregate.CreateFor(customerId: _faker.CustomerId());
 
         // Act & Assert
-        basket.Total.ShouldBeNull();
+        basket.GetTotal().ShouldBeNull();
+    }
+
+    [Fact]
+    public void GetTotal_Should_FailWithCurrencyMismatch_When_TheBasketLinesDoNotShareOneCurrency()
+    {
+        // Arrange
+        var basket = BasketAggregate.CreateFor(customerId: _faker.CustomerId());
+        basket.AddItem(productId: _faker.ProductId(), sku: _faker.Sku(), productName: _faker.ProductName(), unitPrice: Money.Create(amount: 10m, currency: "EUR").Value, quantity: Quantity.Create(value: 1).Value);
+        basket.AddItem(productId: _faker.ProductId(), sku: _faker.Sku(), productName: _faker.ProductName(), unitPrice: Money.Create(amount: 5m, currency: "USD").Value, quantity: Quantity.Create(value: 1).Value);
+
+        // Act
+        Result<Money>? total = basket.GetTotal();
+
+        // Assert
+        total.ShouldNotBeNull();
+        total.IsError.ShouldBeTrue();
+        total.FirstError.Code.ShouldBe(expected: "Money.CurrencyMismatch");
     }
 
     [Fact]
