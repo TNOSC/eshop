@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Tnosc.Lib.Application.Abstractions.Contexts;
+namespace Tnosc.Lib.Application.Contexts;
 
 /// <summary>
 /// Provides information about the current caller, independent of the underlying transport.

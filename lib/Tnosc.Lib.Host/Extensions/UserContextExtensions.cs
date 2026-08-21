@@ -6,7 +6,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Tnosc.Lib.Application.Abstractions.Contexts;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Host.Contexts;
 
 namespace Tnosc.Lib.Host.Extensions;

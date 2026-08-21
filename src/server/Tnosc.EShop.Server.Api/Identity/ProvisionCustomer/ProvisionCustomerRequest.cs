@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using Tnosc.EShop.Server.Application.Identity.Commands.ProvisionCustomer;
-using Tnosc.Lib.Application.Abstractions.Contexts;
+using Tnosc.Lib.Application.Contexts;
 
 namespace Tnosc.EShop.Server.Api.Identity.ProvisionCustomer;
 

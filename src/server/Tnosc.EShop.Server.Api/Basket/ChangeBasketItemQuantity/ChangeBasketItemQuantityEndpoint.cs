@@ -14,8 +14,8 @@ using Tnosc.EShop.Server.Application.Basket.Commands.ChangeBasketItemQuantity;
 using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
-using Tnosc.Lib.Application.Abstractions.Contexts;
 using Tnosc.Lib.Application.Commands;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 

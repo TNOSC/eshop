@@ -6,7 +6,7 @@
 
 using System;
 using Tnosc.EShop.Server.Application.Identity.Commands.UpdateCustomerAddress;
-using Tnosc.Lib.Application.Abstractions.Contexts;
+using Tnosc.Lib.Application.Contexts;
 
 namespace Tnosc.EShop.Server.Api.Identity.UpdateCustomerAddress;
 

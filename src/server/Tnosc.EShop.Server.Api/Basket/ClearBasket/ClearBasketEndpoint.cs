@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Tnosc.EShop.Server.Application.Basket.Commands.ClearBasket;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
-using Tnosc.Lib.Application.Abstractions.Contexts;
 using Tnosc.Lib.Application.Commands;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 

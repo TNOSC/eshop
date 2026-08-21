@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tnosc.EShop.Server.Application.Ordering.Queries.GetOrderById;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
-using Tnosc.Lib.Application.Abstractions.Contexts;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Application.Queries;
 using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;

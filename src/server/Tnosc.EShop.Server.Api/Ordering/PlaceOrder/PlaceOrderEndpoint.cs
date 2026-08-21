@@ -14,8 +14,8 @@ using Tnosc.EShop.Server.Application.Ordering.Commands.PlaceOrder;
 using Tnosc.EShop.Server.Domain.Ordering.Orders;
 using Tnosc.Lib.Api.Abstractions;
 using Tnosc.Lib.Api.Extensions;
-using Tnosc.Lib.Application.Abstractions.Contexts;
 using Tnosc.Lib.Application.Commands;
+using Tnosc.Lib.Application.Contexts;
 using Tnosc.Lib.Shared.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 

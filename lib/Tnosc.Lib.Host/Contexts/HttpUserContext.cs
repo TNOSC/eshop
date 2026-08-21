@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Tnosc.Lib.Application.Abstractions.Contexts;
+using Tnosc.Lib.Application.Contexts;
 
 namespace Tnosc.Lib.Host.Contexts;
 
