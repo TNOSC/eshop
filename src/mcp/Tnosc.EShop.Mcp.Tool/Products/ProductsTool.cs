@@ -4,11 +4,11 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using Tnosc.EShop.Mcp.Application.Products;
 using Tnosc.EShop.Mcp.Tool.Extensions;
@@ -28,7 +28,7 @@ public static class ProductsTool
     /// <summary>Lists products from the eShop catalog, optionally filtered by a free-text search term.</summary>
     [McpServerTool(UseStructuredContent = true)]
     [Description("Lists products from the eShop catalog, optionally filtered by a free-text search term.")]
-    public static async Task<IReadOnlyCollection<Product>> ListProductsAsync(
+    public static async Task<ToolResult<IReadOnlyCollection<Product>>> ListProductsAsync(
         IProductsQueryService productsQueryService,
         CancellationToken cancellationToken,
         string? search = null,
@@ -37,12 +37,16 @@ public static class ProductsTool
     {
         if (page < 1)
         {
-            throw new McpException(message: "page must be greater than or equal to 1.");
+            return ToolResult<IReadOnlyCollection<Product>>.Fail(
+                errorCode: "Products.InvalidPage",
+                errorMessage: "page must be greater than or equal to 1.");
         }
 
         if (pageSize < MinPageSize || pageSize > MaxPageSize)
         {
-            throw new McpException(message: $"pageSize must be between {MinPageSize} and {MaxPageSize}.");
+            return ToolResult<IReadOnlyCollection<Product>>.Fail(
+                errorCode: "Products.InvalidPageSize",
+                errorMessage: $"pageSize must be between {MinPageSize} and {MaxPageSize}.");
         }
 
         Result<IReadOnlyCollection<Product>> result = await productsQueryService.GetProductsAsync(
@@ -51,6 +55,36 @@ public static class ProductsTool
             pageSize: pageSize,
             cancellationToken: cancellationToken);
 
-        return result.GetValueOrThrowMcpException();
+        return result.ToToolResult();
+    }
+
+    /// <summary>Adds a new product to the eShop catalog.</summary>
+    [McpServerTool(UseStructuredContent = true)]
+    [Description("Adds a new product to the eShop catalog. Returns the new product's identifier.")]
+    public static async Task<ToolResult<Guid>> CreateProductAsync(
+        IProductsCommandService productsCommandService,
+        string sku,
+        string name,
+        decimal priceAmount,
+        string priceCurrency,
+        int stockQuantity,
+        Guid brandId,
+        Guid categoryId,
+        string? description = null,
+        CancellationToken cancellationToken = default)
+    {
+        Result<Guid> result = await productsCommandService.CreateProductAsync(
+            request: new CreateProductRequest(
+                Sku: sku,
+                Name: name,
+                Description: description,
+                PriceAmount: priceAmount,
+                PriceCurrency: priceCurrency,
+                StockQuantity: stockQuantity,
+                BrandId: brandId,
+                CategoryId: categoryId),
+            cancellationToken: cancellationToken);
+
+        return result.ToToolResult();
     }
 }

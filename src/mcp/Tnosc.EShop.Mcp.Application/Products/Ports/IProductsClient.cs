@@ -4,6 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace Tnosc.EShop.Mcp.Application.Products.Ports;
 
 /// <summary>
-/// Fetches products from the eShop catalog's search endpoint.
+/// Calls the eShop catalog's products endpoint.
 /// </summary>
 public interface IProductsClient
 {
@@ -27,5 +28,15 @@ public interface IProductsClient
         string? search = null,
         int page = 1,
         int pageSize = 20,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a new product to the catalog.
+    /// </summary>
+    /// <param name="request">The data describing the product to create.</param>
+    /// <param name="cancellationToken">The token used to cancel the request.</param>
+    /// <returns>The identifier of the newly created product.</returns>
+    Task<Guid> CreateProductAsync(
+        CreateProductRequest request,
         CancellationToken cancellationToken = default);
 }

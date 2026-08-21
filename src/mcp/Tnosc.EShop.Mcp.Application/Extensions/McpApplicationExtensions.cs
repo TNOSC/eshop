@@ -15,13 +15,15 @@ namespace Tnosc.EShop.Mcp.Application.Extensions;
 public static class McpApplicationExtensions
 {
     /// <summary>
-    /// Registers the Application layer's services: <see cref="IProductsQueryService"/>.
+    /// Registers the Application layer's services: <see cref="IProductsQueryService"/> and
+    /// <see cref="IProductsCommandService"/>.
     /// </summary>
     /// <param name="services">The service collection to register services with.</param>
     /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
     public static IServiceCollection AddMcpApplication(this IServiceCollection services)
     {
         services.AddScoped<IProductsQueryService, ProductsQueryService>();
+        services.AddScoped<IProductsCommandService, ProductsCommandService>();
 
         return services;
     }

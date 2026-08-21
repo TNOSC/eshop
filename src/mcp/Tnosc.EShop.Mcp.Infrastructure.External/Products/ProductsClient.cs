@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -45,5 +46,67 @@ internal sealed class ProductsClient(HttpClient httpClient) : IProductsClient
         return productsPage?.Items ?? [];
     }
 
+    /// <inheritdoc />
+    public async Task<Guid> CreateProductAsync(
+        CreateProductRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        using HttpRequestMessage httpRequest = new(method: HttpMethod.Post, requestUri: "/api/catalog/products")
+        {
+            Content = JsonContent.Create(inputValue: request, options: SerializerOptions),
+        };
+        httpRequest.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
+
+        using HttpResponseMessage response = await httpClient.SendAsync(
+            request: httpRequest,
+            cancellationToken: cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            string detail = await ReadProblemDetailAsync(response: response, cancellationToken: cancellationToken);
+
+            throw new HttpRequestException(
+                message: detail,
+                inner: null,
+                statusCode: response.StatusCode);
+        }
+
+        return await response.Content.ReadFromJsonAsync<Guid>(
+            options: SerializerOptions,
+            cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Reads the RFC 9457 problem body a failed eShop API call returns and turns it into a single
+    /// human-readable message — the field-level validation errors when present, else the problem's
+    /// detail or title, else a fallback built from the status line.
+    /// </summary>
+    private static async Task<string> ReadProblemDetailAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    {
+        string fallback = $"{(int)response.StatusCode} {response.ReasonPhrase}";
+
+        try
+        {
+            ProblemBody? problem = await response.Content.ReadFromJsonAsync<ProblemBody>(
+                options: SerializerOptions,
+                cancellationToken: cancellationToken);
+
+            if (problem?.Errors is { Count: > 0 })
+            {
+                return string.Join(
+                    separator: "; ",
+                    values: problem.Errors.SelectMany(static kv => kv.Value.Select(message => $"{kv.Key}: {message}")));
+            }
+
+            return problem?.Detail ?? problem?.Title ?? fallback;
+        }
+        catch (JsonException)
+        {
+            return fallback;
+        }
+    }
+
     private sealed record ProductsPage(IReadOnlyCollection<Product> Items, int Page, int PageSize, long TotalCount);
+
+    private sealed record ProblemBody(string? Title, string? Detail, Dictionary<string, string[]>? Errors);
 }
