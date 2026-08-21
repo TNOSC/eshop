@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />

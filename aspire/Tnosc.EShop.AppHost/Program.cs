@@ -96,15 +96,17 @@ builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
     .WithHttpHealthCheck("/health");
 
 IResourceBuilder<ProjectResource> mcpHost = builder.AddProject<Projects.Tnosc_EShop_Mcp_Host>("mcp")
-    .WithReference(eshopHost)
+    .WithReference(source: eshopHost)
+    .WithReference(source: keycloak)
     .WaitFor(dependency: eshopHost)
+    .WaitFor(dependency: keycloak)
     .WithExternalHttpEndpoints()
     .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:MCP")
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:MCP")
     .WithHttpHealthCheck("/health");
 
 builder.AddMcpInspector(name: "mcp-inspector", new McpInspectorOptions() { InspectorVersion = "latest" })
-    .WithMcpServer(mcpHost)
+    .WithMcpServer(mcpServer: mcpHost)
     .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();
