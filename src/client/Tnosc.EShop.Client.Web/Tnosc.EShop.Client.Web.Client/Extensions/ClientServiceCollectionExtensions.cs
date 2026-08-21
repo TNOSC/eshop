@@ -13,6 +13,7 @@ using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Orders.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Profile.Services;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
 using Tnosc.Lib.Web.Api;
@@ -60,6 +61,7 @@ public static class ClientServiceCollectionExtensions
         services.AddScoped<ICheckoutService, CheckoutService>();
         services.AddScoped<IMyOrdersService, MyOrdersService>();
         services.AddScoped<IOrderDetailService, OrderDetailService>();
+        services.AddScoped<IMyProfileService, MyProfileService>();
         services.AddScoped<IAdminCustomersService, AdminCustomersService>();
         services.AddScoped<IAdminCustomerDetailService, AdminCustomerDetailService>();
         services.AddScoped<IAdminDashboardService, AdminDashboardService>();

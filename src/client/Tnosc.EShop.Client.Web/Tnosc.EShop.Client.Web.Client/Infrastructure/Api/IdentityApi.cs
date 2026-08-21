@@ -33,6 +33,58 @@ internal sealed class IdentityApi(HttpClient httpClient) : IIdentityApi
         return await ApiResponseReader.ReadAsync<Customer>(response: response, cancellationToken: cancellationToken);
     }
 
+    public async Task<ClientResult> UpdateMyProfileAsync(UpdateCustomerProfileRequest request, CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PutAsJsonAsync(
+            requestUri: ApiRoutes.Identity.MeProfile,
+            value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult<Guid>> AddMyAddressAsync(AddCustomerAddressRequest request, CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PostAsJsonAsync(
+            requestUri: ApiRoutes.Identity.MeAddresses,
+            value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync<Guid>(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult> UpdateMyAddressAsync(
+        Guid addressId,
+        UpdateCustomerAddressRequest request,
+        CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PutAsJsonAsync(
+            requestUri: ApiRoutes.Identity.MeAddressById(addressId: addressId),
+            value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult> RemoveMyAddressAsync(Guid addressId, CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.DeleteAsync(
+            requestUri: ApiRoutes.Identity.MeAddressById(addressId: addressId),
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult> SetMyDefaultAddressAsync(Guid addressId, CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.PutAsync(
+            requestUri: ApiRoutes.Identity.MeDefaultAddressById(addressId: addressId),
+            content: null,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
     public async Task<ClientResult<PagedResult<CustomerSummary>>> SearchCustomersAsync(
         string? search,
         bool? isActive,

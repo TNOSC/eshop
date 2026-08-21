@@ -37,6 +37,9 @@ public static class Routes
         /// <summary>The caller's order history.</summary>
         public const string Orders = "/orders";
 
+        /// <summary>The caller's own profile and addresses.</summary>
+        public const string Profile = "/profile";
+
         /// <summary>Builds the route to a single order's detail page.</summary>
         public static string OrderDetail(Guid id) => $"/orders/{id}";
     }

@@ -92,6 +92,16 @@ public static class ApiRoutes
         /// <summary>The current caller's addresses route.</summary>
         public const string MeAddresses = "api/identity/customers/me/addresses";
 
+        /// <summary>Builds the route for a single one of the caller's own addresses.</summary>
+        /// <param name="addressId">The address id.</param>
+        public static string MeAddressById(Guid addressId) =>
+            string.Create(provider: CultureInfo.InvariantCulture, handler: $"{MeAddresses}/{addressId}");
+
+        /// <summary>Builds the route to set which of the caller's own addresses is the default.</summary>
+        /// <param name="addressId">The address id.</param>
+        public static string MeDefaultAddressById(Guid addressId) =>
+            string.Create(provider: CultureInfo.InvariantCulture, handler: $"{MeAddresses}/{addressId}/default");
+
         /// <summary>Builds the route for a single customer by id.</summary>
         /// <param name="id">The customer id.</param>
         public static string CustomerById(Guid id) =>

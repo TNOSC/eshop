@@ -1,0 +1,112 @@
+@* Routes.Store.Profile *@
+@page "/profile"
+@rendermode InteractiveAuto
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Profile.ViewModels
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+@using Tnosc.EShop.Client.Web.Client.Layout.Store
+
+<PageTitle>My profile — Tnosc eShop</PageTitle>
+
+<StoreHero Title="My profile" Subtitle="@_profile?.Email" />
+
+<div class="eshop-page">
+<StatefulBoundary State="_state">
+@if (_problem is not null)
+{
+    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+}
+else if (_profile is not null)
+{
+    <FluentCard Margin="Margin.Top3">
+        <FluentText As="TextTag.H2" Class="eshop-h2">Profile</FluentText>
+
+        <EditForm EditContext="@_profileEditContext" OnSubmit="@SaveProfileAsync">
+            <DataAnnotationsValidator />
+
+            @if (_profileUnmappedMessages.Count > 0)
+            {
+                <FluentMessageBar Intent="MessageBarIntent.Error" Title="Could not update profile">
+                    @string.Join(separator: " ", values: _profileUnmappedMessages)
+                </FluentMessageBar>
+            }
+
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+                <FluentTextInput Label="First name" @bind-Value="_profileModel.FirstName" />
+                <ValidationMessage For="@(() => _profileModel.FirstName)" />
+
+                <FluentTextInput Label="Last name" @bind-Value="_profileModel.LastName" />
+                <ValidationMessage For="@(() => _profileModel.LastName)" />
+
+                <FluentTextInput Label="Phone number" @bind-Value="_profileModel.PhoneNumber" />
+                <ValidationMessage For="@(() => _profileModel.PhoneNumber)" />
+            </FluentStack>
+
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8" Margin="Margin.Top3">
+                <FluentButton Type="ButtonType.Submit" Appearance="ButtonAppearance.Primary" Loading="@_isSavingProfile" Disabled="@_isSavingProfile">
+                    Save profile
+                </FluentButton>
+            </FluentStack>
+        </EditForm>
+    </FluentCard>
+
+    <FluentCard Margin="Margin.Top3">
+        <FluentText As="TextTag.H2" Class="eshop-h2">Delivery addresses</FluentText>
+
+        <FluentDataGrid TGridItem="MyAddressListItemViewModel" Items="@_profile.Addresses.AsQueryable()" ResizableColumns="true">
+            <ChildContent>
+                <PropertyColumn Property="@(a => a.Street)" Title="Street" />
+                <PropertyColumn Property="@(a => a.City)" Title="City" />
+                <PropertyColumn Property="@(a => a.PostalCode)" Title="Postal code" />
+                <PropertyColumn Property="@(a => a.Country)" Title="Country" />
+                <TemplateColumn Title="Actions" Align="DataGridCellAlignment.End">
+                    @if (context.Id == _profile.DefaultAddressId)
+                    {
+                        <FluentBadge Color="BadgeColor.Brand">Default</FluentBadge>
+                    }
+                    else
+                    {
+                        <FluentButton Size="ButtonSize.Small" OnClick="@(() => SetDefaultAddressAsync(address: context))">
+                            Set default
+                        </FluentButton>
+                    }
+                    <FluentButton Size="ButtonSize.Small"
+                                  IconStart="@(new Icons.Regular.Size20.Delete())"
+                                  OnClick="@(() => RemoveAddressAsync(address: context))">
+                        Remove
+                    </FluentButton>
+                </TemplateColumn>
+            </ChildContent>
+            <EmptyContent><FluentLabel>No delivery addresses on file yet.</FluentLabel></EmptyContent>
+        </FluentDataGrid>
+
+        <EditForm EditContext="@_addressEditContext" OnSubmit="@AddAddressAsync">
+            <DataAnnotationsValidator />
+
+            @if (_addressUnmappedMessages.Count > 0)
+            {
+                <FluentMessageBar Intent="MessageBarIntent.Error" Title="Could not add address">
+                    @string.Join(separator: " ", values: _addressUnmappedMessages)
+                </FluentMessageBar>
+            }
+
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="12" Margin="Margin.Top3" Wrap="true">
+                <FluentTextInput Label="Street" @bind-Value="_addressModel.Street" />
+                <FluentTextInput Label="City" @bind-Value="_addressModel.City" />
+                <FluentTextInput Label="Postal code" @bind-Value="_addressModel.PostalCode" />
+                <FluentTextInput Label="Country" Placeholder="ISO 3166-1 alpha-2" @bind-Value="_addressModel.Country" />
+                <FluentButton Type="ButtonType.Submit" Appearance="ButtonAppearance.Primary" Loading="@_isAddingAddress" Disabled="@_isAddingAddress">
+                    Add address
+                </FluentButton>
+            </FluentStack>
+            <ValidationMessage For="@(() => _addressModel.Street)" />
+            <ValidationMessage For="@(() => _addressModel.City)" />
+            <ValidationMessage For="@(() => _addressModel.PostalCode)" />
+            <ValidationMessage For="@(() => _addressModel.Country)" />
+        </EditForm>
+    </FluentCard>
+}
+</StatefulBoundary>
+</div>

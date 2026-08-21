@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Client.Web.Client\Tnosc.EShop.Client.Web.Client.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Client.Web.Contracts\Tnosc.EShop.Client.Web.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\lib\Tnosc.Lib.Web.Bff\Tnosc.Lib.Web.Bff.csproj" />
     <PackageReference Include="Aspire.Keycloak.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />

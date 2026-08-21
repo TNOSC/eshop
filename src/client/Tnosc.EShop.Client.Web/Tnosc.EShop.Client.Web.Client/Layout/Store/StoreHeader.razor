@@ -8,6 +8,7 @@
                 <AuthorizeView>
                     <Authorized>
                         <FluentNavItem Href="@Routes.Store.Orders">Orders</FluentNavItem>
+                        <FluentNavItem Href="@Routes.Store.Profile">My profile</FluentNavItem>
                     </Authorized>
                 </AuthorizeView>
             </FluentNav>
@@ -25,6 +26,7 @@
             <AuthorizeView>
                 <Authorized>
                     <NavLink href="@Routes.Store.Orders" ActiveClass="active">Orders</NavLink>
+                    <NavLink href="@Routes.Store.Profile" ActiveClass="active">My profile</NavLink>
                 </Authorized>
             </AuthorizeView>
         </nav>

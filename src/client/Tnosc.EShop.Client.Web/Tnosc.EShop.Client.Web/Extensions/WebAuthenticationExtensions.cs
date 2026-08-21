@@ -127,7 +127,11 @@ internal static class WebAuthenticationExtensions
         options.Scope.Add(item: "offline_access"); // required by the refresh flow
         options.TokenValidationParameters.NameClaimType = "preferred_username";
         options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
-        options.Events.OnTokenValidated = KeycloakRoleClaimsTransformation.OnTokenValidatedAsync;
+        options.Events.OnTokenValidated = static async context =>
+        {
+            await KeycloakRoleClaimsTransformation.OnTokenValidatedAsync(context: context);
+            await CustomerProvisioningEvents.ProvisionAsync(context: context);
+        };
 
         if (isDevelopment)
         {

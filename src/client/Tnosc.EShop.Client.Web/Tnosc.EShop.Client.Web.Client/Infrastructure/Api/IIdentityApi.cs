@@ -20,6 +20,35 @@ public interface IIdentityApi
     /// <param name="cancellationToken">The token observed while the call is in flight.</param>
     Task<ClientResult<Customer>> GetMeAsync(CancellationToken cancellationToken);
 
+    /// <summary>Updates the caller's own name and phone number.</summary>
+    /// <param name="request">The new name and phone number.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> UpdateMyProfileAsync(UpdateCustomerProfileRequest request, CancellationToken cancellationToken);
+
+    /// <summary>Adds an address to the caller's own profile.</summary>
+    /// <param name="request">The address to add.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult<Guid>> AddMyAddressAsync(AddCustomerAddressRequest request, CancellationToken cancellationToken);
+
+    /// <summary>Replaces one of the caller's own addresses.</summary>
+    /// <param name="addressId">The address id.</param>
+    /// <param name="request">The new address content.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> UpdateMyAddressAsync(
+        Guid addressId,
+        UpdateCustomerAddressRequest request,
+        CancellationToken cancellationToken);
+
+    /// <summary>Removes one of the caller's own addresses.</summary>
+    /// <param name="addressId">The address id.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> RemoveMyAddressAsync(Guid addressId, CancellationToken cancellationToken);
+
+    /// <summary>Sets which of the caller's own addresses is their default.</summary>
+    /// <param name="addressId">The address id.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> SetMyDefaultAddressAsync(Guid addressId, CancellationToken cancellationToken);
+
     /// <summary>Lists customers, one page at a time. Requires the <c>identity:read</c> permission.</summary>
     /// <param name="search">An optional free-text search term.</param>
     /// <param name="isActive">An optional active-status filter.</param>
