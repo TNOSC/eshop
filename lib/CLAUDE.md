@@ -1,6 +1,7 @@
 # lib/ — the reusable framework
 
-Six projects with **no eShop knowledge**. Anything context-specific belongs in `src/server/`.
+Projects with **no eShop knowledge**. Anything context-specific belongs in `src/server/` or
+`src/agent/`.
 
 ```
 Tnosc.Lib.Shared                      Result/Error/ErrorType/IResult — depended on by every other
@@ -13,14 +14,27 @@ Tnosc.Lib.Api                         IApiEndpoint, CustomResults, Result → HT
 Tnosc.Lib.Infrastructure.Persistence  Read/Write DbContext bases, UnitOfWork, RepositoryBase,
                                       outbox, EF conventions, migration hosted service
 Tnosc.Lib.Host                        HttpUserContext, GlobalExceptionHandler, RequestContextMiddleware
+Tnosc.Lib.Agent                       AgentDefinition + its value objects, AgentResult, AgentErrors,
+                                      IAgentDefinitionProvider
+Tnosc.Lib.Agent.Runtime               IAgentRunner, IAgentFactory, IAgentToolProvider
 ```
+
+## The agent split is two projects on purpose
+
+`Tnosc.Lib.Agent` takes **no `PackageReference` at all** — not even an abstractions package. That is
+what lets a domain project reference it and still assert that it names no AI framework, which is
+what keeps agent definitions testable with nothing loaded. Anything that mentions an Agent Framework
+or `Microsoft.Extensions.AI` type belongs in `Tnosc.Lib.Agent.Runtime` instead.
+
+`AgentLayerDependencyTests` enforces both halves. If something in `Tnosc.Lib.Agent` seems to need a
+package, it is in the wrong project.
 
 `Tnosc.Lib.Domain` project-references `Tnosc.Lib.Shared` so every consumer of Domain gets `Result` /
 `Error` transitively — no other project needs its own direct reference to `Tnosc.Lib.Shared`.
 
 ## XML documentation is mandatory here
 
-All six projects set `GenerateDocumentationFile=true`, and warnings are errors ⇒ **`CS1591` fails
+Every project here sets `GenerateDocumentationFile=true`, and warnings are errors ⇒ **`CS1591` fails
 the build**. Every public type and member needs `<summary>`, plus `<param>`, `<returns>`,
 `<typeparam>` and `<exception>` where they apply. Use `<inheritdoc />` on interface implementations.
 Document *why*, not just *what* — the existing files explain the reasoning behind a design, and that

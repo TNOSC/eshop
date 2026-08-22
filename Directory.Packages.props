@@ -25,6 +25,33 @@
     <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="5.0.0-rc.5-26219.1" />
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
     <PackageVersion Include="ModelContextProtocol.Core" Version="2.2.0" />
+    <!--
+      Microsoft Agent Framework. Microsoft.Agents.AI has a stable 1.18.0, but every *hosting* piece
+      is preview-only on that same 1.18 train, so all of them must be bumped together — a skew makes
+      the AIAgent type identity diverge between the core and hosting assemblies, which surfaces as a
+      resolution failure at run time rather than at restore.
+    -->
+    <PackageVersion Include="Microsoft.Agents.AI" Version="1.18.0" />
+    <PackageVersion Include="Microsoft.Agents.AI.Hosting" Version="1.18.0-preview.260818.1" />
+    <!--
+      Supplies UseClaimsBasedAgentIsolation. Not optional: MapAGUIServer treats the wire-supplied
+      AG-UI ThreadId as a resume identifier and NOT as an authorization token, so once a session
+      store is registered any caller who guesses another caller's ThreadId resumes that caller's
+      conversation. This package composes the caller's claims into the session lookup key.
+    -->
+    <PackageVersion Include="Microsoft.Agents.AI.Hosting.AspNetCore" Version="1.18.0-preview.260818.1" />
+    <PackageVersion Include="Microsoft.Agents.AI.Hosting.AGUI.AspNetCore" Version="1.18.0-preview.260818.1" />
+    <!-- Microsoft Foundry provider: the Azure SDK client plus the Agent Framework adapter over it. -->
+    <PackageVersion Include="Microsoft.Agents.AI.Foundry" Version="1.18.0-preview.260818.1" />
+    <PackageVersion Include="Azure.AI.Projects" Version="2.1.0-beta.4" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
+    <!--
+      IChatClient / AITool vocabulary. Abstractions is the only one Tnosc.Lib.Agent.Runtime takes —
+      Tnosc.Lib.Agent itself must stay package-free so Tnosc.EShop.Agent.Domain can reference it and
+      still satisfy the Domain-purity architecture test.
+    -->
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="10.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.9.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.10.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="2.11.0" />
     <PackageVersion Include="Meziantou.Analyzer" Version="3.0.173" />
@@ -60,6 +87,13 @@
     -->
     <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.5.0-preview.1.26417.10" />
     <PackageVersion Include="Aspire.Keycloak.Authentication" Version="13.5.0-preview.1.26417.10" />
+    <!--
+      Aspire's Foundry hosting integration. The package id was renamed from
+      "Aspire.Hosting.Azure.AIFoundry" to "Aspire.Hosting.Foundry" in the 13.2 release — the old id
+      still resolves but stops at 13.1.x, which is off this solution's 13.5 train. Preview-only, for
+      the same reason as the two Keycloak integrations above.
+    -->
+    <PackageVersion Include="Aspire.Hosting.Foundry" Version="13.5.2-preview.1.26421.6" />
     <PackageVersion Include="Aspire.Hosting.Redis" Version="13.5.0" />
     <!-- Package id is "Aspire.StackExchange.Redis" (dotted) — "Aspire.StackExchangeRedis" does not exist. -->
     <PackageVersion Include="Aspire.StackExchange.Redis" Version="13.5.0" />

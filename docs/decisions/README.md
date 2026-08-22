@@ -24,3 +24,4 @@ new record.
 | [ADR-014](ADR-014-Configuration-Bound-To-Narrow-Options-Classes.md) | Configuration Bound To Narrow Options Classes, Read Once At Composition Root | 2026-08-14 | Accepted |
 | [ADR-015](ADR-015-Authorization-Roles-In-Keycloak-Permissions-In-Code.md) | Authorization — Roles In Keycloak, Permissions As Code Constants | 2026-08-14 | Accepted |
 | [ADR-016](ADR-016-Architecture-Rules-Mechanised-With-Tests.md) | Architecture Rules Mechanised With NetArchTest + Roslyn | 2026-08-14 | Accepted |
+| [ADR-017](ADR-017-Agent-Stack-Layering-And-Result-Shape.md) | Agent Stack Layering, and AgentResult as a Value Inside Result&lt;T&gt; | 2026-08-22 | Accepted |

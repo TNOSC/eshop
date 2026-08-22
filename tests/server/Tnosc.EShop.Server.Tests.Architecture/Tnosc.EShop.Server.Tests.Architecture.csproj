@@ -25,6 +25,13 @@
 		<ProjectReference Include="..\..\..\src\server\Tnosc.EShop.Server.Infrastructure.External\Tnosc.EShop.Server.Infrastructure.External.csproj" />
 		<ProjectReference Include="..\..\..\src\server\Tnosc.EShop.Server.Infrastructure.Job\Tnosc.EShop.Server.Infrastructure.Job.csproj" />
 		<ProjectReference Include="..\..\..\src\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
+		<ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent\Tnosc.Lib.Agent.csproj" />
+		<ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent.Runtime\Tnosc.Lib.Agent.Runtime.csproj" />
+		<ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Domain\Tnosc.EShop.Agent.Domain.csproj" />
+		<ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Application\Tnosc.EShop.Agent.Application.csproj" />
+		<ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Api\Tnosc.EShop.Agent.Api.csproj" />
+		<ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Infrastructure.Ai\Tnosc.EShop.Agent.Infrastructure.Ai.csproj" />
+		<ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Infrastructure.Mcp\Tnosc.EShop.Agent.Infrastructure.Mcp.csproj" />
 		<ProjectReference Include="..\..\..\lib\Tnosc.Lib.Domain\Tnosc.Lib.Domain.csproj" />
 		<ProjectReference Include="..\..\..\lib\Tnosc.Lib.Application\Tnosc.Lib.Application.csproj" />
 		<ProjectReference Include="..\..\..\lib\Tnosc.Lib.Api\Tnosc.Lib.Api.csproj" />

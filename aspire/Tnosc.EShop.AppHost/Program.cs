@@ -109,4 +109,27 @@ builder.AddMcpInspector(name: "mcp-inspector", new McpInspectorOptions() { Inspe
     .WithMcpServer(mcpServer: mcpHost)
     .WithExternalHttpEndpoints();
 
+// The agent host reaches the catalogue only through the MCP server, never through the API directly,
+// so "mcp" is its one upstream besides Keycloak — and it forwards the caller's own token on that hop,
+// which is what keeps each MCP tool's permission check meaningful.
+//
+// Foundry is supplied as an endpoint rather than as a provisioned Azure resource. Adding an Azure
+// resource here would make `dotnet run` on this AppHost require a subscription and a successful
+// provisioning pass before ANY resource starts, which is a poor trade for a repository where most
+// work never touches an agent. Set Foundry:Endpoint in this AppHost's user secrets to point at an
+// existing project; leave it empty and every other resource still comes up, while the agent host
+// fails its own options validation at startup and says exactly which setting is missing.
+string foundryEndpoint = builder.Configuration["Foundry:Endpoint"] ?? string.Empty;
+
+builder.AddProject<Projects.Tnosc_EShop_Agent_Host>(name: "eshop-agent")
+    .WithReference(source: mcpHost)
+    .WithReference(source: keycloak)
+    .WaitFor(dependency: mcpHost)
+    .WaitFor(dependency: keycloak)
+    .WithEnvironment(name: "Foundry__Endpoint", value: foundryEndpoint)
+    .WithExternalHttpEndpoints()
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:Agent")
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:Agent")
+    .WithHttpHealthCheck("/health");
+
 await builder.Build().RunAsync();

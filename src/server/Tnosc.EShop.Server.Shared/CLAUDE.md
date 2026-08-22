@@ -5,7 +5,10 @@ context** (`Shared/<Context>/…`), mirroring the folder layout everywhere else 
 cross-cutting folder described below.
 
 Referenced by `Server.Domain`, `Server.Application`, `Server.Infrastructure.Persistence`,
-`Server.Api`, `Server.Host` and `Tests.Architecture`.
+`Server.Api`, `Server.Host`, `Tests.Architecture` — and, outside `src/server/`, by `Mcp.Tool`
+(`Authorization/Permissions.cs`, `Catalog/McpToolNames.cs`) and `Agent.Domain`
+(`Catalog/McpToolNames.cs`). `Server.Shared` is a leaf project with no package reference of its own,
+so none of those outer consumers pick up anything beyond the constants themselves.
 
 `Server.Api` gained its reference in T11, for `Authorization/Permissions.cs`. That does **not** make
 Shared a general dumping ground for Api constants: route templates and the OpenAPI tag still stay in
@@ -61,6 +64,31 @@ public static class CacheTags
 ```
 
 Full policy: `.claude/rules/cache-tags.md`.
+
+The same shape recurs across the `src/mcp` / `src/agent` boundary — two subtrees that don't reference
+each other, needing one literal to agree on:
+
+- `[McpServerTool(Name = ...)]` on a tool method in `Mcp.Tool` **declares** the protocol-level name.
+- An agent's `ToolAllowList` in `Agent.Domain` **filters** against that same name.
+
+```csharp
+namespace Tnosc.EShop.Server.Shared.Catalog;
+
+/// <summary>
+/// MCP tool names shared by the Catalog bounded context's <c>[McpServerTool]</c> methods and any
+/// agent that references a tool by name, so the protocol-level name declared on the tool and the
+/// name an agent's allow-list filters against cannot drift apart.
+/// </summary>
+public static class McpToolNames
+{
+    /// <summary>Lists products from the catalogue.</summary>
+    public const string ListProducts = "catalog_list_products";
+}
+```
+
+Without this, the MCP SDK derives a tool's name from its C# method name when `Name` is left unset —
+snake_cased, including the `Async` suffix — which is not a name anyone chose and not one an allow-list
+should ever be written against.
 
 ## What does not belong here
 

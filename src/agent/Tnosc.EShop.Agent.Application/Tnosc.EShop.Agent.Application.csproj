@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Tnosc.EShop.Agent.Domain\Tnosc.EShop.Agent.Domain.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent.Runtime\Tnosc.Lib.Agent.Runtime.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Scrutor" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tnosc.EShop.Agent.Tests.Unit" />
+  </ItemGroup>
+</Project>

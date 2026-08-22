@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent\Tnosc.Lib.Agent.csproj" />
+    <!-- McpToolNames only — a leaf project with no package deps, so Agent.Domain stays pure. -->
+    <ProjectReference Include="..\..\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
+  </ItemGroup>
+</Project>

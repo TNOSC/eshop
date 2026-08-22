@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Tnosc.Lib.Shared\Tnosc.Lib.Shared.csproj" />
+		<ProjectReference Include="..\Tnosc.Lib.Domain\Tnosc.Lib.Domain.csproj" />
+	</ItemGroup>
+</Project>

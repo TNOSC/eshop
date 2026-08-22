@@ -44,6 +44,13 @@ public sealed class ConfigurationTests
         Tnosc.EShop.Server.Infrastructure.Job.AssemblyReference.Assembly,
         Tnosc.EShop.Server.Shared.AssemblyReference.Assembly,
         Assembly.Load(assemblyString: "Tnosc.EShop.Server.Host"),
+        Tnosc.Lib.Agent.AssemblyReference.Assembly,
+        Tnosc.Lib.Agent.Runtime.AssemblyReference.Assembly,
+        Tnosc.EShop.Agent.Domain.AssemblyReference.Assembly,
+        Tnosc.EShop.Agent.Application.AssemblyReference.Assembly,
+        Tnosc.EShop.Agent.Api.AssemblyReference.Assembly,
+        Tnosc.EShop.Agent.Infrastructure.Ai.AssemblyReference.Assembly,
+        Tnosc.EShop.Agent.Infrastructure.Mcp.AssemblyReference.Assembly,
     ];
 
     // No class anywhere takes IConfiguration/IConfigurationSection as a constructor parameter.

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Tnosc.EShop.Agent.Application\Tnosc.EShop.Agent.Application.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Api\Tnosc.Lib.Api.csproj" />
+    <ProjectReference Include="..\..\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.AI.Hosting.AGUI.AspNetCore" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Host\Tnosc.Lib.Host.csproj" />
+    <ProjectReference Include="..\..\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Agent.Api\Tnosc.EShop.Agent.Api.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Agent.Infrastructure.Ai\Tnosc.EShop.Agent.Infrastructure.Ai.csproj" />
+    <ProjectReference Include="..\Tnosc.EShop.Agent.Infrastructure.Mcp\Tnosc.EShop.Agent.Infrastructure.Mcp.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.AI.Hosting" />
+    <PackageReference Include="Microsoft.Agents.AI.Hosting.AspNetCore" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" />
+  </ItemGroup>
+</Project>

@@ -4,6 +4,8 @@
     <Project Path="aspire/Tnosc.EShop.ServiceDefaults/Tnosc.EShop.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/lib/">
+    <Project Path="lib/Tnosc.Lib.Agent.Runtime/Tnosc.Lib.Agent.Runtime.csproj" />
+    <Project Path="lib/Tnosc.Lib.Agent/Tnosc.Lib.Agent.csproj" />
     <Project Path="lib/Tnosc.Lib.Api/Tnosc.Lib.Api.csproj" Id="125c6462-6b4e-4bcf-b1f9-01682b2f0cae" />
     <Project Path="lib/Tnosc.Lib.Application/Tnosc.Lib.Application.csproj" Id="324075fe-c754-4aaa-92c7-04a566dd86a7" />
     <Project Path="lib/Tnosc.Lib.Domain/Tnosc.Lib.Domain.csproj" Id="7662c2e5-3a3f-4b38-9a19-2b1f32dd97f7" />
@@ -19,6 +21,20 @@
     <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/" />
+  <Folder Name="/src/agent/">
+    <Project Path="src/agent/Tnosc.EShop.Agent.Host/Tnosc.EShop.Agent.Host.csproj" Id="b57c3f7e-effb-4f72-84a6-fdaae01795e6" />
+  </Folder>
+  <Folder Name="/src/agent/Api/">
+    <Project Path="src/agent/Tnosc.EShop.Agent.Api/Tnosc.EShop.Agent.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/agent/ApplicationCore/">
+    <Project Path="src/agent/Tnosc.EShop.Agent.Application/Tnosc.EShop.Agent.Application.csproj" />
+    <Project Path="src/agent/Tnosc.EShop.Agent.Domain/Tnosc.EShop.Agent.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/agent/Infrastructure/">
+    <Project Path="src/agent/Tnosc.EShop.Agent.Infrastructure.Ai/Tnosc.EShop.Agent.Infrastructure.Ai.csproj" />
+    <Project Path="src/agent/Tnosc.EShop.Agent.Infrastructure.Mcp/Tnosc.EShop.Agent.Infrastructure.Mcp.csproj" />
+  </Folder>
   <Folder Name="/src/client/" />
   <Folder Name="/src/client/web/">
     <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.Client/Tnosc.EShop.Client.Web.Client.csproj" Id="8e55823b-3bba-4ec3-aed3-5c2f2d714a5e" />
@@ -56,6 +72,9 @@
     <Project Path="src/server/Tnosc.EShop.Server.Shared/Tnosc.EShop.Server.Shared.csproj" Id="bc067331-949b-4883-b404-e86863a6ce88" />
   </Folder>
   <Folder Name="/tests/" />
+  <Folder Name="/tests/agent/">
+    <Project Path="tests/agent/Tnosc.EShop.Agent.Tests.Unit/Tnosc.EShop.Agent.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/client/">
     <Project Path="tests/client/Tnosc.EShop.Client.Web.Tests.Unit/Tnosc.EShop.Client.Web.Tests.Unit.csproj" />
   </Folder>

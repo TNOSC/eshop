@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent\Tnosc.Lib.Agent.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Agent.Runtime\Tnosc.Lib.Agent.Runtime.csproj" />
+    <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Domain\Tnosc.EShop.Agent.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Application\Tnosc.EShop.Agent.Application.csproj" />
+    <!-- McpAgentToolProvider.Filter is internal; the allow-list rule is worth testing without a server. -->
+    <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Infrastructure.Mcp\Tnosc.EShop.Agent.Infrastructure.Mcp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

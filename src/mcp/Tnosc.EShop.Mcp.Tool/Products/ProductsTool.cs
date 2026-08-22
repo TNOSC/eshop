@@ -14,6 +14,7 @@ using ModelContextProtocol.Server;
 using Tnosc.EShop.Mcp.Application.Products;
 using Tnosc.EShop.Mcp.Tool.Extensions;
 using Tnosc.EShop.Server.Shared.Authorization;
+using Tnosc.EShop.Server.Shared.Catalog;
 using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Tool.Products;
@@ -28,7 +29,7 @@ public static class ProductsTool
     private const int MaxPageSize = 100;
 
     /// <summary>Lists products from the eShop catalog, optionally filtered by a free-text search term.</summary>
-    [McpServerTool(UseStructuredContent = true)]
+    [McpServerTool(UseStructuredContent = true, Name = McpToolNames.ListProducts)]
     [Description("Lists products from the eShop catalog, optionally filtered by a free-text search term.")]
     public static async Task<ToolResult<IReadOnlyCollection<Product>>> ListProductsAsync(
         IProductsQueryService productsQueryService,
@@ -61,7 +62,7 @@ public static class ProductsTool
     }
 
     /// <summary>Adds a new product to the eShop catalog. Requires the <c>catalog:write</c> permission.</summary>
-    [McpServerTool(UseStructuredContent = true)]
+    [McpServerTool(UseStructuredContent = true, Name = McpToolNames.CreateProduct)]
     [Description("Adds a new product to the eShop catalog. Returns the new product's identifier.")]
     [Authorize(Policy = Permissions.Catalog.Write)]
     public static async Task<ToolResult<Guid>> CreateProductAsync(
