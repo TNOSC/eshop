@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Tnosc.EShop.Mcp.Application\Tnosc.EShop.Mcp.Application.csproj" />
+    <ProjectReference Include="..\..\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ModelContextProtocol.Core" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" />
   </ItemGroup>
 </Project>

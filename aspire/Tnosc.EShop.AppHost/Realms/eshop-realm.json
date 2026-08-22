@@ -53,11 +53,32 @@
             "access.token.claim": "true",
             "introspection.token.claim": "true"
           }
+        },
+        {
+          "name": "mcp-realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
         }
       ]
     }
   ],
   "defaultOptionalClientScopes": ["mcp:tools"],
+
+  "scopeMappings": [
+    {
+      "clientScope": "mcp:tools",
+      "roles": ["admin", "customer"]
+    }
+  ],
 
   "defaultRole": {
     "name": "default-roles-eshop",

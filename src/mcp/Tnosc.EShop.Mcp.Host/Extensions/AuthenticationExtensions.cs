@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using ModelContextProtocol.AspNetCore.Authentication;
 using ModelContextProtocol.Authentication;
+using Tnosc.EShop.Mcp.Host.Authentication;
 using Tnosc.EShop.Mcp.Host.Options;
+using Tnosc.Lib.Host.Extensions;
 
 namespace Tnosc.EShop.Mcp.Host.Extensions;
 
@@ -38,6 +41,33 @@ namespace Tnosc.EShop.Mcp.Host.Extensions;
 /// <c>/.well-known/oauth-protected-resource</c>, so an MCP client can discover the authorization
 /// server without being told about it out of band. Authentication itself — validating the bearer
 /// token — is still done by the plain JWT bearer scheme underneath.
+/// </para>
+/// <para>
+/// <see cref="Tnosc.EShop.Mcp.Host.Authentication.KeycloakClaimsTransformation"/> and
+/// <c>AddPermissionAuthorization</c> reuse the same permission model as <c>Server.Host</c>: a realm
+/// role expands into <c>Tnosc.EShop.Server.Shared.Authorization.Permissions</c> claims, which
+/// <c>[Authorize(Policy = ...)]</c> on an MCP tool (see <c>ProductsTool.CreateProductAsync</c>) then
+/// checks via <c>AddAuthorizationFilters()</c> in <c>Program.cs</c> — both to hide the tool from
+/// <c>ListTools</c> for a caller without the permission, and to reject a call to it.
+/// </para>
+/// <para>
+/// This depends on <c>realm_access.roles</c> actually being present on the token, which needed two
+/// deliberate additions to <c>eshop-realm.json</c>'s <c>mcp:tools</c> client scope. An MCP client
+/// obtains its client registration through OAuth Dynamic Client Registration (RFC 7591) rather than
+/// being predefined like <c>eshop-web</c>, and the realm's default anonymous registration policies
+/// include Keycloak's built-in <c>"Full Scope Disabled"</c> policy — every such client gets
+/// <c>fullScopeAllowed: false</c>. Two consequences follow, confirmed by decoding an actual MCP
+/// Inspector token: its granted <c>scope</c> was only <c>"mcp:tools offline_access"</c> — the built-in
+/// <c>roles</c> client scope was never attached at all, so relying on its mapper (the way a
+/// <c>fullScopeAllowed: true</c> client implicitly can) was never going to work. <c>mcp:tools</c>
+/// itself therefore carries both pieces directly: a <c>scopeMappings</c> entry granting it the
+/// <c>admin</c>/<c>customer</c> realm roles (the substitute for full scope), and its own
+/// <c>oidc-usermodel-realm-role-mapper</c> protocol mapper (the substitute for the built-in
+/// <c>roles</c> scope's mapper, mirroring <c>eshop-web</c>'s own client-level <c>eshop-realm-roles</c>
+/// mapper) — so whenever <c>mcp:tools</c> is granted, both what makes a role visible and what
+/// actually emits it live on the same scope. This still stops well short of <c>eshop-web</c>'s
+/// <c>fullScopeAllowed: true</c>: only <c>admin</c> and <c>customer</c> become visible, not every
+/// realm role that may ever exist.
 /// </para>
 /// </remarks>
 internal static class AuthenticationExtensions
@@ -98,7 +128,8 @@ internal static class AuthenticationExtensions
                 };
             });
 
-        builder.Services.AddAuthorization();
+        builder.Services.AddSingleton<IClaimsTransformation, KeycloakClaimsTransformation>();
+        builder.Services.AddPermissionAuthorization();
 
         return builder;
     }

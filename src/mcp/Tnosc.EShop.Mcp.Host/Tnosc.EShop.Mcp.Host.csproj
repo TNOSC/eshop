@@ -5,6 +5,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\aspire\Tnosc.EShop.ServiceDefaults\Tnosc.EShop.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tnosc.Lib.Host\Tnosc.Lib.Host.csproj" />
+    <ProjectReference Include="..\..\server\Tnosc.EShop.Server.Shared\Tnosc.EShop.Server.Shared.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Mcp.Tool\Tnosc.EShop.Mcp.Tool.csproj" />
     <ProjectReference Include="..\Tnosc.EShop.Mcp.Infrastructure.External\Tnosc.EShop.Mcp.Infrastructure.External.csproj" />
   </ItemGroup>

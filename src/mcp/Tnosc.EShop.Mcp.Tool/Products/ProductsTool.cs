@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using ModelContextProtocol.Server;
 using Tnosc.EShop.Mcp.Application.Products;
 using Tnosc.EShop.Mcp.Tool.Extensions;
+using Tnosc.EShop.Server.Shared.Authorization;
 using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Tool.Products;
@@ -58,9 +60,10 @@ public static class ProductsTool
         return result.ToToolResult();
     }
 
-    /// <summary>Adds a new product to the eShop catalog.</summary>
+    /// <summary>Adds a new product to the eShop catalog. Requires the <c>catalog:write</c> permission.</summary>
     [McpServerTool(UseStructuredContent = true)]
     [Description("Adds a new product to the eShop catalog. Returns the new product's identifier.")]
+    [Authorize(Policy = Permissions.Catalog.Write)]
     public static async Task<ToolResult<Guid>> CreateProductAsync(
         IProductsCommandService productsCommandService,
         string sku,

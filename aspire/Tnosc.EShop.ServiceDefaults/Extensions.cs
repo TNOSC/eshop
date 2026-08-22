@@ -59,13 +59,17 @@ public static class Extensions
         builder.Services.AddOpenTelemetry()
             .WithMetrics(configure: metrics =>
             {
-                metrics.AddAspNetCoreInstrumentation()
+                metrics
+                    .AddMeter(names: "Experimental.ModelContextProtocol")
+                    .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
             .WithTracing(configure: tracing =>
             {
-                tracing.AddSource(names: builder.Environment.ApplicationName)
+                tracing
+                    .AddSource(names: builder.Environment.ApplicationName)
+                    .AddSource(names: "Experimental.ModelContextProtocol")
                     .AddAspNetCoreInstrumentation(configureAspNetCoreTraceInstrumentationOptions: tracing =>
                         // Exclude health check requests from tracing
                         tracing.Filter = context =>

@@ -26,10 +26,16 @@
     <Project Path="src/client/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web/Tnosc.EShop.Client.Web.csproj" Id="dc23b549-7d4b-4c23-89a7-9f511d7d8fce" />
   </Folder>
   <Folder Name="/src/mcp/">
-    <Project Path="src/mcp/Tnosc.EShop.Mcp.Application/Tnosc.EShop.Mcp.Application.csproj" />
-    <Project Path="src/mcp/Tnosc.EShop.Mcp.Infrastructure.External/Tnosc.EShop.Mcp.Infrastructure.External.csproj" />
-    <Project Path="src/mcp/Tnosc.EShop.Mcp.Tool/Tnosc.EShop.Mcp.Tool.csproj" />
     <Project Path="src/mcp/Tnosc.EShop.Mcp.Host/Tnosc.EShop.Mcp.Host.csproj" Id="c10a4051-285a-4748-b063-155a97502499" />
+  </Folder>
+  <Folder Name="/src/mcp/ApplicationCore/">
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Application/Tnosc.EShop.Mcp.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/mcp/Infrastructure/">
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Infrastructure.External/Tnosc.EShop.Mcp.Infrastructure.External.csproj" />
+  </Folder>
+  <Folder Name="/src/mcp/Tools/">
+    <Project Path="src/mcp/Tnosc.EShop.Mcp.Tool/Tnosc.EShop.Mcp.Tool.csproj" />
   </Folder>
   <Folder Name="/src/server/">
     <Project Path="src/server/Tnosc.EShop.Server.Host/Tnosc.EShop.Server.Host.csproj" />
