@@ -6,8 +6,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Tnosc.EShop.Mcp.Application.Products.Ports;
-using Tnosc.EShop.Mcp.Infrastructure.External.Products;
+using Tnosc.EShop.Mcp.Application.Ports;
 
 namespace Tnosc.EShop.Mcp.Infrastructure.External.Extensions;
 
@@ -18,19 +17,24 @@ namespace Tnosc.EShop.Mcp.Infrastructure.External.Extensions;
 public static class McpInfrastructureExtensions
 {
     /// <summary>
-    /// Registers the External layer's services: <see cref="IProductsClient"/>, backed by a typed
+    /// Registers the External layer's services: <see cref="IEShopClient"/>, backed by a typed
     /// <see cref="System.Net.Http.HttpClient"/> pointed at the eShop API host.
     /// </summary>
     /// <param name="services">The service collection to register services with.</param>
-    /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
-    public static IServiceCollection AddMcpInfrastructureExternal(this IServiceCollection services)
+    /// <returns>
+    /// The <see cref="IHttpClientBuilder"/> for the registered <see cref="IEShopClient"/> client, so
+    /// the composition root can chain in a message handler — such as the Host's own bearer-token
+    /// forwarder — without this layer knowing anything about it.
+    /// </returns>
+    public static IHttpClientBuilder AddMcpInfrastructureExternal(this IServiceCollection services)
     {
 #pragma warning disable S1075 // Not a hardcoded endpoint — "eshop-host" is a service-discovery name resolved by AddServiceDefaults/AddServiceDiscovery, not a literal address.
-        services.AddHttpClient<IProductsClient, ProductsClient>(
-                configureClient: static client => client.BaseAddress = new Uri(uriString: "https+http://eshop-host/"))
-            .AddStandardResilienceHandler();
+        IHttpClientBuilder builder = services.AddHttpClient<IEShopClient, EShopClient>(
+            configureClient: static client => client.BaseAddress = new Uri(uriString: "https+http://eshop-host/"));
 #pragma warning restore S1075
 
-        return services;
+        builder.AddStandardResilienceHandler();
+
+        return builder;
     }
 }

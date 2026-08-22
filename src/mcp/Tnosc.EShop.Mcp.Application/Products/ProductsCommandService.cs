@@ -10,13 +10,13 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Mcp.Application.Products.Ports;
+using Tnosc.EShop.Mcp.Application.Ports;
 using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Application.Products;
 
 /// <inheritdoc cref="IProductsCommandService" />
-internal sealed class ProductsCommandService(IProductsClient productsClient) : IProductsCommandService
+internal sealed class ProductsCommandService(IEShopClient eShopClient) : IProductsCommandService
 {
     /// <inheritdoc />
     public async Task<Result<Guid>> CreateProductAsync(
@@ -25,7 +25,7 @@ internal sealed class ProductsCommandService(IProductsClient productsClient) : I
     {
         try
         {
-            Guid productId = await productsClient.CreateProductAsync(
+            Guid productId = await eShopClient.CreateProductAsync(
                 request: request,
                 cancellationToken: cancellationToken);
 

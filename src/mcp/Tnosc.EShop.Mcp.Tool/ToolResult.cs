@@ -20,8 +20,8 @@ namespace Tnosc.EShop.Mcp.Tool;
 public sealed record ToolResult<TValue>(
     bool Success,
     TValue? Data,
-    string? ErrorCode,
-    string? ErrorMessage)
+    string? ErrorCode = null,
+    string? ErrorMessage = null)
 {
     /// <summary>Builds a successful result carrying <paramref name="data"/>.</summary>
     /// <param name="data">The value the call produced.</param>

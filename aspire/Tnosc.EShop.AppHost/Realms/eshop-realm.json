@@ -40,6 +40,19 @@
             "access.token.claim": "true",
             "introspection.token.claim": "true"
           }
+        },
+        {
+          "name": "eshop-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "",
+            "included.custom.audience": "eshop-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
         }
       ]
     }

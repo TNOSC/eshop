@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tnosc.EShop.Mcp.Application.Extensions;
+using Tnosc.EShop.Mcp.Host.Authentication;
 using Tnosc.EShop.Mcp.Host.Extensions;
 using Tnosc.EShop.Mcp.Infrastructure.External.Extensions;
 
@@ -9,9 +10,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.AddKeycloakAuthentication();
+builder.AddTokenForwarding();
 
 builder.Services.AddMcpApplication();
-builder.Services.AddMcpInfrastructureExternal();
+builder.Services.AddMcpInfrastructureExternal()
+    .AddHttpMessageHandler<TokenForwarder>();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport()

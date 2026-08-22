@@ -12,19 +12,20 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.EShop.Mcp.Application.Ports;
 using Tnosc.EShop.Mcp.Application.Products;
-using Tnosc.EShop.Mcp.Application.Products.Ports;
 
-namespace Tnosc.EShop.Mcp.Infrastructure.External.Products;
+namespace Tnosc.EShop.Mcp.Infrastructure.External;
 
 /// <summary>
-/// Calls the eShop API's Catalog search endpoint over a typed <see cref="HttpClient"/>.
+/// Calls the eShop API over a single typed <see cref="HttpClient"/> shared by every bounded context
+/// an MCP tool needs — Catalog today, Customers and others as their own tool/service pairs are added.
 /// </summary>
 /// <param name="httpClient">
 /// The typed client registered by <see cref="Extensions.McpInfrastructureExtensions.AddMcpInfrastructureExternal"/>,
 /// pointed at the eShop API host via Aspire service discovery.
 /// </param>
-internal sealed class ProductsClient(HttpClient httpClient) : IProductsClient
+internal sealed class EShopClient(HttpClient httpClient) : IEShopClient
 {
     private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
 

@@ -68,11 +68,25 @@ public static class ProductsTool
         decimal priceAmount,
         string priceCurrency,
         int stockQuantity,
-        Guid brandId,
-        Guid categoryId,
+        string brandId,
+        string categoryId,
         string? description = null,
         CancellationToken cancellationToken = default)
     {
+        if (!Guid.TryParse(input: brandId, result: out Guid parsedBrandId))
+        {
+            return ToolResult<Guid>.Fail(
+                errorCode: "Products.InvalidBrandId",
+                errorMessage: "brandId must be a valid GUID.");
+        }
+
+        if (!Guid.TryParse(input: categoryId, result: out Guid parsedCategoryId))
+        {
+            return ToolResult<Guid>.Fail(
+                errorCode: "Products.InvalidCategoryId",
+                errorMessage: "categoryId must be a valid GUID.");
+        }
+
         Result<Guid> result = await productsCommandService.CreateProductAsync(
             request: new CreateProductRequest(
                 Sku: sku,
@@ -81,8 +95,8 @@ public static class ProductsTool
                 PriceAmount: priceAmount,
                 PriceCurrency: priceCurrency,
                 StockQuantity: stockQuantity,
-                BrandId: brandId,
-                CategoryId: categoryId),
+                BrandId: parsedBrandId,
+                CategoryId: parsedCategoryId),
             cancellationToken: cancellationToken);
 
         return result.ToToolResult();

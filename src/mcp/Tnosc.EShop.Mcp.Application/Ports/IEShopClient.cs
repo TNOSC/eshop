@@ -8,13 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Tnosc.EShop.Mcp.Application.Products;
 
-namespace Tnosc.EShop.Mcp.Application.Products.Ports;
+namespace Tnosc.EShop.Mcp.Application.Ports;
 
 /// <summary>
-/// Calls the eShop catalog's products endpoint.
+/// Calls the eShop API on behalf of every MCP tool — Catalog today, with Customers and other
+/// bounded contexts joining as their own tools are added. One typed <see cref="System.Net.Http.HttpClient"/>
+/// backs every method here, so the bearer-token forwarding wired in the Host applies uniformly.
 /// </summary>
-public interface IProductsClient
+public interface IEShopClient
 {
     /// <summary>
     /// Fetches one page of products from the catalog, optionally filtered by a free-text search term.

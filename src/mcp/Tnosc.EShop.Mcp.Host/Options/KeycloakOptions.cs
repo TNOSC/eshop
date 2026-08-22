@@ -14,9 +14,15 @@ namespace Tnosc.EShop.Mcp.Host.Options;
 /// </summary>
 /// <remarks>
 /// Mirrors <c>Tnosc.EShop.Server.Host.Options.KeycloakOptions</c>. The MCP server validates its own
-/// <see cref="Audience"/> — <c>mcp-api</c> — rather than reusing <c>eshop-api</c>, so a token minted
-/// for the storefront cannot be replayed against MCP tools and vice versa (RFC 8707 resource
-/// indicators). It deliberately holds no *service-discovery* authority URL: the authority tokens are
+/// <see cref="Audience"/> — <c>mcp-api</c>. The realm's <c>mcp:tools</c> client scope stamps
+/// <c>eshop-api</c> onto the same token alongside <c>mcp-api</c> (see <c>eshop-realm.json</c>), which
+/// is what lets <c>Authentication/TokenForwarder</c> hand the caller's token straight to the eShop
+/// API — it already carries the audience that API's own <c>KeycloakOptions.Audience</c> checks for.
+/// This does mean an MCP-issued token is also valid against the storefront API and not only the MCP
+/// server; a stricter split (a token minted for one server never usable against the other, RFC 8707)
+/// would need Keycloak token exchange instead, which this realm's Keycloak build does not support in
+/// a way that's practical to configure declaratively (see the git history around this class for what
+/// was tried). It deliberately holds no *service-discovery* authority URL: the authority tokens are
 /// validated against is resolved by service discovery from the AppHost's
 /// <c>WithReference(keycloak)</c>. <see cref="PublicAuthorityUrl"/> is a different, narrower thing — a
 /// browser-reachable address published in the protected-resource metadata so an MCP client can find

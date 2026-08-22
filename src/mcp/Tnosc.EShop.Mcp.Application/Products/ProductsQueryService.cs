@@ -9,13 +9,13 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Tnosc.EShop.Mcp.Application.Products.Ports;
+using Tnosc.EShop.Mcp.Application.Ports;
 using Tnosc.Lib.Shared.Results;
 
 namespace Tnosc.EShop.Mcp.Application.Products;
 
 /// <inheritdoc cref="IProductsQueryService" />
-internal sealed class ProductsQueryService(IProductsClient productsClient) : IProductsQueryService
+internal sealed class ProductsQueryService(IEShopClient eShopClient) : IProductsQueryService
 {
     /// <inheritdoc />
     public async Task<Result<IReadOnlyCollection<Product>>> GetProductsAsync(
@@ -26,7 +26,7 @@ internal sealed class ProductsQueryService(IProductsClient productsClient) : IPr
     {
         try
         {
-            IReadOnlyCollection<Product> products = await productsClient.GetProductsAsync(
+            IReadOnlyCollection<Product> products = await eShopClient.GetProductsAsync(
                 search: search,
                 page: page,
                 pageSize: pageSize,
