@@ -1,5 +1,6 @@
 @namespace Tnosc.EShop.Client.Web.Client.Layout.Store
 @inherits LayoutComponentBase
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Components
 
 <div class="eshop-shell">
     <StoreHeader />
@@ -18,5 +19,16 @@
     <a href="." class="reload">Reload</a>
     <a class="dismiss" role="button" aria-label="Dismiss">✕</a>
 </div>
+
+@* The assistant needs an authenticated caller — the agent host isolates conversations by the caller's
+   Keycloak subject and forwards that same token to its tools, neither of which means anything for a
+   signed-out visitor. Hidden rather than shown-and-refused: a launcher that only ever answers "sign in
+   first" is worse than no launcher. It sits in the layout so a conversation survives navigating the
+   storefront, and does not prerender because its content is per-caller. *@
+<AuthorizeView>
+    <Authorized>
+        <ShoppingAssistant @rendermode="@(new InteractiveAutoRenderMode(prerender: false))" />
+    </Authorized>
+</AuthorizeView>
 
 <FluentProviders @rendermode="InteractiveAuto" />

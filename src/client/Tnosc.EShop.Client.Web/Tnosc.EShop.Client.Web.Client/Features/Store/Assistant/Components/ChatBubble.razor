@@ -1,0 +1,18 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Components
+
+@* Presentational only: every parameter is a primitive, so this component owns no view model and no
+   service of its own. *@
+
+<div class="eshop-chat-bubble @(IsFromShopper ? "shopper" : "assistant")">
+    @if (IsLookingUp)
+    {
+        <span class="eshop-chat-looking-up">
+            <FluentSpinner />
+            Looking up products…
+        </span>
+    }
+    else
+    {
+        <p>@Text</p>
+    }
+</div>

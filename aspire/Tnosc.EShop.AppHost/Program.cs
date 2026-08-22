@@ -85,16 +85,6 @@ IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:API")
     .WithHttpHealthCheck("/health");
 
-builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
-    .WithReference(source: eshopHost)
-    .WithReference(source: keycloak)
-    .WaitFor(dependency: eshopHost)
-    .WaitFor(dependency: keycloak)
-    .WithExternalHttpEndpoints()
-    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:Web")
-    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:Web")
-    .WithHttpHealthCheck("/health");
-
 IResourceBuilder<ProjectResource> mcpHost = builder.AddProject<Projects.Tnosc_EShop_Mcp_Host>("mcp")
     .WithReference(source: eshopHost)
     .WithReference(source: keycloak)
@@ -121,7 +111,7 @@ builder.AddMcpInspector(name: "mcp-inspector", new McpInspectorOptions() { Inspe
 // fails its own options validation at startup and says exactly which setting is missing.
 string foundryEndpoint = builder.Configuration["Foundry:Endpoint"] ?? string.Empty;
 
-builder.AddProject<Projects.Tnosc_EShop_Agent_Host>(name: "eshop-agent")
+IResourceBuilder<ProjectResource> agentHost = builder.AddProject<Projects.Tnosc_EShop_Agent_Host>(name: "eshop-agent")
     .WithReference(source: mcpHost)
     .WithReference(source: keycloak)
     .WaitFor(dependency: mcpHost)
@@ -130,6 +120,24 @@ builder.AddProject<Projects.Tnosc_EShop_Agent_Host>(name: "eshop-agent")
     .WithExternalHttpEndpoints()
     .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:Agent")
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:Agent")
+    .WithHttpHealthCheck("/health");
+
+// Registered after the agent host because it references it — the storefront's chat widget reaches the
+// assistant through this BFF, which forwards to "eshop-agent" the way it already forwards to
+// "eshop-host".
+builder.AddProject<Projects.Tnosc_EShop_Client_Web>(name: "eshop-web")
+    .WithReference(source: eshopHost)
+    .WithReference(source: keycloak)
+    // The web BFF forwards the storefront chat widget's AG-UI calls to the agent host, so it needs a
+    // service-discovery name for it. WaitFor is deliberately omitted: leaving Foundry:Endpoint unset
+    // fails the agent host's own options validation at startup, and the storefront should still come
+    // up in that case with the widget reporting a failed call rather than blocking every other page.
+    .WithReference(source: agentHost)
+    .WaitFor(dependency: eshopHost)
+    .WaitFor(dependency: keycloak)
+    .WithExternalHttpEndpoints()
+    .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:Web")
+    .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:Web")
     .WithHttpHealthCheck("/health");
 
 await builder.Build().RunAsync();

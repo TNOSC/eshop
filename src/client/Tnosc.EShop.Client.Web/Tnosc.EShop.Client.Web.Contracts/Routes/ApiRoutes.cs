@@ -19,6 +19,16 @@ namespace Tnosc.EShop.Client.Web.Contracts.Routes;
 /// </summary>
 public static class ApiRoutes
 {
+    /// <summary>
+    /// Agent host routes. These sit under the BFF's <c>agents/</c> prefix rather than <c>api/</c>,
+    /// because the agent host is a separate downstream service from the eShop API.
+    /// </summary>
+    public static class Agent
+    {
+        /// <summary>The shopping assistant's AG-UI conversation endpoint.</summary>
+        public const string ShoppingAssistant = "agents/shopping-assistant";
+    }
+
     /// <summary>Catalog bounded context routes.</summary>
     public static class Catalog
     {

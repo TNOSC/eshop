@@ -17,8 +17,23 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 /// </summary>
 public static class ErrorCodeMessages
 {
+    /// <summary>
+    /// The code reported when the assistant's own host could not be reached at all.
+    /// </summary>
+    /// <remarks>
+    /// Client-side codes, unlike every other key here, because the assistant streams: a transport
+    /// failure part-way through a reply never produces a server problem document to read a code from.
+    /// They follow the server's <c>Aggregate.Reason</c> shape so both kinds resolve through one lookup.
+    /// </remarks>
+    public const string AssistantUnavailable = "Assistant.Unavailable";
+
+    /// <summary>The code reported when the assistant's reply stopped part-way through.</summary>
+    public const string AssistantInterrupted = "Assistant.Interrupted";
+
     private static readonly FrozenDictionary<string, string> Messages = new Dictionary<string, string>(comparer: StringComparer.Ordinal)
     {
+        [AssistantUnavailable] = "The shopping assistant is unavailable right now. Please try again shortly.",
+        [AssistantInterrupted] = "The assistant's answer was cut short. Ask again to retry.",
         ["Product.NotFound"] = "That product could not be found.",
         ["Product.SkuAlreadyExists"] = "A product with that SKU already exists.",
         ["Product.Discontinued"] = "That product has been discontinued.",

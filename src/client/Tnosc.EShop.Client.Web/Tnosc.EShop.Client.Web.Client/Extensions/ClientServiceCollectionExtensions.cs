@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Identity.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Admin.Services;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Basket.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Checkout.Services;
@@ -28,12 +29,28 @@ namespace Tnosc.EShop.Client.Web.Client.Extensions;
 /// </summary>
 public static class ClientServiceCollectionExtensions
 {
+    /// <summary>
+    /// How long a single assistant reply may stream for before the transport gives up.
+    /// </summary>
+    /// <remarks>
+    /// Generous on purpose: a model writing a long answer through a catalogue lookup routinely runs
+    /// past <see cref="System.Net.Http.HttpClient"/>'s 100-second default, which covers the response
+    /// body and so would truncate the answer rather than fail the request.
+    /// </remarks>
+    private static readonly TimeSpan AssistantStreamTimeout = TimeSpan.FromMinutes(value: 5);
+
     /// <summary>Adds every typed eShop API client to the container.</summary>
     /// <param name="services">The service collection to add the clients to.</param>
     /// <param name="baseAddress">
     /// The base address every typed client is configured with. Must end in a trailing slash — without
     /// one, <see cref="Uri"/> replaces the last path segment of a relative request URI instead of
     /// appending to it.
+    /// </param>
+    /// <param name="agentBaseAddress">
+    /// The base address the shopping assistant's client is configured with, under the same
+    /// trailing-slash rule. Separate from <paramref name="baseAddress"/> because the agent host is a
+    /// different service from the API — under WebAssembly both resolve to the same BFF origin, while
+    /// the server host points them at two different Aspire resources.
     /// </param>
     /// <param name="configure">
     /// An optional callback applied to every typed client's <see cref="IHttpClientBuilder"/>. Used by
@@ -47,24 +64,11 @@ public static class ClientServiceCollectionExtensions
     public static IServiceCollection AddEShopApiClients(
         this IServiceCollection services,
         Uri baseAddress,
+        Uri agentBaseAddress,
         Action<IHttpClientBuilder>? configure = null)
     {
         services.AddTransient<RequestedWithHandler>();
-        services.AddScoped<BasketState>();
-        services.AddScoped<IProductsService, ProductsService>();
-        services.AddScoped<IProductDetailService, ProductDetailService>();
-        services.AddScoped<ICreateProductService, CreateProductService>();
-        services.AddScoped<IAdminProductsService, AdminProductsService>();
-        services.AddScoped<IUpdateProductPriceService, UpdateProductPriceService>();
-        services.AddScoped<IAdjustStockService, AdjustStockService>();
-        services.AddScoped<IBasketPageService, BasketPageService>();
-        services.AddScoped<ICheckoutService, CheckoutService>();
-        services.AddScoped<IMyOrdersService, MyOrdersService>();
-        services.AddScoped<IOrderDetailService, OrderDetailService>();
-        services.AddScoped<IMyProfileService, MyProfileService>();
-        services.AddScoped<IAdminCustomersService, AdminCustomersService>();
-        services.AddScoped<IAdminCustomerDetailService, AdminCustomerDetailService>();
-        services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+        AddFeatureServices(services: services);
 
         IHttpClientBuilder catalog = services.AddHttpClient<ICatalogApi, CatalogApi>(
             name: ApiClientNames.Catalog,
@@ -82,12 +86,28 @@ public static class ClientServiceCollectionExtensions
             name: ApiClientNames.Identity,
             configureClient: client => client.BaseAddress = baseAddress);
 
+        // The assistant lives on a different service from the rest, so it gets its own base address.
+        // Under WebAssembly the two are the same BFF origin; under interactive Server they are two
+        // different Aspire resources.
+        IHttpClientBuilder assistant = services.AddHttpClient<IShoppingAssistantApi, ShoppingAssistantApi>(
+            name: ApiClientNames.Agent,
+            configureClient: client =>
+            {
+                client.BaseAddress = agentBaseAddress;
+
+                // A model's reply streams for as long as it takes to write. HttpClient's default
+                // 100-second timeout covers the whole response including the body, so it cuts a long
+                // answer off mid-sentence rather than failing the request outright.
+                client.Timeout = AssistantStreamTimeout;
+            });
+
         if (configure is null)
         {
             catalog.AddHttpMessageHandler<RequestedWithHandler>();
             basket.AddHttpMessageHandler<RequestedWithHandler>();
             ordering.AddHttpMessageHandler<RequestedWithHandler>();
             identity.AddHttpMessageHandler<RequestedWithHandler>();
+            assistant.AddHttpMessageHandler<RequestedWithHandler>();
         }
         else
         {
@@ -95,8 +115,34 @@ public static class ClientServiceCollectionExtensions
             configure.Invoke(obj: basket);
             configure.Invoke(obj: ordering);
             configure.Invoke(obj: identity);
+            configure.Invoke(obj: assistant);
         }
 
         return services;
+    }
+
+    /// <summary>
+    /// Registers the per-component feature services. Split out from the client registration purely so
+    /// each method stays a readable length; the two lists grow independently of one another.
+    /// </summary>
+    /// <param name="services">The service collection to add the feature services to.</param>
+    private static void AddFeatureServices(IServiceCollection services)
+    {
+        services.AddScoped<BasketState>();
+        services.AddScoped<IProductsService, ProductsService>();
+        services.AddScoped<IProductDetailService, ProductDetailService>();
+        services.AddScoped<ICreateProductService, CreateProductService>();
+        services.AddScoped<IAdminProductsService, AdminProductsService>();
+        services.AddScoped<IUpdateProductPriceService, UpdateProductPriceService>();
+        services.AddScoped<IAdjustStockService, AdjustStockService>();
+        services.AddScoped<IBasketPageService, BasketPageService>();
+        services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IMyOrdersService, MyOrdersService>();
+        services.AddScoped<IOrderDetailService, OrderDetailService>();
+        services.AddScoped<IMyProfileService, MyProfileService>();
+        services.AddScoped<IAdminCustomersService, AdminCustomersService>();
+        services.AddScoped<IAdminCustomerDetailService, AdminCustomerDetailService>();
+        services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+        services.AddScoped<IShoppingAssistantService, ShoppingAssistantService>();
     }
 }

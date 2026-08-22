@@ -1,0 +1,73 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.ViewModels
+@using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors
+
+<StatefulBoundary State="_state">
+    <ChildContent>
+        <div class="eshop-assistant">
+            @if (_isOpen)
+            {
+                <section class="eshop-assistant-panel" aria-label="Shopping assistant">
+                    <header class="eshop-assistant-header">
+                        <FluentIcon Value="@(new Icons.Regular.Size20.Sparkle())" />
+                        <span class="eshop-assistant-title">Shopping assistant</span>
+                        <FluentSpacer />
+                        <FluentButton Appearance="ButtonAppearance.Transparent"
+                                      IconStart="@(new Icons.Regular.Size20.Dismiss())"
+                                      Title="Close the assistant"
+                                      OnClick="@Close" />
+                    </header>
+
+                    <div class="eshop-assistant-messages">
+                        @if (_viewModel.Messages.Count == 0)
+                        {
+                            <p class="eshop-assistant-intro">
+                                Ask about anything in the catalogue — what we stock, what it costs, what
+                                is left.
+                            </p>
+                        }
+
+                        @foreach (ChatMessageViewModel message in _viewModel.Messages)
+                        {
+                            <ChatBubble IsFromShopper="@message.IsFromShopper"
+                                        Text="@message.Text"
+                                        IsLookingUp="@message.IsLookingUp" />
+                        }
+
+                        @if (_problem is not null)
+                        {
+                            <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+                        }
+                    </div>
+
+                    <footer class="eshop-assistant-composer">
+                        <FluentTextArea Placeholder="Ask about a product…"
+                                        AriaLabel="Ask the shopping assistant a question"
+                                        Height="64px"
+                                        Resize="TextAreaResize.None"
+                                        Spellcheck="false"
+                                        ReadOnly="@_isSending"
+                                        Width="100%"
+                                        @bind-Value="_viewModel.Draft"
+                                        Immediate="true"
+                                        ChangeAfterKeyPress="@SendKeys"
+                                        OnChangeAfterKeyPress="@OnComposerKeyAsync" />
+                        <FluentButton Appearance="ButtonAppearance.Primary"
+                                      IconStart="@(new Icons.Regular.Size20.Send())"
+                                      Title="Send"
+                                      Disabled="@_isSending"
+                                      OnClick="@SendAsync">
+                            Send
+                        </FluentButton>
+                    </footer>
+                </section>
+            }
+
+            <FluentButton Appearance="ButtonAppearance.Primary"
+                          Class="eshop-assistant-launcher"
+                          IconStart="@LauncherIcon"
+                          Title="@(_isOpen ? "Close the shopping assistant" : "Ask the shopping assistant")"
+                          OnClick="@Toggle" />
+        </div>
+    </ChildContent>
+</StatefulBoundary>

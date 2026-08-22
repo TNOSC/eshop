@@ -30,5 +30,12 @@ internal static class BffEndpointExtensions
             app: app,
             downstreamClientName: ApiClientNames.Downstream,
             anonymousGetCatchAll: EShopBffRoutes.CatalogCatchAll);
+
+        // The agent host is a second downstream, not part of the API, so it gets its own prefix and
+        // its own forwarder client.
+        BffProxy.MapForward(
+            app: app,
+            pattern: EShopBffRoutes.AgentCatchAll,
+            downstreamClientName: ApiClientNames.AgentDownstream);
     }
 }

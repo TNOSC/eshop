@@ -24,6 +24,19 @@ public static class ApiClientNames
     /// <summary>The Identity typed client.</summary>
     public const string Identity = "eshop-identity";
 
+    /// <summary>The shopping assistant's AG-UI conversation client, targeting the agent host.</summary>
+    public const string Agent = "eshop-agent";
+
     /// <summary>The BFF's downstream forwarder client, targeting <c>eshop-host</c> directly.</summary>
     public const string Downstream = "eshop-downstream";
+
+    /// <summary>
+    /// The BFF's second downstream forwarder client, targeting <c>eshop-agent</c> directly.
+    /// </summary>
+    /// <remarks>
+    /// Kept separate from <see cref="Agent"/> for the same reason <see cref="Downstream"/> is kept
+    /// separate from the typed clients: the proxy sets <c>Authorization</c> itself from the incoming
+    /// request, so the host's access-token handler must never be attached to this one.
+    /// </remarks>
+    public const string AgentDownstream = "eshop-agent-downstream";
 }

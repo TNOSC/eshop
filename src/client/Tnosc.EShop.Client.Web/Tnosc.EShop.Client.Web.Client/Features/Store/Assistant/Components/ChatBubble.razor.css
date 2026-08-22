@@ -1,0 +1,39 @@
+.eshop-chat-bubble {
+    max-width: 85%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.eshop-chat-bubble p {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.eshop-chat-bubble.shopper {
+    align-self: flex-end;
+    background: var(--colorBrandBackground2, var(--colorNeutralBackground3));
+    color: var(--colorNeutralForeground1);
+    border-bottom-right-radius: 0.25rem;
+}
+
+.eshop-chat-bubble.assistant {
+    align-self: flex-start;
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground1);
+    border-bottom-left-radius: 0.25rem;
+}
+
+.eshop-chat-looking-up {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--colorNeutralForeground3);
+}
+
+.eshop-chat-looking-up ::deep fluentui-spinner {
+    width: 16px;
+    height: 16px;
+}

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 
@@ -46,12 +47,8 @@ public static class BffProxy
         ArgumentNullException.ThrowIfNull(argument: app);
         ArgumentException.ThrowIfNullOrEmpty(argument: downstreamClientName);
 
-        // Authenticated: everything under /bff/api. DisableAntiforgery is safe only because
-        // SameOriginRequirement provides a compensating CSRF defence inside ForwardAsync.
-        app.Map(pattern: BffRoutes.ApiCatchAll, handler: (HttpContext context, IHttpClientFactory factory, CancellationToken cancellationToken) =>
-                ForwardAsync(context: context, factory: factory, downstreamClientName: downstreamClientName, cancellationToken: cancellationToken))
-            .RequireAuthorization()
-            .DisableAntiforgery();
+        // Authenticated: everything under /bff/api.
+        MapForward(app: app, pattern: BffRoutes.ApiCatchAll, downstreamClientName: downstreamClientName);
 
         if (anonymousGetCatchAll is not null)
         {
@@ -59,6 +56,35 @@ public static class BffProxy
                     ForwardAsync(context: context, factory: factory, downstreamClientName: downstreamClientName, cancellationToken: cancellationToken))
                 .AllowAnonymous();
         }
+    }
+
+    /// <summary>
+    /// Maps a single authenticated catch-all pattern under <c>/bff/</c> onto one downstream service.
+    /// </summary>
+    /// <param name="app">The application to map the route on.</param>
+    /// <param name="pattern">
+    /// The route pattern to forward, which must start with <c>/bff/</c> — that prefix is stripped and
+    /// the remainder becomes the downstream path, so <c>/bff/agents/{**path}</c> reaches the
+    /// downstream as <c>agents/…</c>.
+    /// </param>
+    /// <param name="downstreamClientName">
+    /// The name of the <see cref="IHttpClientFactory"/> client this pattern forwards through.
+    /// </param>
+    /// <remarks>
+    /// A host with more than one downstream calls this once per downstream, each with its own client
+    /// name and prefix. <c>DisableAntiforgery</c> is safe only because <see cref="SameOriginRequirement"/>
+    /// provides a compensating CSRF defence inside the forwarding handler.
+    /// </remarks>
+    public static void MapForward(WebApplication app, string pattern, string downstreamClientName)
+    {
+        ArgumentNullException.ThrowIfNull(argument: app);
+        ArgumentException.ThrowIfNullOrEmpty(argument: pattern);
+        ArgumentException.ThrowIfNullOrEmpty(argument: downstreamClientName);
+
+        app.Map(pattern: pattern, handler: (HttpContext context, IHttpClientFactory factory, CancellationToken cancellationToken) =>
+                ForwardAsync(context: context, factory: factory, downstreamClientName: downstreamClientName, cancellationToken: cancellationToken))
+            .RequireAuthorization()
+            .DisableAntiforgery();
     }
 
     private static async Task ForwardAsync(
@@ -105,6 +131,13 @@ public static class BffProxy
 
         context.Response.StatusCode = (int)response.StatusCode;
         CopyResponseHeaders(source: response, target: context.Response);
+
+        // Required for a downstream that streams — a server-sent-event conversation, for instance.
+        // The response body feature buffers by default, which for a JSON response is invisible but for
+        // an event stream means every delta is held until the downstream closes the connection, so the
+        // browser sees one block at the end instead of a stream. Harmless for the buffered routes.
+        context.Features.Get<IHttpResponseBodyFeature>()?.DisableBuffering();
+
         await response.Content.CopyToAsync(stream: context.Response.Body, cancellationToken: cancellationToken);
     }
 

@@ -41,6 +41,14 @@
     -->
     <PackageVersion Include="Microsoft.Agents.AI.Hosting.AspNetCore" Version="1.18.0-preview.260818.1" />
     <PackageVersion Include="Microsoft.Agents.AI.Hosting.AGUI.AspNetCore" Version="1.18.0-preview.260818.1" />
+    <!--
+      The AG-UI protocol's own .NET client. AGUIChatClient is an IChatClient over AG-UI's HTTP/SSE
+      transport, so the Blazor client parses no server-sent events and builds no RunAgentInput itself.
+      Pinned to 0.0.3 because that is exactly the AGUI.Abstractions version
+      Microsoft.Agents.AI.Hosting.AGUI.AspNetCore already resolves on the server side — a skew would
+      give BaseEvent two type identities across the solution, which surfaces at run time, not restore.
+    -->
+    <PackageVersion Include="AGUI.Client" Version="0.0.3" />
     <!-- Microsoft Foundry provider: the Azure SDK client plus the Agent Framework adapter over it. -->
     <PackageVersion Include="Microsoft.Agents.AI.Foundry" Version="1.18.0-preview.260818.1" />
     <PackageVersion Include="Azure.AI.Projects" Version="2.1.0-beta.4" />

@@ -18,6 +18,18 @@ namespace Tnosc.Lib.Web.Components.Shared;
 /// </summary>
 public partial class StatefulBoundary : ComponentBase
 {
+    /// <summary>
+    /// The fallback rendered while <see cref="State"/> is <see cref="ComponentState.Loading"/> and no
+    /// <see cref="LoadingContent"/> was supplied. Built by hand rather than declared as markup because
+    /// a <see cref="RenderFragment"/> field cannot be expressed in the <c>.razor</c> half without an
+    /// inline code block, which this codebase keeps out of its views.
+    /// </summary>
+    private static readonly RenderFragment DefaultLoading = builder =>
+    {
+        builder.OpenComponent<LoadingPanel>(sequence: 0);
+        builder.CloseComponent();
+    };
+
     private LoggingErrorBoundary? _errorBoundary;
 
     /// <summary>Gets or sets the component's current lifecycle state.</summary>
