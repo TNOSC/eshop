@@ -7,7 +7,8 @@
             "Bash(dotnet ef migrations list:*)",
             "Bash(git status)",
             "Bash(git diff:*)",
-            "Bash(git log:*)"
+            "Bash(git log:*)",
+            "mcp__serena__*"
         ],
         "deny": [
             "Bash(git push:*)",
@@ -17,6 +18,18 @@
         ]
     },
     "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/pretooluse-enforce-serena.sh",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ],
         "PostToolUse": [
             {
                 "matcher": "Write|Edit",

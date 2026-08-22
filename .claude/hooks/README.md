@@ -4,8 +4,23 @@ Scripts that run automatically on Claude Code events. **Copying a script here do
 is only live once wired in `.claude/settings.json` (team-shared, tracked) or
 `.claude/settings.local.json` (personal, untracked).
 
-Both hooks below are **wired in `settings.json`** and are **advisory**: they print and always exit 0,
-so they never block a tool call or a turn.
+All three hooks below are **wired in `settings.json`**. Two are **advisory**: they print and always
+exit 0, so they never block a tool call or a turn. `pretooluse-enforce-serena.sh` is the one
+exception — it actively **denies** the matched tool call.
+
+## `pretooluse-enforce-serena.sh`
+
+Runs on `PreToolUse` with matcher `Write|Edit`. Reads the hook payload from stdin, pulls
+`tool_input.file_path` (no `jq` dependency, same extraction idiom as the conventions hook below), and
+no-ops unless the file is a `.cs`.
+
+On a `.cs` match it prints a `{"hookSpecificOutput":{"permissionDecision":"deny", ...}}` JSON decision
+to stdout and exits 0 — that JSON shape, not the exit code, is what makes Claude Code block the call.
+The denial message points at the Serena MCP tools to use instead
+(`mcp__serena__find_symbol`, `.replace_symbol_body`, `.insert_after_symbol`, `.replace_content`, …),
+mirroring Serena's own "Edit is FORBIDDEN on code files" guidance from `mcp__serena__initial_instructions`
+so native edits can't silently bypass it. Non-`.cs` files (docs, json, `.csproj`, scripts, …) and any
+payload it can't parse are let through unchanged — it fails open.
 
 ## `posttooluse-csharp-conventions.sh`
 
@@ -50,6 +65,18 @@ Already present in `.claude/settings.json`:
 ```json
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pretooluse-enforce-serena.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -80,6 +107,12 @@ Already present in `.claude/settings.json`:
 ## Testing a hook without waiting for its event
 
 ```bash
+echo '{"tool_name":"Edit","tool_input":{"file_path":"src/server/Tnosc.EShop.Server.Domain/Catalog/Products/Product.cs"}}' \
+  | bash .claude/hooks/pretooluse-enforce-serena.sh            # .cs -> deny JSON on stdout
+
+echo '{"tool_name":"Write","tool_input":{"file_path":"README.md"}}' \
+  | bash .claude/hooks/pretooluse-enforce-serena.sh            # non-.cs -> silent, exit 0
+
 echo '{"tool_input":{"file_path":"src/server/Tnosc.EShop.Server.Domain/Catalog/Products/Product.cs"}}' \
   | bash .claude/hooks/posttooluse-csharp-conventions.sh      # compliant file -> silent
 
