@@ -99,4 +99,46 @@ public static class ProductErrors
     public static Error StockDeltaRequired => Error.Validation(
         code: "Product.StockDeltaRequired",
         description: "A stock adjustment must move the stock level by a non-zero amount.");
+
+    /// <summary>
+    /// Gets the error returned when an image URL is missing.
+    /// </summary>
+    public static Error ImageUrlRequired => Error.Validation(
+        code: "Product.ImageUrlRequired",
+        description: "An image URL is required.");
+
+    /// <summary>
+    /// Gets the error returned when an image URL exceeds <see cref="Product.ImageUrlMaxLength"/>.
+    /// </summary>
+    public static Error ImageUrlTooLong => Error.Validation(
+        code: "Product.ImageUrlTooLong",
+        description: $"An image URL must be at most {Product.ImageUrlMaxLength} characters long.");
+
+    /// <summary>
+    /// Gets the error returned when an image upload's file name is missing.
+    /// </summary>
+    public static Error ImageFileNameRequired => Error.Validation(
+        code: "Product.ImageFileNameRequired",
+        description: "An image file name is required.");
+
+    /// <summary>
+    /// Gets the error returned when an image upload carries no content.
+    /// </summary>
+    public static Error ImageContentRequired => Error.Validation(
+        code: "Product.ImageContentRequired",
+        description: "Image content is required.");
+
+    /// <summary>
+    /// Gets the error returned when an image upload exceeds the maximum allowed size.
+    /// </summary>
+    public static Error ImageContentTooLarge => Error.Validation(
+        code: "Product.ImageContentTooLarge",
+        description: "The image exceeds the maximum allowed size of 5 MB.");
+
+    /// <summary>
+    /// Gets the error returned when an image upload's content type is not one of the supported types.
+    /// </summary>
+    public static Error ImageContentTypeNotSupported => Error.Validation(
+        code: "Product.ImageContentTypeNotSupported",
+        description: "Only image/jpeg, image/png and image/webp are supported.");
 }

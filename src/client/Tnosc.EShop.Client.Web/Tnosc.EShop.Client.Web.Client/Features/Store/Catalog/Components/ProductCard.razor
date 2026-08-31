@@ -5,7 +5,7 @@
 <div class="eshop-card" data-testid="product-card">
     <a class="eshop-card-link" href="@Routes.Store.ProductDetail(Product.Id)">
         <span class="eshop-card-image">
-            <ProductImage Sku="@Product.Sku" Alt="@Product.Name" />
+            <ProductImage Sku="@Product.Sku" Alt="@Product.Name" ImageUrl="@Product.ImageUrl" />
         </span>
         <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Class="eshop-card-content">
             <span class="eshop-card-name" data-testid="product-card-name">@Product.Name</span>
@@ -18,5 +18,14 @@
     @if (Product.StockQuantity <= 0)
     {
         <span class="eshop-card-flag">Out of stock</span>
+    }
+    @if (ShowAddToBasket)
+    {
+        <FluentButton Appearance="ButtonAppearance.Primary"
+                      Class="eshop-card-add-to-basket"
+                      Disabled="@(Product.StockQuantity <= 0)"
+                      OnClick="@AddToBasketAsync">
+            Add to basket
+        </FluentButton>
     }
 </div>

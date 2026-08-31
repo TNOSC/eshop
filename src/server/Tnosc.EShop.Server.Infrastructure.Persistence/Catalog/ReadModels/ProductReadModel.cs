@@ -68,4 +68,9 @@ internal sealed class ProductReadModel : IReadModel
     /// Gets a value indicating whether the product has been withdrawn from sale.
     /// </summary>
     public bool IsDiscontinued { get; init; }
+
+    /// <summary>
+    /// Gets the URL of the product's image, or <see langword="null"/> when none has been uploaded.
+    /// </summary>
+    public string? ImageUrl { get; init; }
 }

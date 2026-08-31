@@ -28,6 +28,7 @@ builder.Services.AddGlobalExceptionHandling();
 
 builder.AddRedisDistributedCache(connectionName: "cache");
 builder.AddRedisClient(connectionName: "cache");
+builder.AddAzureBlobServiceClient(connectionName: "images");
 builder.Services.AddHybridCache();
 builder.Services.AddInfrastructureExternal(configuration: builder.Configuration);
 

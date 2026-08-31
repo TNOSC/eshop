@@ -6,12 +6,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Tnosc.EShop.Server.Application.Catalog.Ports;
 using Tnosc.EShop.Server.Domain.Catalog.Brands;
 using Tnosc.EShop.Server.Domain.Catalog.Categories;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
@@ -62,6 +64,10 @@ internal sealed class DevelopmentDataSeeder(
     SeedOptions options,
     ILogger<DevelopmentDataSeeder> logger) : IHostedService
 {
+    // Embedded resource names follow "{RootNamespace}.{FolderPath}.{FileName}" — this project's root
+    // namespace matches its assembly name, so the prefix below is just the folder path with dots.
+    private const string SampleImageResourcePrefix = "Tnosc.EShop.Server.Infrastructure.Persistence.Seeding.SampleImages.";
+
     /// <inheritdoc />
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -78,6 +84,7 @@ internal sealed class DevelopmentDataSeeder(
         EShopWriteDbContext context = scope.ServiceProvider.GetRequiredService<EShopWriteDbContext>();
         IProductRepository products = scope.ServiceProvider.GetRequiredService<IProductRepository>();
         ICustomerRepository customers = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+        IProductImageStorage imageStorage = scope.ServiceProvider.GetRequiredService<IProductImageStorage>();
         IUnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         IReadOnlyDictionary<string, BrandId> brandIds = await SeedBrandsAsync(context: context, cancellationToken: cancellationToken);
@@ -90,6 +97,7 @@ internal sealed class DevelopmentDataSeeder(
 
         await SeedProductsAsync(
             products: products,
+            imageStorage: imageStorage,
             brandIds: brandIds,
             categoryIds: categoryIds,
             cancellationToken: cancellationToken);
@@ -156,6 +164,7 @@ internal sealed class DevelopmentDataSeeder(
 
     private static async Task SeedProductsAsync(
         IProductRepository products,
+        IProductImageStorage imageStorage,
         IReadOnlyDictionary<string, BrandId> brandIds,
         IReadOnlyDictionary<string, CategoryId> categoryIds,
         CancellationToken cancellationToken)
@@ -192,8 +201,44 @@ internal sealed class DevelopmentDataSeeder(
                     cancellationToken: cancellationToken),
                 what: $"product '{specification.Sku}'");
 
+            if (specification.ImageFileName is not null)
+            {
+                byte[] imageContent = ReadSampleImage(fileName: specification.ImageFileName);
+                string imageUrl = await imageStorage.UploadAsync(
+                    productId: product.Id.Value,
+                    fileName: specification.ImageFileName,
+                    contentType: "image/jpeg",
+                    content: imageContent,
+                    cancellationToken: cancellationToken);
+
+                Result imageSet = product.SetImage(imageUrl: imageUrl);
+
+                if (imageSet.IsError)
+                {
+                    throw new InvalidOperationException(
+                        message: $"Seeding image of '{specification.Sku}' failed: {imageSet.FirstError.Code} — {imageSet.FirstError.Description}.");
+                }
+            }
+
             await products.AddAsync(aggregate: product, cancellationToken: cancellationToken);
         }
+    }
+
+    // Read as an embedded resource rather than a copied output file, so seeding does not depend on
+    // the working directory a developer happens to launch the host from.
+    private static byte[] ReadSampleImage(string fileName)
+    {
+        string resourceName = SampleImageResourcePrefix + fileName;
+        using Stream? resource = typeof(DevelopmentDataSeeder).Assembly.GetManifestResourceStream(name: resourceName);
+
+        if (resource is null)
+        {
+            throw new InvalidOperationException(message: $"Embedded sample image '{resourceName}' was not found.");
+        }
+
+        using MemoryStream buffer = new();
+        resource.CopyTo(destination: buffer);
+        return buffer.ToArray();
     }
 
     private static async Task SeedDemoCustomerAsync(ICustomerRepository customers, CancellationToken cancellationToken)

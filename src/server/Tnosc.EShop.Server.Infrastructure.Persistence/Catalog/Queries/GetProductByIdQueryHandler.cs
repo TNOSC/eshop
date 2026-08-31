@@ -37,7 +37,8 @@ internal sealed class GetProductByIdQueryHandler(EShopReadDbContext context)
                p.brand_id       AS "BrandId",
                b.name           AS "BrandName",
                p.category_id    AS "CategoryId",
-               p.is_discontinued AS "IsDiscontinued"
+               p.is_discontinued AS "IsDiscontinued",
+               p.image_url      AS "ImageUrl"
         FROM catalog.products p
         INNER JOIN catalog.brands b ON b.id = p.brand_id
         WHERE p.id = @id
@@ -72,6 +73,7 @@ internal sealed class GetProductByIdQueryHandler(EShopReadDbContext context)
             BrandId: row.BrandId,
             BrandName: row.BrandName,
             CategoryId: row.CategoryId,
-            IsDiscontinued: row.IsDiscontinued);
+            IsDiscontinued: row.IsDiscontinued,
+            ImageUrl: row.ImageUrl);
     }
 }

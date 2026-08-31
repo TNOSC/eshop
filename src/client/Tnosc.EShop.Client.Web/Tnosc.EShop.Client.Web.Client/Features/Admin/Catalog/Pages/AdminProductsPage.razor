@@ -50,6 +50,11 @@
                               OnClick="@(() => OpenStockDialogAsync(product: context))">
                     Stock
                 </FluentButton>
+                <FluentButton Size="ButtonSize.Small"
+                              IconStart="@(new Icons.Regular.Size20.Image())"
+                              OnClick="@(() => OpenImageDialogAsync(product: context))">
+                    Image
+                </FluentButton>
             </TemplateColumn>
         </ChildContent>
         <EmptyContent><FluentLabel>No products match the current filter.</FluentLabel></EmptyContent>

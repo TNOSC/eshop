@@ -56,7 +56,8 @@ public sealed class AdminProductsServiceTests
             PriceCurrency: "USD",
             StockQuantity: 5,
             BrandName: "Brand",
-            CategoryName: "Category");
+            CategoryName: "Category",
+            ImageUrl: null);
 
         _catalogApi.SearchProductsAsync(query: Arg.Any<SearchProductsQuery>(), cancellationToken: Arg.Any<CancellationToken>())
             .Returns(returnThis: Task.FromResult(ClientResult<PagedResult<ProductSummary>>.Success(

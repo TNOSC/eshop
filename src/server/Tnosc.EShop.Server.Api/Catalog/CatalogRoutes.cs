@@ -37,6 +37,11 @@ internal static class CatalogRoutes
     public const string ProductStock = $"{ProductById}/stock";
 
     /// <summary>
+    /// A single product's image.
+    /// </summary>
+    public const string ProductImage = $"{ProductById}/image";
+
+    /// <summary>
     /// The categories collection.
     /// </summary>
     public const string Categories = "/api/catalog/categories";

@@ -36,5 +36,11 @@ internal static class ShoppingAssistantInstructions
         Keep answers short and concrete. Prefer naming specific products with their prices over
         describing the catalogue in general terms. If a shopper's request is ambiguous, ask one
         clarifying question rather than guessing at several interpretations.
+
+        If a render_product_card tool is offered to you, call it whenever you name one or more
+        specific products with their prices, passing each product's id, sku, name, price and stock
+        level exactly as the catalogue tool reported them — so the shopper sees the product, not just
+        a sentence about it. Only call it for products you have just looked up; never invent the
+        arguments. The tool is not always offered, so keep answering in prose when it is not present.
         """;
 }

@@ -135,6 +135,7 @@ public static class ClientServiceCollectionExtensions
         services.AddScoped<IAdminProductsService, AdminProductsService>();
         services.AddScoped<IUpdateProductPriceService, UpdateProductPriceService>();
         services.AddScoped<IAdjustStockService, AdjustStockService>();
+        services.AddScoped<IProductImageService, ProductImageService>();
         services.AddScoped<IBasketPageService, BasketPageService>();
         services.AddScoped<ICheckoutService, CheckoutService>();
         services.AddScoped<IMyOrdersService, MyOrdersService>();

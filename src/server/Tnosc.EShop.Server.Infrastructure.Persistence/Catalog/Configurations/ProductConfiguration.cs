@@ -62,6 +62,10 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(propertyExpression: product => product.IsDiscontinued)
             .HasColumnName(name: "is_discontinued");
 
+        builder.Property(propertyExpression: product => product.ImageUrl)
+            .HasColumnName(name: "image_url")
+            .HasMaxLength(maxLength: Product.ImageUrlMaxLength);
+
         ConfigureValueObjects(builder: builder);
         ConfigureRelationships(builder: builder);
 

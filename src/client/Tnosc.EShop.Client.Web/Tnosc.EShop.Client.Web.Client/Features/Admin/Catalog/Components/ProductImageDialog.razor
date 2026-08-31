@@ -1,0 +1,39 @@
+@namespace Tnosc.EShop.Client.Web.Client.Features.Admin.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Shared
+
+<FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+    @if (!string.IsNullOrWhiteSpace(_currentImageUrl))
+    {
+        <ProductImage Sku="@Sku" Alt="@Sku" ImageUrl="@_currentImageUrl" />
+    }
+
+    <FluentInputFile Id="product-image-input"
+                      DragDropZoneVisible="false"
+                      AnchorId="product-image-upload-button"
+                      Mode="InputFileMode.Stream"
+                      Multiple="false"
+                      Accept="image/jpeg,image/png,image/webp"
+                      MaximumFileSize="@MaxFileSize"
+                      OnFileUploaded="@OnFileUploadedAsync"
+                      OnFileError="@OnFileErrorAsync" />
+
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8">
+        <FluentButton Id="product-image-upload-button"
+                      Appearance="ButtonAppearance.Primary"
+                      Loading="@_isUploading"
+                      Disabled="@(_isUploading || _isRemoving)">
+            Choose image
+        </FluentButton>
+
+        @if (!string.IsNullOrWhiteSpace(_currentImageUrl))
+        {
+            <FluentButton Loading="@_isRemoving"
+                          Disabled="@(_isUploading || _isRemoving)"
+                          OnClick="@RemoveImageAsync">
+                Remove image
+            </FluentButton>
+        }
+
+        <FluentButton OnClick="@CancelAsync" Disabled="@(_isUploading || _isRemoving)">Close</FluentButton>
+    </FluentStack>
+</FluentStack>

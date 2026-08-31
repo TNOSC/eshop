@@ -1,7 +1,9 @@
 @namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
+@using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels
 
-@* Presentational only: every parameter is a primitive, so this component owns no view model and no
-   service of its own. *@
+@* Presentational only: no Contracts DTO reaches it, so this component owns no view model and no
+   service of its own — Products is the same display view model ProductCard already takes. *@
 
 <div class="eshop-chat-bubble @(IsFromShopper ? "shopper" : "assistant")">
     @if (IsLookingUp)
@@ -14,5 +16,17 @@
     else
     {
         <p>@Text</p>
+
+        @if (Products.Count > 0)
+        {
+            <div class="eshop-chat-products">
+                @foreach (ProductSummaryViewModel product in Products)
+                {
+                    <ProductCard Product="product"
+                                 ShowAddToBasket="true"
+                                 OnAddToBasket="OnAddToBasket" />
+                }
+            </div>
+        }
     }
 </div>

@@ -39,4 +39,7 @@ public sealed class ProductRowViewModel
 
     /// <summary>Gets or sets the product's stock quantity.</summary>
     public int StockQuantity { get; init; }
+
+    /// <summary>Gets or sets the URL of the product's image, or <see langword="null"/> when none has been uploaded.</summary>
+    public string? ImageUrl { get; init; }
 }

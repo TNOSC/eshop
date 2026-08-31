@@ -9,11 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
 using Tnosc.EShop.Server.Application.Basket.Ports;
+using Tnosc.EShop.Server.Application.Catalog.Ports;
 using Tnosc.EShop.Server.Application.Ordering.Ports;
 using Tnosc.EShop.Server.Application.Payment.Ports;
 using Tnosc.EShop.Server.Infrastructure.External.Payment;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
 using Tnosc.EShop.Server.Infrastructure.External.Redis.Ordering;
+using Tnosc.EShop.Server.Infrastructure.External.Storage;
 using BasketRepositoryContract = Tnosc.EShop.Server.Domain.Basket.Baskets.IBasketRepository;
 
 namespace Tnosc.EShop.Server.Infrastructure.External.Extensions;
@@ -60,6 +62,18 @@ public static class ExternalExtensions
         // issues a real call yet.
         services.AddHttpClient<IPaymentGateway, FakePaymentGateway>()
             .AddStandardResilienceHandler();
+
+        // Catalog's external boundary. The BlobServiceClient itself is registered by
+        // AddAzureBlobServiceClient in Server.Host — the Aspire client integration — the same way
+        // IConnectionMultiplexer is registered there for Redis and injected into RedisBasketRepository.
+        services.AddOptions<ProductImageStorageOptions>()
+            .Bind(config: configuration.GetSection(key: ProductImageStorageOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddSingleton(implementationFactory: resolve => resolve.GetRequiredService<IOptions<ProductImageStorageOptions>>().Value);
+
+        services.AddScoped<IProductImageStorage, BlobProductImageStorage>();
 
         return services;
     }

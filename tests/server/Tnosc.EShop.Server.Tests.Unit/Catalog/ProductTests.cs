@@ -163,6 +163,74 @@ public sealed class ProductTests
     }
 
     [Fact]
+    public async Task SetImage_Should_SetTheImageUrl_And_IncrementVersion()
+    {
+        // Arrange
+        Product product = await ProductTestFactory.CreateAsync();
+        int versionBefore = product.Version;
+        string imageUrl = _faker.Internet.Url();
+
+        // Act
+        Result result = product.SetImage(imageUrl: imageUrl);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        product.ImageUrl.ShouldBe(expected: imageUrl);
+        product.Version.ShouldBe(expected: versionBefore + 1);
+    }
+
+    [Fact]
+    public async Task SetImage_Should_ReturnValidationError_When_TheUrlIsBlank()
+    {
+        // Arrange
+        Product product = await ProductTestFactory.CreateAsync();
+        int versionBefore = product.Version;
+
+        // Act
+        Result result = product.SetImage(imageUrl: " ");
+
+        // Assert
+        result.IsError.ShouldBeTrue();
+        result.FirstError.Type.ShouldBe(expected: ErrorType.Validation);
+        result.FirstError.Code.ShouldBe(expected: "Product.ImageUrlRequired");
+        product.ImageUrl.ShouldBeNull();
+        product.Version.ShouldBe(expected: versionBefore);
+    }
+
+    [Fact]
+    public async Task SetImage_Should_ReturnValidationError_When_TheUrlExceedsTheMaxLength()
+    {
+        // Arrange
+        Product product = await ProductTestFactory.CreateAsync();
+        string tooLong = new('a', count: Product.ImageUrlMaxLength + 1);
+
+        // Act
+        Result result = product.SetImage(imageUrl: tooLong);
+
+        // Assert
+        result.IsError.ShouldBeTrue();
+        result.FirstError.Type.ShouldBe(expected: ErrorType.Validation);
+        result.FirstError.Code.ShouldBe(expected: "Product.ImageUrlTooLong");
+    }
+
+    [Fact]
+    public async Task ClearImage_Should_RemoveTheImageUrl_And_IncrementVersion()
+    {
+        // Arrange
+        Product product = await ProductTestFactory.CreateAsync();
+        product.SetImage(imageUrl: _faker.Internet.Url());
+        int versionBefore = product.Version;
+
+        // Act
+        Result result = product.ClearImage();
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        product.ImageUrl.ShouldBeNull();
+        product.Version.ShouldBe(expected: versionBefore + 1);
+    }
+
+    [Fact]
     public async Task ClearDomainEvents_Should_EmptyTheCollection()
     {
         // Arrange

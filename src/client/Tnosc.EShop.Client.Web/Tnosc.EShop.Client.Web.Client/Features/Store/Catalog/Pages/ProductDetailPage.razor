@@ -28,7 +28,7 @@ else if (_product is not null)
     <StoreHero Title="@_product.Name" Subtitle="@_product.BrandName" />
 
     <div class="eshop-page eshop-item">
-        <ProductImage Sku="@_product.Sku" Alt="@_product.Name" />
+        <ProductImage Sku="@_product.Sku" Alt="@_product.Name" ImageUrl="@_product.ImageUrl" />
 
         <div class="eshop-item-description">
             @if (!string.IsNullOrWhiteSpace(_product.Description))

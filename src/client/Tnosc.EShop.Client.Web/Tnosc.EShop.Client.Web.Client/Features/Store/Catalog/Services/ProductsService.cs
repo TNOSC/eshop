@@ -74,5 +74,6 @@ internal sealed class ProductsService(ICatalogApi catalogApi) : IProductsService
             PriceAmount = product.PriceAmount,
             PriceCurrency = product.PriceCurrency,
             StockQuantity = product.StockQuantity,
+            ImageUrl = product.ImageUrl,
         };
 }

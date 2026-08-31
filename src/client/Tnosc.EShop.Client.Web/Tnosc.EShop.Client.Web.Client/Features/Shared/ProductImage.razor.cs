@@ -17,4 +17,7 @@ public partial class ProductImage : ComponentBase
     [Parameter]
     [EditorRequired]
     public string Alt { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? ImageUrl { get; set; }
 }

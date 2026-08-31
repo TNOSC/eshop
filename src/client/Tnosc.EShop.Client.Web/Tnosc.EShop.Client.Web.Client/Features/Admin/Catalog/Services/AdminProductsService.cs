@@ -52,5 +52,6 @@ internal sealed class AdminProductsService(ICatalogApi catalogApi) : IAdminProdu
             PriceAmount = product.PriceAmount,
             PriceCurrency = product.PriceCurrency,
             StockQuantity = product.StockQuantity,
+            ImageUrl = product.ImageUrl,
         };
 }

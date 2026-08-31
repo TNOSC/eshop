@@ -73,4 +73,9 @@ internal sealed class ProductByIdRow
     /// Gets or sets a value indicating whether the product has been withdrawn from sale.
     /// </summary>
     public bool IsDiscontinued { get; set; }
+
+    /// <summary>
+    /// Gets or sets the URL of the product's image, or <see langword="null"/> when none has been uploaded.
+    /// </summary>
+    public string? ImageUrl { get; set; }
 }

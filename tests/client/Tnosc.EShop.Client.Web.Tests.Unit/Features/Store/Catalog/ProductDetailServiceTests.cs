@@ -43,7 +43,8 @@ public sealed class ProductDetailServiceTests
             BrandId: Guid.CreateVersion7(),
             BrandName: "Brand",
             CategoryId: Guid.CreateVersion7(),
-            IsDiscontinued: false);
+            IsDiscontinued: false,
+            ImageUrl: null);
 
         _catalogApi.GetProductAsync(id: Arg.Any<Guid>(), cancellationToken: Arg.Any<CancellationToken>())
             .Returns(returnThis: Task.FromResult(ClientResult<Product>.Success(value: product)));

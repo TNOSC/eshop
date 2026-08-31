@@ -24,4 +24,5 @@ internal sealed record SeedProduct(
     decimal PriceAmount,
     int Stock,
     string BrandName,
-    string CategoryName);
+    string CategoryName,
+    string? ImageFileName);

@@ -56,5 +56,6 @@ internal sealed class ProductDetailService(ICatalogApi catalogApi, IBasketApi ba
             PriceCurrency = product.PriceCurrency,
             StockQuantity = product.StockQuantity,
             BrandName = product.BrandName,
+            ImageUrl = product.ImageUrl,
         };
 }

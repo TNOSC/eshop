@@ -130,4 +130,29 @@ public partial class AdminProductsPage : ComponentBase
             await _grid.RefreshDataAsync();
         }
     }
+
+
+    private async Task OpenImageDialogAsync(ProductRowViewModel product)
+    {
+        DialogOptions options = new()
+        {
+            Header = { Title = $"Image — {product.Sku}" },
+            Size = DialogSize.Small,
+            Modal = true,
+            PreventDismissOnEscape = true,
+            Parameters = new Dictionary<string, object?>(comparer: StringComparer.Ordinal)
+            {
+                [nameof(ProductImageDialog.ProductId)] = product.Id,
+                [nameof(ProductImageDialog.Sku)] = product.Sku,
+                [nameof(ProductImageDialog.CurrentImageUrl)] = product.ImageUrl,
+            },
+        };
+
+        DialogResult result = await DialogService.ShowDialogAsync<ProductImageDialog>(options: options);
+
+        if (!result.Cancelled)
+        {
+            await _grid.RefreshDataAsync();
+        }
+    }
 }

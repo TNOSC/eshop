@@ -4,6 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AGUI.Client;
 using Microsoft.Extensions.AI;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Infrastructure;
 using Tnosc.EShop.Client.Web.Contracts.Routes;
 
 namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
@@ -36,6 +38,18 @@ namespace Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 /// </remarks>
 internal sealed class ShoppingAssistantApi(HttpClient httpClient) : IShoppingAssistantApi
 {
+    /// <summary>
+    /// The client-declared, render-only tool the agent may call to have a product shown as a card.
+    /// It has no invoke delegate, so <see cref="AGUIChatClient"/> never executes it — the call
+    /// surfaces to the caller as a <see cref="FunctionCallContent"/> instead, which
+    /// <c>ShoppingAssistantService</c> reads back into the reply's view model.
+    /// </summary>
+    private static readonly AIFunctionDeclaration RenderProductCardTool = AIFunctionFactory.CreateDeclaration(
+        name: AssistantToolNames.RenderProductCard,
+        description: "Shows the shopper a card for one or more products you have just looked up, instead of " +
+            "only describing them in prose.",
+        jsonSchema: AIJsonUtilities.CreateJsonSchema(type: typeof(RenderProductCardArgs)));
+
     /// <inheritdoc />
     public async IAsyncEnumerable<ChatResponseUpdate> SendAsync(
         IReadOnlyList<ChatMessage> messages,
@@ -49,7 +63,11 @@ internal sealed class ShoppingAssistantApi(HttpClient httpClient) : IShoppingAss
 
         // ConversationId is what the AG-UI client carries inward as the thread id. It deliberately
         // keeps sending the full history alongside it, which is why the caller passes both.
-        ChatOptions chatOptions = new() { ConversationId = threadId };
+        ChatOptions chatOptions = new()
+        {
+            ConversationId = threadId,
+            Tools = [RenderProductCardTool],
+        };
 
         IAsyncEnumerable<ChatResponseUpdate> updates = chatClient.GetStreamingResponseAsync(
             messages: messages,

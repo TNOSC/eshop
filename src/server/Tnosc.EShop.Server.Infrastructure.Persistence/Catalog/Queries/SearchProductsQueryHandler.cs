@@ -47,6 +47,7 @@ internal sealed class SearchProductsQueryHandler(EShopReadDbContext context)
                p.stock_quantity AS "StockQuantity",
                b.name           AS "BrandName",
                c.name           AS "CategoryName",
+               p.image_url      AS "ImageUrl",
                COUNT(*) OVER () AS "TotalCount"
         FROM catalog.products p
         INNER JOIN catalog.brands b ON b.id = p.brand_id
@@ -85,7 +86,8 @@ internal sealed class SearchProductsQueryHandler(EShopReadDbContext context)
             PriceCurrency: row.PriceCurrency,
             StockQuantity: row.StockQuantity,
             BrandName: row.BrandName,
-            CategoryName: row.CategoryName))];
+            CategoryName: row.CategoryName,
+            ImageUrl: row.ImageUrl))];
 
         // Every row carries the same window total; an empty page yields the natural zero.
         long totalCount = rows.Select(selector: static row => row.TotalCount).FirstOrDefault();

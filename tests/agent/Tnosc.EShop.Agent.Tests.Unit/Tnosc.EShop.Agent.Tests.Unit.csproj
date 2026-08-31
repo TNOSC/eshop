@@ -23,6 +23,8 @@
     <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Application\Tnosc.EShop.Agent.Application.csproj" />
     <!-- McpAgentToolProvider.Filter is internal; the allow-list rule is worth testing without a server. -->
     <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Infrastructure.Mcp\Tnosc.EShop.Agent.Infrastructure.Mcp.csproj" />
+    <!-- ToolInjectionMiddleware is internal; the client-tool merge behaviour is worth testing without a server. -->
+    <ProjectReference Include="..\..\..\src\agent\Tnosc.EShop.Agent.Infrastructure.Ai\Tnosc.EShop.Agent.Infrastructure.Ai.csproj" />
   </ItemGroup>
 
   <ItemGroup>

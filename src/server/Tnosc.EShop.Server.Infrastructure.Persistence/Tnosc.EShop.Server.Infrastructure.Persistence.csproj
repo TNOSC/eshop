@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Sample photos DevelopmentDataSeeder uploads for the seeded demo products — embedded so reading
+         them at runtime does not depend on the working directory or an output-copy step. -->
+    <EmbeddedResource Include="Seeding\SampleImages\*.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">

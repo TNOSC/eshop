@@ -169,7 +169,8 @@ public sealed class SearchProductsQueryHandlerTests(PostgresFixture fixture) : C
                 PriceCurrency: product.PriceCurrency,
                 StockQuantity: product.StockQuantity,
                 BrandName: brand.Name,
-                CategoryName: category.Name))
+                CategoryName: category.Name,
+                ImageUrl: product.ImageUrl))
             .Take(count: 10)
             .ToListAsync();
 

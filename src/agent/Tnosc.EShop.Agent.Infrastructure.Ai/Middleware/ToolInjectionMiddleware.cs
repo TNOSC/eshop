@@ -125,7 +125,11 @@ internal sealed class ToolInjectionMiddleware(IServiceScopeFactory scopeFactory,
             ? chatRunOptions.ChatOptions.Clone()
             : new ChatOptions();
 
-        chatOptions.Tools = [.. tools];
+        // A caller (AG-UI's own client-declared-tool mechanism) may already have put tools on
+        // chatOptions.Tools before this middleware runs — a render-only frontend tool the client
+        // will handle itself, never executed here. Merge rather than overwrite, or that tool
+        // silently disappears from the run.
+        chatOptions.Tools = [.. (chatOptions.Tools ?? []), .. tools];
 
         return new ChatClientAgentRunOptions(chatOptions: chatOptions);
     }

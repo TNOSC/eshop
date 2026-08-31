@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Tnosc.EShop.Client.Web.Contracts.Catalog;
@@ -63,4 +64,22 @@ public interface ICatalogApi
         Guid productId,
         AdjustStockRequest request,
         CancellationToken cancellationToken);
+
+    /// <summary>Uploads a product's image, replacing any previous one.</summary>
+    /// <param name="productId">The product to set the image on.</param>
+    /// <param name="content">The image file's content stream.</param>
+    /// <param name="fileName">The image file's original name.</param>
+    /// <param name="contentType">The image file's content type.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> UploadProductImageAsync(
+        Guid productId,
+        Stream content,
+        string fileName,
+        string contentType,
+        CancellationToken cancellationToken);
+
+    /// <summary>Removes a product's image, if it has one.</summary>
+    /// <param name="productId">The product to remove the image from.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    Task<ClientResult> DeleteProductImageAsync(Guid productId, CancellationToken cancellationToken);
 }

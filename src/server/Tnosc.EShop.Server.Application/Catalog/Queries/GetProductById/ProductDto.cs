@@ -22,6 +22,7 @@ namespace Tnosc.EShop.Server.Application.Catalog.Queries.GetProductById;
 /// <param name="BrandName">The name of the product's brand.</param>
 /// <param name="CategoryId">The identifier of the product's category.</param>
 /// <param name="IsDiscontinued">Whether the product has been withdrawn from sale.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other field here, never System.Uri.
 public sealed record ProductDto(
     Guid Id,
     string Sku,
@@ -33,4 +34,6 @@ public sealed record ProductDto(
     Guid BrandId,
     string BrandName,
     Guid CategoryId,
-    bool IsDiscontinued);
+    bool IsDiscontinued,
+    string? ImageUrl);
+#pragma warning restore CA1054

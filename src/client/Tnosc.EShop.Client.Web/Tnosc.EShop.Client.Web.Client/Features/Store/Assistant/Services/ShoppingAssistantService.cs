@@ -9,15 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.AI;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Infrastructure;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.ViewModels;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Validation;
+using Tnosc.EShop.Client.Web.Contracts.Basket;
 using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
+using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Services;
 
@@ -29,8 +34,24 @@ namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Services;
 /// framework's vocabulary is a wire shape like any DTO, and the panel is written against view models
 /// for the same reason every other component here is.
 /// </remarks>
-internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantApi) : IShoppingAssistantService
+internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantApi, IBasketApi basketApi)
+    : IShoppingAssistantService
 {
+    /// <summary>Adds one unit of a product to the shopper's basket, as chosen from a chat card.</summary>
+    public async Task<ClientResult<int>> AddToBasketAsync(Guid productId, CancellationToken cancellationToken)
+    {
+        ClientResult<BasketDto> result = await basketApi.AddItemAsync(
+            request: new AddItemToBasketRequest(ProductId: productId, Quantity: 1),
+            cancellationToken: cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ClientResult<int>.Failure(problem: result.Problem!);
+        }
+
+        return ClientResult<int>.Success(value: result.Value.Items.Count);
+    }
+
     public async Task<ClientResult> SendAsync(
         ShoppingAssistantViewModel viewModel,
         Func<Task> onUpdatedAsync,
@@ -89,6 +110,14 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
                 // A tool call produces no text, and the model goes quiet for as long as the catalogue
                 // lookup takes. Saying so is the difference between "thinking" and "broken".
                 reply.IsLookingUp = update.Contents.Any(predicate: static content => content is FunctionCallContent);
+
+                foreach (FunctionCallContent call in update.Contents.OfType<FunctionCallContent>())
+                {
+                    if (string.Equals(a: call.Name, b: AssistantToolNames.RenderProductCard, comparisonType: StringComparison.Ordinal))
+                    {
+                        reply.Products = ParseProductCards(arguments: call.Arguments);
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(value: update.Text))
                 {
@@ -167,5 +196,36 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
 
         messages.Add(item: new ChatMessage(role: ChatRole.User, content: question));
         return messages;
+    }
+
+    /// <summary>
+    /// Reconstructs a <c>render_product_card</c> call's arguments into display view models. The
+    /// dictionary is round-tripped through JSON rather than walked by hand, so the tool's declared
+    /// schema and this parsing can never drift out of shape with one another.
+    /// </summary>
+    private static IReadOnlyList<ProductSummaryViewModel> ParseProductCards(IDictionary<string, object?>? arguments)
+    {
+        if (arguments is null)
+        {
+            return [];
+        }
+
+        string json = JsonSerializer.Serialize(value: arguments, options: AIJsonUtilities.DefaultOptions);
+        RenderProductCardArgs? parsed = JsonSerializer.Deserialize<RenderProductCardArgs>(json: json, options: AIJsonUtilities.DefaultOptions);
+
+        if (parsed is null)
+        {
+            return [];
+        }
+
+        return [.. parsed.Products.Select(selector: static product => new ProductSummaryViewModel
+        {
+            Id = product.Id,
+            Sku = product.Sku,
+            Name = product.Name,
+            PriceAmount = product.PriceAmount,
+            PriceCurrency = product.PriceCurrency,
+            StockQuantity = product.StockQuantity,
+        })];
     }
 }

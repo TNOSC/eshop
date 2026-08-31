@@ -64,4 +64,9 @@ internal sealed class ProductSearchRow
     /// query's <c>COUNT(*) OVER ()</c> window so paging needs a single round trip.
     /// </summary>
     public long TotalCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the URL of the product's image, or <see langword="null"/> when none has been uploaded.
+    /// </summary>
+    public string? ImageUrl { get; set; }
 }

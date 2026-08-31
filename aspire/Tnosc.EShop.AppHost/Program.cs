@@ -7,6 +7,7 @@
 using System;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Azure;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args: args);
 
@@ -74,13 +75,35 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
     .WaitFor(dependency: keycloakDb)
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "Keycloak Admin Console");
 
+// Product images: Azurite locally, a real Azure Storage account in production — the same
+// per-environment split as Postgres/Redis/Keycloak above. RunAsEmulator only in run mode: a publish
+// run provisions a real storage account through Aspire's Azure publishing path instead.
+//
+// The blob port is pinned to Azurite's own default (10000) rather than left dynamic, so
+// ProductImageStorage:PublicBaseUrl in appsettings.Development.json — "http://127.0.0.1:10000/devstoreaccount1" —
+// can stay a fixed value instead of being threaded through as an env var the way KC_HOSTNAME is
+// above. A real storage account has one public DNS name already, so that setting stays absent from
+// appsettings.json and BlobProductImageStorage falls back to the client's own BlobClient.Uri there.
+IResourceBuilder<AzureStorageResource> storage = builder.AddAzureStorage(name: "storage");
+
+if (!builder.ExecutionContext.IsPublishMode)
+{
+    storage.RunAsEmulator(configureContainer: azurite =>
+        azurite.WithBlobPort(port: 10000)
+               .WithUrlForEndpoint(endpointName: "blob", callback: url => url.DisplayText = "Azurite Blob"));
+}
+
+IResourceBuilder<AzureBlobStorageResource> images = storage.AddBlobs(name: "images");
+
 IResourceBuilder<ProjectResource> eshopHost = builder.AddProject<Projects.Tnosc_EShop_Server_Host>(name: "eshop-host")
     .WithReference(source: db)
     .WithReference(source: keycloak)
     .WithReference(source: cache)
+    .WithReference(source: images)
     .WaitFor(dependency: db)
     .WaitFor(dependency: keycloak)
     .WaitFor(dependency: cache)
+    .WaitFor(dependency: images)
     .WithUrlForEndpoint(endpointName: "https", callback: url => url.DisplayText = "https:API")
     .WithUrlForEndpoint(endpointName: "http", callback: url => url.DisplayText = "http:API")
     .WithHttpHealthCheck("/health");

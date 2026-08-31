@@ -44,6 +44,10 @@ internal sealed class EShopApiFactory(string connectionString, string redisConne
         // production does not have.
         builder.UseSetting(key: "Persistence:ApplyMigrationsOnStartup", value: "false");
 
+        // These tests exercise the auth pipeline, not the sample catalogue, and there is no Azurite
+        // container here for DevelopmentDataSeeder's product-image upload to reach.
+        builder.UseSetting(key: "Seed:Enabled", value: "false");
+
         builder.UseEnvironment(environment: "Development");
 
         builder.ConfigureServices(configureServices: static services =>

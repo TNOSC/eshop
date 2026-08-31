@@ -19,19 +19,24 @@ using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.ViewModels;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Api;
 using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
+using Tnosc.EShop.Client.Web.Contracts.Basket;
+using Tnosc.Lib.Web.Contracts;
 using Tnosc.Lib.Web.Results;
 using Xunit;
+using BasketDto = Tnosc.EShop.Client.Web.Contracts.Basket.Basket;
 
 namespace Tnosc.EShop.Client.Web.Tests.Unit.Features.Store.Assistant;
 
 public sealed class ShoppingAssistantServiceTests
 {
     private readonly IShoppingAssistantApi _assistantApi = Substitute.For<IShoppingAssistantApi>();
+    private readonly IBasketApi _basketApi = Substitute.For<IBasketApi>();
     private readonly ShoppingAssistantService _sut;
 
     private int _updateCount;
 
-    public ShoppingAssistantServiceTests() => _sut = new ShoppingAssistantService(assistantApi: _assistantApi);
+    public ShoppingAssistantServiceTests() =>
+        _sut = new ShoppingAssistantService(assistantApi: _assistantApi, basketApi: _basketApi);
 
     [Fact]
     public async Task SendAsync_Should_RejectTheDraft_Without_CallingTheApi_When_ItIsEmpty()
@@ -174,6 +179,103 @@ public sealed class ShoppingAssistantServiceTests
         // Assert — an empty bubble reads like a rendering bug, so the service fills one in.
         result.IsSuccess.ShouldBeTrue();
         viewModel.Messages[^1].Text.ShouldNotBeEmpty();
+    }
+
+    [Fact]
+    public async Task SendAsync_Should_MapARenderProductCardCall_IntoTheReplysProducts()
+    {
+        // Arrange
+        ShoppingAssistantViewModel viewModel = new() { Draft = "what keyboards do you have?" };
+        var productId = Guid.CreateVersion7();
+
+        ChatResponseUpdate toolCall = new()
+        {
+            Role = ChatRole.Assistant,
+            Contents =
+            [
+                new FunctionCallContent(
+                    callId: "1",
+                    name: "render_product_card",
+                    arguments: new Dictionary<string, object?>(comparer: StringComparer.Ordinal)
+                    {
+                        ["Products"] = new[]
+                        {
+                            new Dictionary<string, object?>(comparer: StringComparer.Ordinal)
+                            {
+                                ["Id"] = productId,
+                                ["Sku"] = "SKU-1",
+                                ["Name"] = "Blue Widget",
+                                ["PriceAmount"] = 12.99m,
+                                ["PriceCurrency"] = "USD",
+                                ["StockQuantity"] = 3,
+                            },
+                        },
+                    }),
+            ],
+        };
+        StubStream(updates: [toolCall, Text(text: "We stock the Blue Widget.")]);
+
+        // Act
+        await _sut.SendAsync(viewModel: viewModel, onUpdatedAsync: CountUpdateAsync, cancellationToken: CancellationToken.None);
+
+        // Assert
+        viewModel.Messages[^1].Products.ShouldHaveSingleItem().Id.ShouldBe(expected: productId);
+        viewModel.Messages[^1].Products[0].Name.ShouldBe(expected: "Blue Widget");
+    }
+
+    [Fact]
+    public async Task AddToBasketAsync_Should_AddOneUnit_And_ReturnTheNewItemCount()
+    {
+        // Arrange
+        var productId = Guid.CreateVersion7();
+        var basketItem = new BasketItem(
+            ItemId: Guid.CreateVersion7(),
+            ProductId: productId,
+            Sku: "SKU-1",
+            ProductName: "Blue Widget",
+            UnitPriceAmount: 12.99m,
+            UnitPriceCurrency: "USD",
+            Quantity: 1);
+        var basket = new BasketDto(BasketId: Guid.CreateVersion7(), CustomerId: Guid.CreateVersion7(), Items: [basketItem], TotalAmount: null, TotalCurrency: null);
+
+        _basketApi.AddItemAsync(request: Arg.Any<AddItemToBasketRequest>(), cancellationToken: Arg.Any<CancellationToken>())
+            .Returns(returnThis: Task.FromResult(ClientResult<BasketDto>.Success(value: basket)));
+
+        // Act
+        ClientResult<int> result = await _sut.AddToBasketAsync(productId: productId, cancellationToken: CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(expected: basket.Items.Count);
+        await _basketApi.Received(requiredNumberOfCalls: 1).AddItemAsync(
+            request: Arg.Is<AddItemToBasketRequest>(predicate: r => r.ProductId == productId && r.Quantity == 1),
+            cancellationToken: Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task AddToBasketAsync_Should_PropagateTheFailure_When_TheApiRejectsTheAdd()
+    {
+        // Arrange
+        var productId = Guid.CreateVersion7();
+        ClientProblem problem = new(
+            Type: null,
+            Title: "Product.NotFound",
+            Status: 404,
+            Detail: null,
+            Instance: null,
+            Errors: null,
+            ErrorCode: "Product.NotFound",
+            TraceId: null);
+
+        _basketApi.AddItemAsync(request: Arg.Any<AddItemToBasketRequest>(), cancellationToken: Arg.Any<CancellationToken>())
+            .Returns(returnThis: Task.FromResult(ClientResult<BasketDto>.Failure(problem: problem)));
+
+        // Act
+        ClientResult<int> result = await _sut.AddToBasketAsync(productId: productId, cancellationToken: CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Problem!.Title.ShouldBe(expected: "Product.NotFound");
     }
 
     private static ChatResponseUpdate Text(string text) =>

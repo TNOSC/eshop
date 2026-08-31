@@ -69,6 +69,7 @@ public sealed class GetProductByIdQueryHandlerTests(PostgresFixture fixture) : C
         dto.BrandName.ShouldBe(expected: brand.Name);
         dto.CategoryId.ShouldBe(expected: category.Id.Value);
         dto.IsDiscontinued.ShouldBeFalse();
+        dto.ImageUrl.ShouldBeNull();
     }
 
     [Fact]
@@ -108,6 +109,30 @@ public sealed class GetProductByIdQueryHandlerTests(PostgresFixture fixture) : C
         // Assert
         result.Value.PriceAmount.ShouldBe(expected: newAmount);
         result.Value.PriceCurrency.ShouldBe(expected: newCurrency);
+    }
+
+    [Fact]
+    public async Task HandleAsync_Should_ProjectTheImageUrl_When_TheProductHasOne()
+    {
+        // Arrange
+        Brand brand = await SeedBrandAsync(name: _faker.BrandName());
+        Category category = await SeedCategoryAsync(name: _faker.CategoryName());
+        Product product = await SeedProductAsync(
+            sku: _faker.Sku(),
+            name: _faker.ProductName(),
+            brandId: brand.Id,
+            categoryId: category.Id);
+
+        string imageUrl = _faker.Internet.Url();
+        product.SetImage(imageUrl: imageUrl);
+        ProductRepository.Update(aggregate: product);
+        await UnitOfWork.SaveChangesAsync();
+
+        // Act
+        Result<ProductDto> result = await HandleAsync(productId: product.Id.Value);
+
+        // Assert
+        result.Value.ImageUrl.ShouldBe(expected: imageUrl);
     }
 
     private ValueTask<Result<ProductDto>> HandleAsync(Guid productId) =>

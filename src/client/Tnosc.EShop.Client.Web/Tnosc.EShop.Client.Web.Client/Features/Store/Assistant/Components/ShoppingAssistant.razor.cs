@@ -4,14 +4,18 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.Services;
 using Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.ViewModels;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Basket;
+using Tnosc.EShop.Client.Web.Client.Infrastructure.Errors;
 using Tnosc.Lib.Web.Components.Shared;
 using Tnosc.Lib.Web.Contracts;
+using Tnosc.Lib.Web.Errors;
 using Tnosc.Lib.Web.Results;
 using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons;
 
@@ -57,6 +61,18 @@ public partial class ShoppingAssistant : ComponentBase
     [Inject]
     public IShoppingAssistantService Service { get; set; } = null!;
 
+    /// <summary>Gets the shared basket item count, updated after a card's "Add to basket" succeeds.</summary>
+    [Inject]
+    public BasketState BasketState { get; set; } = null!;
+
+    /// <summary>Gets the toast service used to report the outcome of adding a card's product.</summary>
+    [Inject]
+    public INotificationService Notifications { get; set; } = null!;
+
+    /// <summary>Gets the navigation manager, used to redirect to login on a 401 while adding to basket.</summary>
+    [Inject]
+    public NavigationManager Navigation { get; set; } = null!;
+
     private Icon LauncherIcon => _isOpen
         ? new Icons.Regular.Size24.Dismiss()
         : new Icons.Regular.Size24.ChatSparkle();
@@ -86,6 +102,25 @@ public partial class ShoppingAssistant : ComponentBase
         // content through ErrorPanel. Only StatefulBoundary's own error boundary sets ComponentState.Error.
         _problem = result.IsSuccess ? null : result.Problem;
         _isSending = false;
+    }
+
+    /// <summary>Adds a product shown on a chat card to the shopper's basket.</summary>
+    private async Task AddToBasketAsync(Guid productId)
+    {
+        ClientResult<int> result = await Service.AddToBasketAsync(productId: productId, cancellationToken: CancellationToken.None);
+
+        if (result.IsSuccess)
+        {
+            BasketState.SetItemCount(itemCount: result.Value);
+            await Notifications.ShowSuccessToastAsync(title: "Added to basket", message: "Added to your basket.");
+            return;
+        }
+
+        await NotificationExtensions.NotifyFailureAsync(
+            problem: result.Problem!,
+            notifications: Notifications,
+            navigation: Navigation,
+            humanize: ErrorCodeMessages.Humanize);
     }
 
     private Task OnStreamUpdatedAsync()

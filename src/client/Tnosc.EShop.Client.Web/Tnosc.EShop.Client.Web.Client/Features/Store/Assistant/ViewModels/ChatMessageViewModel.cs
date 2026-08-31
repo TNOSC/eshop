@@ -4,6 +4,9 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels;
+
 namespace Tnosc.EShop.Client.Web.Client.Features.Store.Assistant.ViewModels;
 
 /// <summary>
@@ -25,4 +28,10 @@ public sealed class ChatMessageViewModel
     /// for a noticeable stretch — without it the panel looks stalled.
     /// </summary>
     public bool IsLookingUp { get; set; }
+
+    /// <summary>
+    /// Gets or sets the products the assistant chose to show alongside its text, from a
+    /// <c>render_product_card</c> tool call. Empty for a turn that answered in prose only.
+    /// </summary>
+    public IReadOnlyList<ProductSummaryViewModel> Products { get; set; } = [];
 }

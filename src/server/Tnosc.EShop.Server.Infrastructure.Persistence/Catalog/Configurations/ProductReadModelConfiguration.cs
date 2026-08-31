@@ -35,5 +35,6 @@ internal sealed class ProductReadModelConfiguration : IEntityTypeConfiguration<P
         builder.Property(propertyExpression: product => product.BrandId).HasColumnName(name: "brand_id");
         builder.Property(propertyExpression: product => product.CategoryId).HasColumnName(name: "category_id");
         builder.Property(propertyExpression: product => product.IsDiscontinued).HasColumnName(name: "is_discontinued");
+        builder.Property(propertyExpression: product => product.ImageUrl).HasColumnName(name: "image_url");
     }
 }

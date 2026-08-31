@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -99,6 +101,38 @@ internal sealed class CatalogApi(HttpClient httpClient) : ICatalogApi
         using HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             requestUri: ApiRoutes.Catalog.ProductStock(id: productId),
             value: request,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult> UploadProductImageAsync(
+        Guid productId,
+        Stream content,
+        string fileName,
+        string contentType,
+        CancellationToken cancellationToken)
+    {
+        using StreamContent fileContent = new(content: content);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType: contentType);
+
+        using MultipartFormDataContent form = new()
+        {
+            { fileContent, "file", fileName },
+        };
+
+        using HttpResponseMessage response = await httpClient.PostAsync(
+            requestUri: ApiRoutes.Catalog.ProductImage(id: productId),
+            content: form,
+            cancellationToken: cancellationToken);
+
+        return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);
+    }
+
+    public async Task<ClientResult> DeleteProductImageAsync(Guid productId, CancellationToken cancellationToken)
+    {
+        using HttpResponseMessage response = await httpClient.DeleteAsync(
+            requestUri: ApiRoutes.Catalog.ProductImage(id: productId),
             cancellationToken: cancellationToken);
 
         return await ApiResponseReader.ReadAsync(response: response, cancellationToken: cancellationToken);

@@ -3,5 +3,5 @@
 
 <img class="eshop-product-image"
      alt="@Alt"
-     src="@ProductImageResolver.For(sku: Sku)"
+     src="@(ImageUrl ?? ProductImageResolver.For(sku: Sku))"
      loading="lazy" />

@@ -56,7 +56,8 @@ internal static class SeedData
             PriceAmount: 1299.00m,
             Stock: 25,
             BrandName: "Contoso",
-            CategoryName: "Laptops"),
+            CategoryName: "Laptops",
+            ImageFileName: "laptop-1.jpg"),
         new SeedProduct(
             Sku: "TNOSC-LAPTOP-15",
             Name: "Fabrikam WorkStation 15",
@@ -64,7 +65,8 @@ internal static class SeedData
             PriceAmount: 1899.50m,
             Stock: 12,
             BrandName: "Fabrikam",
-            CategoryName: "Laptops"),
+            CategoryName: "Laptops",
+            ImageFileName: "laptop-2.jpg"),
         new SeedProduct(
             Sku: "TNOSC-PHONE-X",
             Name: "Contoso Phone X",
@@ -72,7 +74,8 @@ internal static class SeedData
             PriceAmount: 899.00m,
             Stock: 40,
             BrandName: "Contoso",
-            CategoryName: "Phones"),
+            CategoryName: "Phones",
+            ImageFileName: "phone-1.jpg"),
         new SeedProduct(
             Sku: "TNOSC-PHONE-MINI",
             Name: "Northwind Phone Mini",
@@ -80,7 +83,8 @@ internal static class SeedData
             PriceAmount: 549.00m,
             Stock: 60,
             BrandName: "Northwind",
-            CategoryName: "Phones"),
+            CategoryName: "Phones",
+            ImageFileName: "phone-2.jpg"),
         new SeedProduct(
             Sku: "TNOSC-ACC-MOUSE",
             Name: "Fabrikam Wireless Mouse",
@@ -88,6 +92,7 @@ internal static class SeedData
             PriceAmount: 49.90m,
             Stock: 200,
             BrandName: "Fabrikam",
-            CategoryName: "Accessories"),
+            CategoryName: "Accessories",
+            ImageFileName: "mouse.jpg"),
     ];
 }

@@ -31,7 +31,9 @@
                         {
                             <ChatBubble IsFromShopper="@message.IsFromShopper"
                                         Text="@message.Text"
-                                        IsLookingUp="@message.IsLookingUp" />
+                                        IsLookingUp="@message.IsLookingUp"
+                                        Products="@message.Products"
+                                        OnAddToBasket="AddToBasketAsync" />
                         }
 
                         @if (_problem is not null)

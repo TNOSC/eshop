@@ -37,4 +37,12 @@ public interface IShoppingAssistantService
         ShoppingAssistantViewModel viewModel,
         Func<Task> onUpdatedAsync,
         CancellationToken cancellationToken);
+
+    /// <summary>Adds one unit of a product the assistant showed as a card to the shopper's basket.</summary>
+    /// <param name="productId">The product to add, as shown on the card.</param>
+    /// <param name="cancellationToken">The token observed while the call is in flight.</param>
+    /// <returns>
+    /// A successful result carrying the basket's new item count, or a failure carrying the problem.
+    /// </returns>
+    Task<ClientResult<int>> AddToBasketAsync(Guid productId, CancellationToken cancellationToken);
 }

@@ -76,6 +76,16 @@ public sealed class Product : AggregateRoot<ProductId>
     public bool IsDiscontinued { get; private set; }
 
     /// <summary>
+    /// The maximum number of characters an image URL may contain.
+    /// </summary>
+    public const int ImageUrlMaxLength = 2048;
+
+    /// <summary>
+    /// Gets the URL of the product's image, or <see langword="null"/> when none has been uploaded.
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
     /// Creates a product and raises <see cref="ProductCreatedDomainEvent"/>.
     /// </summary>
     /// <remarks>
@@ -215,6 +225,44 @@ public sealed class Product : AggregateRoot<ProductId>
         }
 
         IsDiscontinued = true;
+        IncrementVersion();
+
+        return Result.Success();
+    }
+
+
+    /// <summary>
+    /// Sets the product's image URL, replacing any previous one.
+    /// </summary>
+    /// <param name="imageUrl">The uploaded image's URL.</param>
+    /// <returns>Success, or a <c>Product.ImageUrlRequired</c> / <c>Product.ImageUrlTooLong</c> validation error.</returns>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string throughout this codebase, like every other DTO field — never System.Uri.
+    public Result SetImage(string imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(value: imageUrl))
+        {
+            return ProductErrors.ImageUrlRequired;
+        }
+
+        if (imageUrl.Length > ImageUrlMaxLength)
+        {
+            return ProductErrors.ImageUrlTooLong;
+        }
+
+        ImageUrl = imageUrl;
+        IncrementVersion();
+
+        return Result.Success();
+    }
+#pragma warning restore CA1054
+
+    /// <summary>
+    /// Clears the product's image URL.
+    /// </summary>
+    /// <returns>Always succeeds.</returns>
+    public Result ClearImage()
+    {
+        ImageUrl = null;
         IncrementVersion();
 
         return Result.Success();

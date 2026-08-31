@@ -9,6 +9,7 @@ using System;
 namespace Tnosc.EShop.Client.Web.Contracts.Catalog;
 
 /// <summary>The full detail of a single product.</summary>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other field here, never System.Uri.
 public sealed record Product(
     Guid Id,
     string Sku,
@@ -20,4 +21,6 @@ public sealed record Product(
     Guid BrandId,
     string BrandName,
     Guid CategoryId,
-    bool IsDiscontinued);
+    bool IsDiscontinued,
+    string? ImageUrl);
+#pragma warning restore CA1054

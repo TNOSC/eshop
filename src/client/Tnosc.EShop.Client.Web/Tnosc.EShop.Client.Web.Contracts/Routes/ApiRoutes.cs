@@ -53,6 +53,11 @@ public static class ApiRoutes
         public static string ProductStock(Guid id) =>
             string.Create(provider: CultureInfo.InvariantCulture, handler: $"{Products}/{id}/stock");
 
+        /// <summary>Builds the route for a product's image.</summary>
+        /// <param name="id">The product id.</param>
+        public static string ProductImage(Guid id) =>
+            string.Create(provider: CultureInfo.InvariantCulture, handler: $"{Products}/{id}/image");
+
         /// <summary>Builds the products route with a search query string appended.</summary>
         /// <param name="query">The search parameters.</param>
         public static string SearchProducts(SearchProductsQuery query)

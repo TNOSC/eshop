@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Keycloak.Authentication" />
     <PackageReference Include="Aspire.StackExchange.Redis" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" />
     <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

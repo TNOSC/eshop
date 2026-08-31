@@ -19,6 +19,7 @@ namespace Tnosc.EShop.Server.Application.Catalog.Queries.SearchProducts;
 /// <param name="StockQuantity">The number of units currently on hand.</param>
 /// <param name="BrandName">The name of the product's brand.</param>
 /// <param name="CategoryName">The name of the product's category.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other field here, never System.Uri.
 public sealed record ProductSummaryDto(
     Guid Id,
     string Sku,
@@ -27,4 +28,6 @@ public sealed record ProductSummaryDto(
     string PriceCurrency,
     int StockQuantity,
     string BrandName,
-    string CategoryName);
+    string CategoryName,
+    string? ImageUrl);
+#pragma warning restore CA1054

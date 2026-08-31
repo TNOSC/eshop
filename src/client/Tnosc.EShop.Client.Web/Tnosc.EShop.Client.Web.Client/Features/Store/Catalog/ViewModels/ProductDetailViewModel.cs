@@ -38,4 +38,7 @@ public sealed class ProductDetailViewModel
 
     /// <summary>Gets or sets the product's brand name.</summary>
     public string BrandName { get; init; } = string.Empty;
+
+    /// <summary>Gets or sets the URL of the product's image, or <see langword="null"/> when none has been uploaded.</summary>
+    public string? ImageUrl { get; init; }
 }
