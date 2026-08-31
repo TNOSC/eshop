@@ -5,6 +5,8 @@
 # tools instead (symbolic navigation + edits over the C# Roslyn LSP). Everything else (docs, json,
 # markdown, scripts, .csproj, .editorconfig, ...) is left to the native tools untouched.
 #
+# Allows Serena MCP tools (serena-*) to proceed for .cs file editing.
+#
 # Reads the preToolUse event JSON on stdin; on a match, prints a FLAT deny decision as JSON on stdout
 # and exits 0. Copilot reads permissionDecision from the top level of stdout -- unlike Claude Code,
 # there is no hookSpecificOutput wrapper.
@@ -15,6 +17,19 @@
 
 payload=$(cat)
 [ -z "$payload" ] && exit 0
+
+# Extract toolName first to check if it's a Serena tool
+tool_name=$(printf '%s' "$payload" \
+  | tr ',' '\n' \
+  | grep -oE '"toolName"[[:space:]]*:[[:space:]]*"[^"]*"' \
+  | head -1 \
+  | sed 's/.*:[[:space:]]*"//; s/"$//')
+[ -z "$tool_name" ] && tool_name="write"
+
+# Allow Serena MCP tools (serena-*) to proceed -- only block native tools on .cs files
+if [[ "$tool_name" == serena-* ]]; then
+  exit 0
+fi
 
 # Extract toolArgs.path without requiring jq. Copilot's file tools take `path`; Claude Code's took
 # `tool_input.file_path`.
@@ -35,13 +50,6 @@ case "$file_path" in
   *.cs) ;;
   *) exit 0 ;;
 esac
-
-tool_name=$(printf '%s' "$payload" \
-  | tr ',' '\n' \
-  | grep -oE '"toolName"[[:space:]]*:[[:space:]]*"[^"]*"' \
-  | head -1 \
-  | sed 's/.*:[[:space:]]*"//; s/"$//')
-[ -z "$tool_name" ] && tool_name="write"
 
 reason="Native '${tool_name}' on .cs files is disabled in this project -- use the Serena MCP tools instead.\n- Overview / navigate: serena(get_symbols_overview), serena(find_symbol), serena(find_referencing_symbols).\n- Edit an existing symbol: serena(replace_symbol_body), serena(insert_after_symbol), serena(insert_before_symbol).\n- Small in-symbol edits: serena(replace_content).\n- Brand-new file Serena has never read: serena(replace_content) in create mode, or ask the user to approve a one-off native write.\nRe-do this change through the appropriate Serena tool."
 
