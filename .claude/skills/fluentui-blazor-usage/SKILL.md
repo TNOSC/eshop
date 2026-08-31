@@ -1,5 +1,5 @@
 ---
-name: Fluent UI Blazor v5 — Usage Guide
+name: fluentui-blazor-usage
 description: >
   Provides accurate coding patterns for building Blazor applications with the
   Microsoft.FluentUI.AspNetCore.Components v5 NuGet package. Covers service

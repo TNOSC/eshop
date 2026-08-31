@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "shell(dotnet build:*)",
+      "shell(dotnet test:*)",
+      "shell(dotnet format:*)",
+      "shell(dotnet ef migrations list:*)",
+      "shell(git status)",
+      "shell(git diff:*)",
+      "shell(git log:*)",
+      "serena"
+    ],
+    "deny": [
+      "shell(git push:*)",
+      "write(.env)",
+      "write(.env.local)"
+    ]
+  },
+  "deniedPaths": [
+    "**/.env",
+    "**/.env.local",
+    "**/*.pfx"
+  ]
+}

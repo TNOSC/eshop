@@ -1,11 +1,13 @@
 {
   "mcpServers": {
     "aspire": {
+      "type": "stdio",
       "command": "aspire",
       "args": [
         "agent",
         "mcp"
-      ]
+      ],
+      "env": {}
     },
     "serena": {
       "type": "stdio",
@@ -21,6 +23,12 @@
         "ide-assistant",
         "--project-from-cwd"
       ],
+      "env": {}
+    },
+    "fluent-ui-blazor": {
+      "type": "stdio",
+      "command": "fluentui-mcp",
+      "args": [],
       "env": {}
     }
   }

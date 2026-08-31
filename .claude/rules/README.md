@@ -7,6 +7,14 @@ be quotable from a skill, command or review.
 answer *how to decide* in one narrow area, and are read when the topic comes up — a skill or command
 links to the relevant one rather than restating it.
 
+## These files are redirects
+
+The bodies of the ten rules below now live in
+[`.github/instructions/`](../../.github/instructions) as `*.instructions.md` files carrying an
+`applyTo` glob, so GitHub Copilot loads the right one automatically when it touches a matching file.
+Each `.claude/rules/*.md` here is a one-paragraph stub pointing at its counterpart. **Edit the
+instructions file, not the stub** — the table below is a map, not a second copy.
+
 | Rule | Covers |
 |---|---|
 | [`cache-tags.md`](cache-tags.md) | `[CacheTag]` values are constants in `Server.Shared`, never literals — and the silent failure that follows if they aren't |
@@ -26,5 +34,7 @@ Write one when a decision keeps needing the same explanation, and it is either t
 `CLAUDE.md` bullet or spans several projects. Keep the shape consistent: **the rule**, **why** (the
 concrete failure it prevents), **how**, and a short checklist.
 
-If a rule only ever applies inside one project, prefer that project's `CLAUDE.md`. If it is a
+Write the body in `.github/instructions/<name>.instructions.md` with an `applyTo` glob, and leave a
+stub here. If a rule only ever applies inside one project, prefer that project's `CLAUDE.md` and its
+`.github/instructions/` twin. If it is a
 workflow with steps rather than a policy, it is a command or a skill instead.

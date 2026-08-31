@@ -1,7 +1,7 @@
 ---
 name: ca-review
 description: Review pending changes against Tnosc.EShop's Clean Architecture conventions — layer boundaries, rich-domain rules, no business branching, Result handling, CQRS split, decorators, outbox, and test coverage. Use when the user asks to review changes, check conventions, or audit a feature before committing.
-argument-hint: [optional: files or feature to review; defaults to the working-tree diff]
+argument-hint: "[optional: files or feature to review; defaults to the working-tree diff]"
 ---
 
 # Convention Review

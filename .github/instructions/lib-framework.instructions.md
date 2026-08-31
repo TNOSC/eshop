@@ -1,0 +1,82 @@
+---
+description: "The reusable framework projects: what belongs in lib/ versus src/, and the XML-doc contract"
+applyTo: "lib/**"
+---
+
+# lib/ — the reusable framework
+
+Projects with **no eShop knowledge**. Anything context-specific belongs in `src/server/` or
+`src/agent/`.
+
+```
+Tnosc.Lib.Shared                      Result/Error/ErrorType/IResult — depended on by every other
+                                      layer, so it carries no dependency of its own
+Tnosc.Lib.Domain                      Entity, AggregateRoot, IEntityId/GuidEntityId, ValueObject,
+                                      IRepository, IDomainEvent
+Tnosc.Lib.Application                 ICommand(Handler), IQuery(Handler), IValidator, IUnitOfWork,
+                                      decorators, attributes, exceptions, PagedResult
+Tnosc.Lib.Api                         IApiEndpoint, CustomResults, Result → HTTP extensions
+Tnosc.Lib.Infrastructure.Persistence  Read/Write DbContext bases, UnitOfWork, RepositoryBase,
+                                      outbox, EF conventions, migration hosted service
+Tnosc.Lib.Host                        HttpUserContext, GlobalExceptionHandler, RequestContextMiddleware
+Tnosc.Lib.Agent                       AgentDefinition + its value objects, AgentResult, AgentErrors,
+                                      IAgentDefinitionProvider
+Tnosc.Lib.Agent.Runtime               IAgentRunner, IAgentFactory, IAgentToolProvider
+```
+
+## The agent split is two projects on purpose
+
+`Tnosc.Lib.Agent` takes **no `PackageReference` at all** — not even an abstractions package. That is
+what lets a domain project reference it and still assert that it names no AI framework, which is
+what keeps agent definitions testable with nothing loaded. Anything that mentions an Agent Framework
+or `Microsoft.Extensions.AI` type belongs in `Tnosc.Lib.Agent.Runtime` instead.
+
+`AgentLayerDependencyTests` enforces both halves. If something in `Tnosc.Lib.Agent` seems to need a
+package, it is in the wrong project.
+
+`Tnosc.Lib.Domain` project-references `Tnosc.Lib.Shared` so every consumer of Domain gets `Result` /
+`Error` transitively — no other project needs its own direct reference to `Tnosc.Lib.Shared`.
+
+## XML documentation is mandatory here
+
+Every project here sets `GenerateDocumentationFile=true`, and warnings are errors ⇒ **`CS1591` fails
+the build**. Every public type and member needs `<summary>`, plus `<param>`, `<returns>`,
+`<typeparam>` and `<exception>` where they apply. Use `<inheritdoc />` on interface implementations.
+Document *why*, not just *what* — the existing files explain the reasoning behind a design, and that
+is the house style.
+
+## Rules
+
+- Public API changes here ripple across every bounded context. Prefer additive changes; if you must
+  change a signature, update all call sites in the same commit and keep the build clean.
+- **`IRepository<TAggregateRoot, TEntityId>` lives in `Lib.Domain`, `IUnitOfWork` in
+  `Lib.Application`.** That split is deliberate: enforcing a uniqueness invariant is a domain
+  concern (a domain factory must be able to query), while committing a transaction is orchestration.
+- Async members return `ValueTask` / `ValueTask<T>`, with `CancellationToken cancellationToken = default` last.
+- Decorators are nested types (`LoggingDecorator.CommandHandler<,>`, `.CommandBaseHandler<>`,
+  `.QueryHandler<,>`) — `CA1034` is suppressed for exactly this. Every nested handler must implement
+  `IHandlerDecorator`, checked by `FrameworkInvariantTests`.
+- Handler attributes are read through `HandlerMetadata`, which unwraps the decorator chain. Do not
+  read `innerHandler.GetType()` directly — in a real chain only the innermost decorator would see the
+  handler and every attribute would silently become a no-op.
+- `Result` implements the domain `IResult`; `Error` carries an `ErrorType` and, for
+  `ErrorType.Custom`, a `NumericType` that `CustomResults` must honour.
+- The outbox is the framework's correctness centrepiece: events serialize through their **concrete**
+  type (never the static `IDomainEvent`, which would flatten the payload), each type is resolved by
+  its `[DomainEventName]` via `DomainEventTypeRegistry`, and claiming uses `FOR UPDATE SKIP LOCKED`.
+- **Handlers of one event are isolated.** `DomainEventsPublisher` catches per handler and returns a
+  `DomainEventDeliveryReport`, so one throwing subscriber never stops the others. A message that runs
+  out of attempts is **moved** to `outbox.dead_letters` — one row per (event, handler), the outbox row
+  deleted in the same transaction — and `IDeadLetterQueue` lists, replays (that handler alone) or
+  discards it. Anything memoised per handler must key on `HandlerChain.Unwrap(...)`, never on the
+  decorator's closed type, which siblings of one event share.
+- The inbox closes the outbox's at-least-once window: `IdempotencyDecorator` claims the key —
+  `Idempotency-Key` for a command, `IDomainEvent.Id` for an event — **in the handler's own
+  transaction**, so a key is never burned without its effect. It is registered innermost for that
+  reason. Two things it depends on: the write context must not use a retrying execution strategy (EF
+  refuses user-initiated transactions under one), and any scope a handler runs in must be created
+  with `CreateAsyncScope()` because `IUnitOfWork` is `IAsyncDisposable`-only. See
+  `idempotency.instructions.md`.
+- `ReadDbContextBase` seals its `SaveChanges`/`SaveChangesAsync` overrides to throw — keep it that way.
+- Framework behaviour is covered by `Tests.Unit/Lib*` and `Tests.Integration`; changes here need
+  tests in both where they touch persistence.

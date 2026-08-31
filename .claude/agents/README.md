@@ -31,3 +31,14 @@ narrowly, which is exactly what a separate context is good at.
 - **Require honest reporting.** Every agent here ends with an instruction to state what it could not
   verify. A subagent's report is the only thing that surfaces, so an over-confident one is worse than
   a partial one.
+
+## The Copilot twins
+
+Each agent here has a counterpart at `.github/agents/<name>.agent.md` for GitHub Copilot. The bodies
+are the same prose; the frontmatter differs, and so do the **tool names** — Copilot's built-ins are
+`view`, `grep`, `glob`, `bash`, `powershell`, `write`, `create`, `edit`/`str_replace`, `lsp`, `task`
+and `fetch`, not Claude Code's `Read`/`Write`/`Edit`/`Grep`/`Glob`/`Bash`.
+
+That matters most for `arch-auditor`: its read-only guarantee comes from the tools it is *not* given,
+so a careless port that lists `write` throws the guarantee away without failing anything. **Change
+one, change both.**

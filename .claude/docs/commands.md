@@ -28,3 +28,18 @@ Keep the shape: frontmatter, a one-line statement of intent, numbered **Steps**,
 section saying what to output. Link to a `.claude/rules/*.md` rather than restating policy. Be
 explicit about what the command must *not* do — `/verify` not fixing, `/migration` not skipping the
 review step — since that is where a helpful agent tends to overstep.
+
+## Also available to GitHub Copilot
+
+These three workflows are mirrored for Copilot in two places, because Copilot splits the job across
+two surfaces:
+
+- **`.github/skills/<name>/SKILL.md`** — the Copilot CLI's equivalent of a command. This is where the
+  body lives; the CLI discovers it automatically.
+- **`.github/prompts/<name>.prompt.md`** — VS Code Copilot Chat, invoked as `/verify` etc. A thin
+  wrapper that points at the skill file.
+
+So a change to one of these workflows means editing `.claude/commands/<name>.md` **and**
+`.github/skills/<name>/SKILL.md`. This file is named `about-commands.md` rather than `README.md`
+on purpose: Copilot's skill loader treats a `README.md` in a scanned directory as a skill manifest,
+and `.claude/commands/` was being registered as a bogus skill named `README`.
