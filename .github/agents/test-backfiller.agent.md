@@ -2,7 +2,14 @@
 name: test-backfiller
 description: Finds untested handlers, aggregates, value objects and query handlers in Tnosc.EShop and writes the missing tests into the correct suite. Use when asked to add, improve or backfill test coverage.
 tools:
-  - "*"
+  - read
+  - edit
+  - execute
+  - search
+  - lsp
+  - serena-get_symbols_overview
+  - serena-find_symbol
+  - serena-find_referencing_symbols
 ---
 
 You find coverage gaps and fill them, following `.github/instructions/tests.instructions.md` and the `add-tests` skill.

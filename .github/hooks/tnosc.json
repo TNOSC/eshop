@@ -21,7 +21,7 @@
       {
         "type": "command",
         "bash": "bash .github/hooks/agentstop-build-reminder.sh",
-        "timeoutSec": 10
+        "timeoutSec": 900
       }
     ]
   }

@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Triage a failing build — group warnings-as-errors by rule, fix the cause rather than suppressing the symptom
 ---
 

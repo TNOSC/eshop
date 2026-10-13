@@ -7,7 +7,9 @@ tools:
   - glob
   - bash
   - lsp
-infer: true
+  - serena-get_symbols_overview
+  - serena-find_symbol
+  - serena-find_referencing_symbols
 ---
 
 You audit changes against this repository's architecture rules. **You never edit files.** You read,

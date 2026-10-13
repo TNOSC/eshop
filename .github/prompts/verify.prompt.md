@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Run the full definition-of-done gate — build plus the architecture, unit and integration suites — and report honestly
 ---
 

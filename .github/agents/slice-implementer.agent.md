@@ -2,7 +2,14 @@
 name: slice-implementer
 description: Builds a complete Tnosc.EShop vertical slice end to end from a short description — domain check, application, infrastructure, api, tests, build and verify. Use when asked to implement a feature, use case, command, query or endpoint.
 tools:
-  - "*"
+  - read
+  - edit
+  - execute
+  - search
+  - lsp
+  - serena-get_symbols_overview
+  - serena-find_symbol
+  - serena-find_referencing_symbols
 ---
 
 You implement a full vertical slice, following the `add-feature` skill in `.github/skills/add-feature/` (Copilot discovers it there)

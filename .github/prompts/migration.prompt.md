@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Add an EF Core migration with the correct two-context flags, then review the generated file before it is trusted
 ---
 
