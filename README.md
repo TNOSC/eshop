@@ -307,9 +307,10 @@ flowchart LR
 5. **Tests** - a unit test per domain rule and per handler, an integration test per query handler
    against real Postgres, and an architecture test if the slice introduced a new rule.
 
-Each layer has scoped guidance in [`.github/instructions/`](./.github/instructions), alongside the
-policies that span layers: cache tags, idempotency, domain events, migrations, configuration options,
-authorization, analyzer suppressions, dependencies, and code style.
+Each layer has its own scoped instructions for the rules of that project area, and
+[`.github/instructions/`](./.github/instructions) also holds the policies that span layers: cache
+tags, idempotency, domain events, migrations, configuration options, authorization, analyzer
+suppressions, dependencies, and code style.
 
 Catalog is the reference implementation. Copy its slice layout.
 
@@ -436,12 +437,11 @@ source file in this repository.
 
 ## Contributing
 
-This repo enforces its architecture with tests, not code review, so start with the rules for the tree
-you're editing:
+This repo enforces its architecture with tests, not code review, so start with the rules rather than
+the code:
 
 - [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) for the repository overview and
-  [`.github/instructions/`](./.github/instructions) for scoped project instructions and cross-cutting
-  policies.
+  its scoped project instructions in [`.github/instructions/`](./.github/instructions).
 - [`.github/skills/`](./.github/skills) for repeatable workflows and [`.github/agents/`](./.github/agents)
   for delegated reviews and implementation tasks.
 - [`docs/decisions/`](./docs/decisions) for the reasoning behind decisions already made, before
@@ -450,8 +450,8 @@ you're editing:
 A change is done when `dotnet build Tnosc.EShop.slnx` is clean, the new unit and integration tests
 are green, and the architecture suite still passes.
 
-This repo also uses the **GitHub Copilot harness** for day-to-day development: scoped instructions
-and [`.github/instructions/`](./.github/instructions) capture the rules for each project area, while
-[`.github/agents/`](./.github/agents) and [`.github/skills/`](./.github/skills) encode repeatable
-review, implementation and testing workflows rather than ad hoc prompts. Contributions using Copilot
-should follow those instructions and workflows.
+This repo also uses the **GitHub Copilot harness** for day-to-day development: the repository
+instructions and scoped guidance in [`.github/instructions/`](./.github/instructions) define the
+conventions to follow, while [`.github/agents/`](./.github/agents) and
+[`.github/skills/`](./.github/skills) encode repeatable review, implementation and testing workflows.
+Contributions using Copilot should follow those instructions and workflows rather than ad hoc prompts.
