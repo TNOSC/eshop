@@ -19,7 +19,11 @@ namespace Tnosc.Lib.Infrastructure.Persistence.Publishers;
 /// to the failure. Returning the failures also lets the caller record <b>which</b> handler broke,
 /// which is what makes a per-handler dead-letter queue possible at all.
 /// </remarks>
-public sealed class DomainEventDeliveryReport
+/// <remarks>
+/// Initializes a new instance of the <see cref="DomainEventDeliveryReport"/> class.
+/// </remarks>
+/// <param name="failures">The handlers that threw, in the order they were attempted.</param>
+public sealed class DomainEventDeliveryReport(IReadOnlyList<DomainEventHandlerFailure> failures)
 {
     /// <summary>
     /// A report for a batch in which every handler succeeded.
@@ -27,16 +31,9 @@ public sealed class DomainEventDeliveryReport
     public static readonly DomainEventDeliveryReport Success = new(failures: []);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DomainEventDeliveryReport"/> class.
-    /// </summary>
-    /// <param name="failures">The handlers that threw, in the order they were attempted.</param>
-    public DomainEventDeliveryReport(IReadOnlyList<DomainEventHandlerFailure> failures) =>
-        Failures = failures;
-
-    /// <summary>
     /// Gets the handlers that threw, in the order they were attempted. Empty when delivery was clean.
     /// </summary>
-    public IReadOnlyList<DomainEventHandlerFailure> Failures { get; }
+    public IReadOnlyList<DomainEventHandlerFailure> Failures { get; } = failures;
 
     /// <summary>
     /// Gets a value indicating whether any handler failed.

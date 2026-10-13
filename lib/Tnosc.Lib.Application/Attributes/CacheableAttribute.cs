@@ -11,17 +11,15 @@ namespace Tnosc.Lib.Application.Attributes;
 /// <summary>
 /// Caches the result of a message handler or component for a duration.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="CacheableAttribute"/> class.
+/// </remarks>
+/// <param name="durationSeconds">Cache duration in seconds. Default is 60.</param>
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class CacheableAttribute : Attribute
+public sealed class CacheableAttribute(int durationSeconds = 60) : Attribute
 {
     /// <summary>
     /// Gets the cache duration in seconds.
     /// </summary>
-    public int DurationSeconds { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CacheableAttribute"/> class.
-    /// </summary>
-    /// <param name="durationSeconds">Cache duration in seconds. Default is 60.</param>
-    public CacheableAttribute(int durationSeconds = 60) => DurationSeconds = durationSeconds;
+    public int DurationSeconds { get; } = durationSeconds;
 }

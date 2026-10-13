@@ -12,40 +12,33 @@ namespace Tnosc.Lib.Infrastructure.Persistence.Outbox;
 /// <summary>
 /// Represents the outbox message.
 /// </summary>
-public sealed class OutboxMessage
+/// <remarks>
+/// Initializes a new instance of the <see cref="OutboxMessage"/> class.
+/// </remarks>
+/// <param name="type">The type.</param>
+/// <param name="content">The content.</param>
+public sealed class OutboxMessage(string type, string content)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OutboxMessage"/> class.
-    /// </summary>
-    /// <param name="type">The type.</param>
-    /// <param name="content">The content.</param>
-    public OutboxMessage(string type, string content)
-    {
-        Id = Guid.NewGuid();
-        OccurredOnUtc = DateTime.UtcNow;
-        Content = content;
-        Type = type;
-    }
 
     /// <summary>
     /// Gets the identifier.
     /// </summary>
-    public Guid Id { get; private set; }
+    public Guid Id { get; private set; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets the occurred on date and time.
     /// </summary>
-    public DateTime OccurredOnUtc { get; private set; }
+    public DateTime OccurredOnUtc { get; private set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets the type.
     /// </summary>
-    public string Type { get; private set; }
+    public string Type { get; private set; } = type;
 
     /// <summary>
     /// Gets the content.
     /// </summary>
-    public string Content { get; private set; }
+    public string Content { get; private set; } = content;
 
     /// <summary>
     /// Gets the processed on date and time, if it exists.

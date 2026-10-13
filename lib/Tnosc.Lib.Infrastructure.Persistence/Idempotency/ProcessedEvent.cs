@@ -19,39 +19,33 @@ namespace Tnosc.Lib.Infrastructure.Persistence.Idempotency;
 /// Rows are written by <see cref="InboxStore{TContext}"/> through raw, conflict-tolerant SQL, for
 /// the same reason as <see cref="IdempotencyRequest"/>.
 /// </remarks>
-public sealed class ProcessedEvent
+/// <remarks>
+/// Initializes a new instance of the <see cref="ProcessedEvent"/> class.
+/// </remarks>
+/// <remarks>
+/// EF Core materializes rows through this constructor by matching parameter names to properties.
+/// Production code never calls it — claims are written as raw SQL — but a test that needs a row
+/// in a specific state can.
+/// </remarks>
+/// <param name="eventId">The identifier of the domain event that was processed.</param>
+/// <param name="handler">The full type name of the handler that processed it.</param>
+/// <param name="processedOnUtc">The UTC date and time at which the claim was made.</param>
+public sealed class ProcessedEvent(Guid eventId, string handler, DateTime processedOnUtc)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProcessedEvent"/> class.
-    /// </summary>
-    /// <remarks>
-    /// EF Core materializes rows through this constructor by matching parameter names to properties.
-    /// Production code never calls it — claims are written as raw SQL — but a test that needs a row
-    /// in a specific state can.
-    /// </remarks>
-    /// <param name="eventId">The identifier of the domain event that was processed.</param>
-    /// <param name="handler">The full type name of the handler that processed it.</param>
-    /// <param name="processedOnUtc">The UTC date and time at which the claim was made.</param>
-    public ProcessedEvent(Guid eventId, string handler, DateTime processedOnUtc)
-    {
-        EventId = eventId;
-        Handler = handler;
-        ProcessedOnUtc = processedOnUtc;
-    }
 
     /// <summary>
     /// Gets the identifier of the domain event that was processed.
     /// </summary>
-    public Guid EventId { get; }
+    public Guid EventId { get; } = eventId;
 
     /// <summary>
     /// Gets the full type name of the handler that processed it, so each handler gets its own
     /// at-most-once guarantee for the same event.
     /// </summary>
-    public string Handler { get; }
+    public string Handler { get; } = handler;
 
     /// <summary>
     /// Gets the UTC date and time at which the claim was made.
     /// </summary>
-    public DateTime ProcessedOnUtc { get; }
+    public DateTime ProcessedOnUtc { get; } = processedOnUtc;
 }

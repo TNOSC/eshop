@@ -26,36 +26,28 @@ namespace Tnosc.Lib.Infrastructure.Persistence;
 /// Provides a unit-of-work wrapper around a DbContext to manage transactions and save operations.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type.</typeparam>
-public sealed class UnitOfWork<TContext> : IUnitOfWork, IAsyncDisposable
+/// <remarks>
+/// Initializes a new instance of the <see cref="UnitOfWork{TContext}"/> class.
+/// </remarks>
+/// <param name="context">The <typeparamref name="TContext"/> <see cref="DbContext"/> instance to wrap.</param>
+/// <param name="userContext">Provides information about the current caller.</param>
+/// <param name="domainEventTypeRegistry">Resolves the durable contract name for a domain event type.</param>
+/// <param name="timeProvider">Supplies the current UTC time for audit stamping.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown if any of the required parameters is <c>null</c>.
+/// </exception>
+public sealed class UnitOfWork<TContext>(
+    TContext context,
+    IUserContext userContext,
+    IDomainEventTypeRegistry domainEventTypeRegistry,
+    TimeProvider timeProvider) : IUnitOfWork, IAsyncDisposable
     where TContext : DbContext
 {
-    private readonly TContext _context;
-    private readonly IUserContext _userContext;
-    private readonly IDomainEventTypeRegistry _domainEventTypeRegistry;
-    private readonly TimeProvider _timeProvider;
+    private readonly TContext _context = context ?? throw new ArgumentNullException(paramName: nameof(context));
+    private readonly IUserContext _userContext = userContext ?? throw new ArgumentNullException(paramName: nameof(userContext));
+    private readonly IDomainEventTypeRegistry _domainEventTypeRegistry = domainEventTypeRegistry ?? throw new ArgumentNullException(paramName: nameof(domainEventTypeRegistry));
+    private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(paramName: nameof(timeProvider));
     private IDbContextTransaction? _currentTransaction;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UnitOfWork{TContext}"/> class.
-    /// </summary>
-    /// <param name="context">The <typeparamref name="TContext"/> <see cref="DbContext"/> instance to wrap.</param>
-    /// <param name="userContext">Provides information about the current caller.</param>
-    /// <param name="domainEventTypeRegistry">Resolves the durable contract name for a domain event type.</param>
-    /// <param name="timeProvider">Supplies the current UTC time for audit stamping.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown if any of the required parameters is <c>null</c>.
-    /// </exception>
-    public UnitOfWork(
-        TContext context,
-        IUserContext userContext,
-        IDomainEventTypeRegistry domainEventTypeRegistry,
-        TimeProvider timeProvider)
-    {
-        _context = context ?? throw new ArgumentNullException(paramName: nameof(context));
-        _userContext = userContext ?? throw new ArgumentNullException(paramName: nameof(userContext));
-        _domainEventTypeRegistry = domainEventTypeRegistry ?? throw new ArgumentNullException(paramName: nameof(domainEventTypeRegistry));
-        _timeProvider = timeProvider ?? throw new ArgumentNullException(paramName: nameof(timeProvider));
-    }
 
     /// <inheritdoc />
     public bool HasActiveTransaction => _currentTransaction is not null;

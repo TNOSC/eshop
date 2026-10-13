@@ -29,8 +29,12 @@ namespace Tnosc.Lib.Application.Attributes;
 /// attempt already committed. Pair the two when the handler writes anything.
 /// </para>
 /// </remarks>
+/// <remarks>
+/// Initializes a new instance of the <see cref="RetryAttribute"/> class.
+/// </remarks>
+/// <param name="maxRetries">Maximum total attempts, first one included. Default is 3.</param>
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class RetryAttribute : Attribute
+public sealed class RetryAttribute(int maxRetries = 3) : Attribute
 {
     /// <summary>
     /// Gets the maximum number of attempts — <b>total</b>, not additional ones.
@@ -40,11 +44,5 @@ public sealed class RetryAttribute : Attribute
     /// retries. The name predates a second consumer and is kept rather than renamed, since the value
     /// is compared as <c>attempt &lt; maxAttempts</c> in every decorator that reads it.
     /// </remarks>
-    public int MaxRetries { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RetryAttribute"/> class.
-    /// </summary>
-    /// <param name="maxRetries">Maximum total attempts, first one included. Default is 3.</param>
-    public RetryAttribute(int maxRetries = 3) => MaxRetries = maxRetries;
+    public int MaxRetries { get; } = maxRetries;
 }

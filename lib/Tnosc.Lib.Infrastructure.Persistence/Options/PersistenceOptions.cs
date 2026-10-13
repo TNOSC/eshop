@@ -15,43 +15,37 @@ namespace Tnosc.Lib.Infrastructure.Persistence.Options;
 /// <summary>
 /// Configures <see cref="PersistenceExtensions.AddPersistence{TWriteContext, TReadContext}"/>.
 /// </summary>
-public sealed class PersistenceOptions
+/// <remarks>
+/// Initializes a new instance of the <see cref="PersistenceOptions"/> class with placeholder
+/// values for its required members.
+/// </remarks>
+/// <remarks>
+/// This constructor exists only so <c>AddPersistence</c> can create an instance to hand to the
+/// caller-supplied configuration delegate. <see cref="ConnectionName"/>, <see cref="ConfigurationAssembly"/>,
+/// and <see cref="DomainEventAssemblies"/> are still required in practice — <c>AddPersistence</c>
+/// validates that the delegate replaced them before use.
+/// </remarks>
+[method: SetsRequiredMembers]
+public sealed class PersistenceOptions()
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PersistenceOptions"/> class with placeholder
-    /// values for its required members.
-    /// </summary>
-    /// <remarks>
-    /// This constructor exists only so <c>AddPersistence</c> can create an instance to hand to the
-    /// caller-supplied configuration delegate. <see cref="ConnectionName"/>, <see cref="ConfigurationAssembly"/>,
-    /// and <see cref="DomainEventAssemblies"/> are still required in practice — <c>AddPersistence</c>
-    /// validates that the delegate replaced them before use.
-    /// </remarks>
-    [SetsRequiredMembers]
-    public PersistenceOptions()
-    {
-        ConnectionName = string.Empty;
-        ConfigurationAssembly = typeof(PersistenceOptions).Assembly;
-        DomainEventAssemblies = [];
-    }
 
     /// <summary>
     /// Gets or sets the Aspire connection resource name used to resolve the Postgres connection string
     /// (for example, <c>"eshopdb"</c>).
     /// </summary>
-    public required string ConnectionName { get; set; }
+    public required string ConnectionName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the assembly scanned for <c>IEntityTypeConfiguration&lt;T&gt;</c> classes on both the
     /// write and read models.
     /// </summary>
-    public required Assembly ConfigurationAssembly { get; set; }
+    public required Assembly ConfigurationAssembly { get; set; } = typeof(PersistenceOptions).Assembly;
 
     /// <summary>
     /// Gets or sets the assemblies scanned for concrete domain event types, used to build the
     /// <see cref="IDomainEventTypeRegistry"/>.
     /// </summary>
-    public required Assembly[] DomainEventAssemblies { get; set; }
+    public required Assembly[] DomainEventAssemblies { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the assembly containing EF Core migrations, if different from <see cref="ConfigurationAssembly"/>.
