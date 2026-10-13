@@ -1,19 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "shell(dotnet build:*)",
-      "shell(dotnet test:*)",
-      "shell(dotnet format:*)",
-      "shell(dotnet ef migrations list:*)",
-      "shell(git status)",
-      "shell(git diff:*)",
-      "shell(git log:*)",
+      "Shell(dotnet build:*)",
+      "Shell(dotnet test:*)",
+      "Shell(dotnet format:*)",
+      "Shell(dotnet ef migrations list:*)",
+      "Shell(git status)",
+      "Shell(git diff:*)",
+      "Shell(git log:*)",
       "serena"
     ],
     "deny": [
-      "shell(git push:*)",
-      "write(.env)",
-      "write(.env.local)"
+      "Shell(git push:*)",
+      "Write(.env)",
+      "Write(.env.local)"
     ]
   },
   "deniedPaths": [
