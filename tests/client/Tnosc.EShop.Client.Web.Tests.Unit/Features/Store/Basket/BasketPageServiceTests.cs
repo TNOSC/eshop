@@ -36,7 +36,8 @@ public sealed class BasketPageServiceTests
             ProductName: "Widget",
             UnitPriceAmount: 5m,
             UnitPriceCurrency: "USD",
-            Quantity: 2);
+            Quantity: 2,
+            ImageUrl: "images/products/product.webp");
         var basket = new BasketDto(BasketId: Guid.CreateVersion7(), CustomerId: Guid.CreateVersion7(), Items: [item], TotalAmount: 10m, TotalCurrency: "USD");
         _basketApi.GetBasketAsync(cancellationToken: Arg.Any<CancellationToken>())
             .Returns(returnThis: Task.FromResult(ClientResult<BasketDto>.Success(value: basket)));
@@ -52,6 +53,7 @@ public sealed class BasketPageServiceTests
         mappedItem.ItemId.ShouldBe(expected: item.ItemId);
         mappedItem.Sku.ShouldBe(expected: item.Sku);
         mappedItem.ProductName.ShouldBe(expected: item.ProductName);
+        mappedItem.ImageUrl.ShouldBe(expected: item.ImageUrl);
         mappedItem.UnitPriceAmount.ShouldBe(expected: item.UnitPriceAmount);
         mappedItem.UnitPriceCurrency.ShouldBe(expected: item.UnitPriceCurrency);
         mappedItem.Quantity.ShouldBe(expected: item.Quantity);

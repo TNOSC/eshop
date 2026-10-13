@@ -32,7 +32,8 @@ internal static class BasketDocumentMapper
                 ProductName: item.ProductName,
                 UnitPriceAmount: item.UnitPrice.Amount,
                 UnitPriceCurrency: item.UnitPrice.Currency,
-                Quantity: item.Quantity.Value))],
+                Quantity: item.Quantity.Value,
+                ImageUrl: item.ImageUrl))],
             Version: basket.Version);
 
     /// <summary>
@@ -50,6 +51,7 @@ internal static class BasketDocumentMapper
                 Sku: item.Sku,
                 ProductName: item.ProductName,
                 UnitPrice: Money.Create(amount: item.UnitPriceAmount, currency: item.UnitPriceCurrency).Value,
-                Quantity: Quantity.Create(value: item.Quantity).Value)),
+                Quantity: Quantity.Create(value: item.Quantity).Value,
+                ImageUrl: item.ImageUrl)),
             version: document.Version);
 }

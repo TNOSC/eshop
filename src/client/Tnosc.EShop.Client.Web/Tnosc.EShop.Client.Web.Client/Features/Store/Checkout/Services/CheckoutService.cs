@@ -54,6 +54,7 @@ internal sealed class CheckoutService(IBasketApi basketApi, IIdentityApi identit
         {
             ItemId = item.ItemId,
             ProductName = item.ProductName,
+            ImageUrl = item.ImageUrl,
             UnitPriceAmount = item.UnitPriceAmount,
             UnitPriceCurrency = item.UnitPriceCurrency,
             Quantity = item.Quantity,

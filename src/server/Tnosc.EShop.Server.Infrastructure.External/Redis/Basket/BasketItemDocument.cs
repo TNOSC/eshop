@@ -18,6 +18,7 @@ namespace Tnosc.EShop.Server.Infrastructure.External.Redis.Basket;
 /// <param name="UnitPriceAmount">The snapshotted unit price amount.</param>
 /// <param name="UnitPriceCurrency">The snapshotted unit price currency.</param>
 /// <param name="Quantity">The line's quantity.</param>
+/// <param name="ImageUrl">The product image URL captured when the line was added, when available.</param>
 internal sealed record BasketItemDocument(
     Guid ItemId,
     Guid ProductId,
@@ -25,4 +26,5 @@ internal sealed record BasketItemDocument(
     string ProductName,
     decimal UnitPriceAmount,
     string UnitPriceCurrency,
-    int Quantity);
+    int Quantity,
+    string? ImageUrl = null);

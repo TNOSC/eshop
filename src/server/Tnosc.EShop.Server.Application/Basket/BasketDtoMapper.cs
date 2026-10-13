@@ -47,7 +47,8 @@ internal static class BasketDtoMapper
                 ProductName: item.ProductName,
                 UnitPriceAmount: item.UnitPrice.Amount,
                 UnitPriceCurrency: item.UnitPrice.Currency,
-                Quantity: item.Quantity.Value))],
+                Quantity: item.Quantity.Value,
+                ImageUrl: item.ImageUrl))],
             TotalAmount: total?.Value.Amount,
             TotalCurrency: total?.Value.Currency);
     }

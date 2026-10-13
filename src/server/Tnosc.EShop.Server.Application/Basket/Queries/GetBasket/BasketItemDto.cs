@@ -18,6 +18,8 @@ namespace Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
 /// <param name="UnitPriceAmount">The snapshotted unit price amount.</param>
 /// <param name="UnitPriceCurrency">The snapshotted unit price currency.</param>
 /// <param name="Quantity">The line's quantity.</param>
+/// <param name="ImageUrl">The product image URL captured when the line was added, when available.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other DTO field here, never System.Uri.
 public sealed record BasketItemDto(
     Guid ItemId,
     Guid ProductId,
@@ -25,4 +27,6 @@ public sealed record BasketItemDto(
     string ProductName,
     decimal UnitPriceAmount,
     string UnitPriceCurrency,
-    int Quantity);
+    int Quantity,
+    string? ImageUrl = null);
+#pragma warning restore CA1054

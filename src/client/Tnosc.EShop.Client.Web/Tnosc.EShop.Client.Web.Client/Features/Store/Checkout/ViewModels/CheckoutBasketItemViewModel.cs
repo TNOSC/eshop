@@ -23,6 +23,9 @@ public sealed class CheckoutBasketItemViewModel
     /// <summary>Gets or sets the product's name.</summary>
     public string ProductName { get; init; } = string.Empty;
 
+    /// <summary>Gets or sets the product image URL, when available.</summary>
+    public string? ImageUrl { get; init; }
+
     /// <summary>Gets or sets the unit price amount.</summary>
     public decimal UnitPriceAmount { get; init; }
 

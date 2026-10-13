@@ -1,48 +1,58 @@
 .eshop-hero {
     position: relative;
-    height: var(--eshop-hero-short);
-    margin-bottom: 4rem;
+    height: clamp(12rem, 17vw, var(--eshop-hero-short));
+    margin-bottom: 0;
     overflow: hidden;
+    background: var(--eshop-panel);
 }
 
 .eshop-hero.tall {
     height: var(--eshop-hero-tall);
-    margin-bottom: 0;
 }
 
 .eshop-hero-image {
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(to right, var(--eshop-surface) 0%, transparent 70%),
+    background-image: linear-gradient(90deg, var(--eshop-surface) 0%, color-mix(in srgb, var(--eshop-surface) 82%, transparent) 44%, transparent 100%),
                       url("/images/hero.webp");
     background-size: cover;
     background-position: center;
 }
 
 .eshop-hero.tall .eshop-hero-image {
-    background-image: linear-gradient(to right, var(--eshop-surface) 0%, transparent 70%),
+    background-image: linear-gradient(90deg, var(--eshop-surface) 0%, color-mix(in srgb, var(--eshop-surface) 82%, transparent) 44%, transparent 100%),
                       url("/images/hero-home.webp");
 }
 
 .eshop-hero-content {
     position: absolute;
-    bottom: 3rem;
-    max-width: 48rem;
+    top: 50%;
+    width: min(100%, var(--eshop-max));
+    box-sizing: border-box;
     padding-inline: var(--eshop-gutter);
+    transform: translateY(-50%);
 }
 
 .eshop-hero-content h1 {
-    color: var(--eshop-ink);
-    font-size: var(--eshop-hero-size);
-    font-weight: var(--eshop-weight-bold);
-    line-height: var(--eshop-hero-line);
     margin: 0;
+    color: var(--eshop-ink);
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    font-weight: var(--eshop-weight-bold);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
 }
 
 .eshop-hero-content p {
-    color: var(--eshop-ink);
-    font-size: var(--eshop-sub-size);
-    font-weight: var(--eshop-weight-bold);
-    line-height: var(--eshop-sub-line);
-    margin: 0;
+    max-width: 34rem;
+    margin: 0.65rem 0 0;
+    color: var(--eshop-muted);
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    font-weight: var(--eshop-weight-regular);
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .eshop-hero-content {
+        padding-inline: var(--eshop-gutter);
+    }
 }

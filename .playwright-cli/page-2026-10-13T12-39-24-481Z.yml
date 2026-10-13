@@ -1,0 +1,23 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - generic [ref=f1e5]: Tnosc EShop
+  - main [ref=f1e6]:
+    - heading "Sign in to your account" [level=1] [ref=f1e8]
+    - generic [ref=f1e9]:
+      - generic [ref=f1e12]:
+        - generic [ref=f1e13]:
+          - generic [ref=f1e14]: Email
+          - textbox "Email" [active] [ref=f1e17]
+        - generic [ref=f1e18]:
+          - generic [ref=f1e19]: Password
+          - generic [ref=f1e21]:
+            - textbox "Password" [ref=f1e24]
+            - button "Show password" [ref=f1e26] [cursor=pointer]:
+              - generic [ref=f1e27]: 
+          - link "Forgot Password?" [ref=f1e32] [cursor=pointer]:
+            - /url: /realms/eshop/login-actions/reset-credentials?client_id=eshop-web&tab_id=RsNTF5HPplM&client_data=eyJydSI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzgvc2lnbmluLW9pZGMiLCJydCI6ImNvZGUiLCJybSI6ImZvcm1fcG9zdCIsInN0IjoiQ2ZESjhNcGROa015RHYxT2o3Ykg0b2YyWDF1Z2xYYWt6LWFYU21BeDFQYlBKQVY5elRSLXM1WUkzdkxYUlpsaURoQUxJOWVpZ0dob2FfMmh6SVFvWXFRRnhTaXg4dmJOcG5sOFM4SnJrazdmeUxsRGl6YWt5SGNLN1dPWDVyUkpxcWUxWFctTGVoOHpTRUVmNmZxX2VOejFYNVl6RG9sWWNzeUIzRTZJdmdZd3N1RjBWM3NkRDZhVlNaZTI4UzJEQTFxcjNfQmNRbnIxQlpTclBlV1VleUJzUWJEVkdPNkdkcXlVc1RVZHRWQkZBZFFvOUtBTFgzYmNHMVBiZHNfRV9PR2ZFNVN1OUp5UzFUZC1lb1NmN1dDcHpsSkNZaVQ4d1lqdG5jZnlDUVBDZ1N0UHdiZEFUekVpcWdOcXZCRVJwTXJTczY1X051MzZjY1ozLXNzSk5ZVkFBSDNFdGFiS2hKWG1QY012NU5SNnJXMEJDZGE4UFRHSHJ4bG5YSWQxbG1TU2hRIn0
+        - button "Sign In" [ref=f1e35] [cursor=pointer]
+      - generic [ref=f1e41]:
+        - text: New user?
+        - link "Register" [ref=f1e42] [cursor=pointer]:
+          - /url: /realms/eshop/login-actions/registration?client_id=eshop-web&tab_id=RsNTF5HPplM&client_data=eyJydSI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzgvc2lnbmluLW9pZGMiLCJydCI6ImNvZGUiLCJybSI6ImZvcm1fcG9zdCIsInN0IjoiQ2ZESjhNcGROa015RHYxT2o3Ykg0b2YyWDF1Z2xYYWt6LWFYU21BeDFQYlBKQVY5elRSLXM1WUkzdkxYUlpsaURoQUxJOWVpZ0dob2FfMmh6SVFvWXFRRnhTaXg4dmJOcG5sOFM4SnJrazdmeUxsRGl6YWt5SGNLN1dPWDVyUkpxcWUxWFctTGVoOHpTRUVmNmZxX2VOejFYNVl6RG9sWWNzeUIzRTZJdmdZd3N1RjBWM3NkRDZhVlNaZTI4UzJEQTFxcjNfQmNRbnIxQlpTclBlV1VleUJzUWJEVkdPNkdkcXlVc1RVZHRWQkZBZFFvOUtBTFgzYmNHMVBiZHNfRV9PR2ZFNVN1OUp5UzFUZC1lb1NmN1dDcHpsSkNZaVQ4d1lqdG5jZnlDUVBDZ1N0UHdiZEFUekVpcWdOcXZCRVJwTXJTczY1X051MzZjY1ozLXNzSk5ZVkFBSDNFdGFiS2hKWG1QY012NU5SNnJXMEJDZGE4UFRHSHJ4bG5YSWQxbG1TU2hRIn0

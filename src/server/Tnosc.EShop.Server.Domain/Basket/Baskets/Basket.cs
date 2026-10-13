@@ -118,13 +118,16 @@ public sealed class Basket : AggregateRoot<BasketId>
     /// <param name="productName">The product's display name, snapshotted at add-time.</param>
     /// <param name="unitPrice">The unit price the customer saw, snapshotted at add-time.</param>
     /// <param name="quantity">The quantity being added.</param>
+    /// <param name="imageUrl">The product image URL to snapshot, when available.</param>
     /// <returns>Success, or a <c>Quantity.OutOfRange</c> validation error when the combined quantity is out of range.</returns>
+#pragma warning disable CA1054 // ImageUrl is a flat snapshot string here, not a URI used by the domain.
     public Result AddItem(
         Guid productId,
         string sku,
         string productName,
         Money unitPrice,
-        Quantity quantity)
+        Quantity quantity,
+        string? imageUrl = null)
     {
         BasketItem? existing = _items.Find(match: item => item.ProductId == productId);
 
@@ -135,7 +138,8 @@ public sealed class Basket : AggregateRoot<BasketId>
                 sku: sku,
                 productName: productName,
                 unitPrice: unitPrice,
-                quantity: quantity));
+                quantity: quantity,
+                imageUrl: imageUrl));
 
             IncrementVersion();
             return Result.Success();
@@ -153,6 +157,7 @@ public sealed class Basket : AggregateRoot<BasketId>
 
         return Result.Success();
     }
+#pragma warning restore CA1054
 
     /// <summary>
     /// Replaces the quantity of an existing line.
@@ -226,7 +231,8 @@ public sealed class Basket : AggregateRoot<BasketId>
             sku: snapshot.Sku,
             productName: snapshot.ProductName,
             unitPrice: snapshot.UnitPrice,
-            quantity: snapshot.Quantity)));
+            quantity: snapshot.Quantity,
+            imageUrl: snapshot.ImageUrl)));
         basket.SetVersion(version: version);
         basket.OriginalVersion = version;
 

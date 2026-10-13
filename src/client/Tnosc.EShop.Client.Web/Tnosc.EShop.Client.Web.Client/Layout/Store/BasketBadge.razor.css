@@ -1,14 +1,32 @@
 .eshop-basket-badge {
     position: relative;
-    display: flex;
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
     align-items: center;
+    justify-content: center;
+    border: 1px solid var(--eshop-rule);
+    border-radius: 50%;
     color: var(--eshop-ink);
+    text-decoration: none;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.eshop-basket-badge:hover {
+    border-color: var(--eshop-ink);
+    background: var(--eshop-panel);
+}
+
+.eshop-basket-badge svg {
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
 }
 
 .eshop-basket-count {
     position: absolute;
-    top: -0.5rem;
-    right: -0.5rem;
+    top: -0.3rem;
+    right: -0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -11,10 +11,14 @@ using Bogus;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Tnosc.EShop.Server.Application.Basket.Ports;
+using Tnosc.EShop.Server.Application.Basket.Queries.GetBasket;
+using Tnosc.EShop.Server.Domain.Basket.Baskets;
 using Tnosc.EShop.Server.Domain.Catalog.Products;
 using Tnosc.EShop.Server.Domain.Shared;
 using Tnosc.EShop.Server.Tests.Integration.Infrastructure;
+using Tnosc.Lib.Shared.Results;
 using Xunit;
+using BasketAggregate = Tnosc.EShop.Server.Domain.Basket.Baskets.Basket;
 
 namespace Tnosc.EShop.Server.Tests.Integration.Basket;
 
@@ -36,6 +40,10 @@ public sealed class ProductLookupTests(PostgresFixture fixture) : BasketIntegrat
         string name = _faker.ProductName();
         decimal amount = _faker.PriceAmount();
         Product product = await SeedProductAsync(sku: sku, name: name, amount: amount, currency: "EUR");
+        const string imageUrl = "https://cdn.example.com/products/product.webp";
+        product.SetImage(imageUrl: imageUrl).IsSuccess.ShouldBeTrue();
+        Scope.ServiceProvider.GetRequiredService<IProductRepository>().Update(aggregate: product);
+        await UnitOfWork.SaveChangesAsync();
 
         // Act
         ProductSnapshot? snapshot = await ProductLookup.GetAsync(productId: product.Id.Value, cancellationToken: CancellationToken.None);
@@ -47,6 +55,7 @@ public sealed class ProductLookupTests(PostgresFixture fixture) : BasketIntegrat
         snapshot.Name.ShouldBe(expected: name);
         snapshot.PriceAmount.ShouldBe(expected: amount);
         snapshot.PriceCurrency.ShouldBe(expected: "EUR");
+        snapshot.ImageUrl.ShouldBe(expected: imageUrl);
     }
 
     [Fact]
@@ -57,6 +66,37 @@ public sealed class ProductLookupTests(PostgresFixture fixture) : BasketIntegrat
 
         // Assert
         snapshot.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GetBasketAsync_Should_ResolveTheCatalogImage_When_AnOlderBasketLineHasNoImageUrl()
+    {
+        // Arrange
+        string sku = _faker.Sku();
+        Product product = await SeedProductAsync(sku: sku, name: _faker.ProductName(), amount: 10m, currency: "EUR");
+        const string imageUrl = "https://cdn.example.com/products/product.webp";
+        product.SetImage(imageUrl: imageUrl).IsSuccess.ShouldBeTrue();
+        Scope.ServiceProvider.GetRequiredService<IProductRepository>().Update(aggregate: product);
+        await UnitOfWork.SaveChangesAsync();
+
+        var customerId = Guid.CreateVersion7();
+        var basket = BasketAggregate.CreateFor(customerId: customerId);
+        basket.AddItem(
+            productId: product.Id.Value,
+            sku: product.Sku.Value,
+            productName: product.Name,
+            unitPrice: product.Price,
+            quantity: Quantity.Create(value: 1).Value);
+        await BasketRepository.SaveAsync(basket: basket, cancellationToken: CancellationToken.None);
+
+        // Act
+        Result<BasketDto> result = await QueryHandler<GetBasketQuery, BasketDto>().HandleAsync(
+            query: new GetBasketQuery(CustomerId: customerId),
+            cancellationToken: CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.Items.ShouldHaveSingleItem().ImageUrl.ShouldBe(expected: imageUrl);
     }
 
     [Fact]

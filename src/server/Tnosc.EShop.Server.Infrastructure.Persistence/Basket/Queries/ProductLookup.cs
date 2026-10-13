@@ -37,6 +37,7 @@ internal sealed class ProductLookup(EShopReadDbContext context) : IProductLookup
                 Sku: readModel.Sku,
                 Name: readModel.Name,
                 PriceAmount: readModel.PriceAmount,
-                PriceCurrency: readModel.PriceCurrency))
+                PriceCurrency: readModel.PriceCurrency,
+                ImageUrl: readModel.ImageUrl))
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 }

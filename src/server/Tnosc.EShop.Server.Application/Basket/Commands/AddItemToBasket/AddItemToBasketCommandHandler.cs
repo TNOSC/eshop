@@ -76,7 +76,8 @@ internal sealed class AddItemToBasketCommandHandler(
             sku: product.Sku,
             productName: product.Name,
             unitPrice: unitPrice.Value,
-            quantity: quantity.Value);
+            quantity: quantity.Value,
+            imageUrl: product.ImageUrl);
 
         if (added.IsError)
         {

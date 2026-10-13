@@ -62,6 +62,7 @@ internal sealed class BasketPageService(IBasketApi basketApi) : IBasketPageServi
             ItemId = item.ItemId,
             Sku = item.Sku,
             ProductName = item.ProductName,
+            ImageUrl = item.ImageUrl,
             UnitPriceAmount = item.UnitPriceAmount,
             UnitPriceCurrency = item.UnitPriceCurrency,
             Quantity = item.Quantity,

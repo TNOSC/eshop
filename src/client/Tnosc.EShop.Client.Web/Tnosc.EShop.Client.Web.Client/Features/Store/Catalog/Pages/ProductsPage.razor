@@ -12,52 +12,47 @@
 
 <StoreHero Title="Catalogue" Subtitle="Browse everything in the store." />
 
-<div class="eshop-page">
-    <FluentGrid Spacing="4">
-        <FluentGridItem Xs="12" Md="3">
-            <ProductFilters Search="@Search"
-                            SearchChanged="@OnSearchChangedAsync"
-                            CategoryId="@CategoryId"
-                            Categories="@_categories" />
-        </FluentGridItem>
-        <FluentGridItem Xs="12" Md="9">
-            <StatefulBoundary State="_state">
-                <LoadingContent>
-                    <FluentGrid Spacing="4">
-                        @for (int i = 0; i < PageSize; i++)
-                        {
-                            <FluentGridItem Xs="12" Sm="6" Md="4">
-                                <FluentSkeleton Height="220px" />
-                            </FluentGridItem>
-                        }
-                    </FluentGrid>
-                </LoadingContent>
-                <ChildContent>
-                    @if (_problem is not null)
-                    {
-                        <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
-                    }
-                    else if (_products.Count == 0)
-                    {
-                        <p class="eshop-catalog-empty">No products found. Try a different search or category.</p>
-                    }
-                    else
-                    {
-                        <FluentGrid Spacing="4">
-                            @foreach (ProductSummaryViewModel product in _products)
-                            {
-                                <FluentGridItem Xs="12" Sm="6" Md="4">
-                                    <ProductCard Product="@product" />
-                                </FluentGridItem>
-                            }
-                        </FluentGrid>
+<div class="eshop-page eshop-catalog-layout">
+    <ProductFilters Search="@Search"
+                    SearchChanged="@OnSearchChangedAsync"
+                    CategoryId="@CategoryId"
+                    Categories="@_categories" />
 
-                        <Pagination CurrentPageIndex="@_pagination.CurrentPageIndex"
-                                    LastPageIndex="@_pagination.LastPageIndex"
-                                    PageUriFactory="@PageUri" />
+    <section class="eshop-catalog-results" aria-label="Product results">
+        <StatefulBoundary State="_state">
+            <LoadingContent>
+                <div class="eshop-product-grid" role="status" aria-label="Loading products">
+                    @for (int i = 0; i < PageSize; i++)
+                    {
+                        <div class="eshop-product-skeleton">
+                            <FluentSkeleton Height="220px" />
+                        </div>
                     }
-                </ChildContent>
-            </StatefulBoundary>
-        </FluentGridItem>
-    </FluentGrid>
+                </div>
+            </LoadingContent>
+            <ChildContent>
+                @if (_problem is not null)
+                {
+                    <ErrorPanel Message="@ErrorCodeMessages.Humanize(_problem)" />
+                }
+                else if (_products.Count == 0)
+                {
+                    <p class="eshop-catalog-empty">No products found. Try a different search or category.</p>
+                }
+                else
+                {
+                    <div class="eshop-product-grid">
+                        @foreach (ProductSummaryViewModel product in _products)
+                        {
+                            <ProductCard Product="@product" />
+                        }
+                    </div>
+
+                    <Pagination CurrentPageIndex="@_pagination.CurrentPageIndex"
+                                LastPageIndex="@_pagination.LastPageIndex"
+                                PageUriFactory="@PageUri" />
+                }
+            </ChildContent>
+        </StatefulBoundary>
+    </section>
 </div>

@@ -1,0 +1,74 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Tnosc EShop — home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "TNOSC" [ref=e6]
+      - generic [ref=e7]:
+        - link "Basket (0 items)" [ref=e8] [cursor=pointer]:
+          - /url: /basket
+        - button "Toggle theme":
+          - generic [ref=e13] [cursor=pointer]
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e19]:
+        - heading "Catalogue" [active] [level=1] [ref=e20]
+        - paragraph [ref=e21]: Browse everything in the store.
+      - generic [ref=e22]:
+        - complementary "Filter products" [ref=e23]:
+          - generic [ref=e24]: Filters
+          - generic [ref=e29]:
+            - generic: Search
+            - generic "Search" [ref=e31]:
+              - searchbox [ref=e33]
+          - generic [ref=e34]:
+            - heading "Category" [level=3] [ref=e35]
+            - generic [ref=e36]:
+              - link "All" [ref=e37] [cursor=pointer]:
+                - /url: https://tnosc-eshop-client-web.dev.localhost:7278/
+              - link "Accessories" [ref=e38] [cursor=pointer]:
+                - /url: https://tnosc-eshop-client-web.dev.localhost:7278/?categoryId=01a02b14-53f8-7679-98a6-c0096c6cc7b7
+              - link "Laptops" [ref=e39] [cursor=pointer]:
+                - /url: https://tnosc-eshop-client-web.dev.localhost:7278/?categoryId=01a02b14-53d2-7fc5-9ded-b272ebee3994
+              - link "Phones" [ref=e40] [cursor=pointer]:
+                - /url: https://tnosc-eshop-client-web.dev.localhost:7278/?categoryId=01a02b14-53f3-7ab2-a037-8d851e46abd6
+        - region "Product results" [ref=e41]:
+          - generic [ref=e42]:
+            - link "Contoso Phone X Contoso Phone X 899.00 EUR" [ref=e44] [cursor=pointer]:
+              - /url: /products/01a09070-95c8-703f-9127-36bf57a144f9
+              - img "Contoso Phone X" [ref=e46]
+              - generic [ref=e47]:
+                - generic [ref=e48]: Contoso Phone X
+                - generic [ref=e49]: 899.00 EUR
+            - link "Contoso UltraBook 13 Contoso UltraBook 13 1,299.00 EUR" [ref=e51] [cursor=pointer]:
+              - /url: /products/01a09070-9456-7199-91e7-c8379c7cdcc5
+              - img "Contoso UltraBook 13" [ref=e53]
+              - generic [ref=e54]:
+                - generic [ref=e55]: Contoso UltraBook 13
+                - generic [ref=e56]: 1,299.00 EUR
+            - link "Fabrikam Wireless Mouse Fabrikam Wireless Mouse 49.90 EUR" [ref=e58] [cursor=pointer]:
+              - /url: /products/01a09070-960a-714b-bb65-26d282037480
+              - img "Fabrikam Wireless Mouse" [ref=e60]
+              - generic [ref=e61]:
+                - generic [ref=e62]: Fabrikam Wireless Mouse
+                - generic [ref=e63]: 49.90 EUR
+            - link "Fabrikam WorkStation 15 Fabrikam WorkStation 15 1,899.50 EUR" [ref=e65] [cursor=pointer]:
+              - /url: /products/01a09070-9588-7338-973f-1bdcca390991
+              - img "Fabrikam WorkStation 15" [ref=e67]
+              - generic [ref=e68]:
+                - generic [ref=e69]: Fabrikam WorkStation 15
+                - generic [ref=e70]: 1,899.50 EUR
+            - link "Northwind Phone Mini Northwind Phone Mini 549.00 EUR" [ref=e72] [cursor=pointer]:
+              - /url: /products/01a09070-95e2-7d23-8bfc-f539579ed856
+              - img "Northwind Phone Mini" [ref=e74]
+              - generic [ref=e75]:
+                - generic [ref=e76]: Northwind Phone Mini
+                - generic [ref=e77]: 549.00 EUR
+          - link "1" [ref=e79] [cursor=pointer]:
+            - /url: https://tnosc-eshop-client-web.dev.localhost:7278/
+    - contentinfo [ref=e81]:
+      - generic [ref=e82]:
+        - img "TNOSC eShop" [ref=e84]:
+          - generic [ref=e85]: TNOSC
+          - generic [ref=e86]: eShop
+        - paragraph [ref=e87]: © Tnosc EShop

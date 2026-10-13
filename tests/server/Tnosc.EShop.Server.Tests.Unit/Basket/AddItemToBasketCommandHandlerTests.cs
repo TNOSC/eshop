@@ -48,6 +48,7 @@ public sealed class AddItemToBasketCommandHandlerTests
         result.Value.Items.ShouldHaveSingleItem();
         result.Value.Items.Single().ProductId.ShouldBe(expected: product.ProductId);
         result.Value.Items.Single().Quantity.ShouldBe(expected: 2);
+        result.Value.Items.Single().ImageUrl.ShouldBe(expected: product.ImageUrl);
         await _repository.Received(requiredNumberOfCalls: 1).SaveAsync(basket: Arg.Any<BasketAggregate>(), cancellationToken: Arg.Any<CancellationToken>());
     }
 
@@ -85,7 +86,7 @@ public sealed class AddItemToBasketCommandHandlerTests
     }
 
     private ProductSnapshot SomeProduct() =>
-        new(ProductId: _faker.ProductId(), Sku: _faker.Sku(), Name: _faker.ProductName(), PriceAmount: _faker.PriceAmount(), PriceCurrency: _faker.Currency());
+        new(ProductId: _faker.ProductId(), Sku: _faker.Sku(), Name: _faker.ProductName(), PriceAmount: _faker.PriceAmount(), PriceCurrency: _faker.Currency(), ImageUrl: "images/products/product.webp");
 
     private void NoBasketExistsFor(Guid customerId) =>
         _repository

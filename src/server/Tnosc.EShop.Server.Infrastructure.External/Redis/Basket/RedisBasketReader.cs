@@ -58,7 +58,8 @@ internal sealed class RedisBasketReader(IConnectionMultiplexer connectionMultipl
                 ProductName: item.ProductName,
                 UnitPriceAmount: item.UnitPriceAmount,
                 UnitPriceCurrency: item.UnitPriceCurrency,
-                Quantity: item.Quantity))],
+                Quantity: item.Quantity,
+                ImageUrl: item.ImageUrl))],
             TotalAmount: totalAmount,
             TotalCurrency: totalCurrency);
     }

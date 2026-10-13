@@ -26,10 +26,14 @@ namespace Tnosc.EShop.Server.Domain.Basket.Baskets;
 /// <param name="ProductName">The stored product name snapshot.</param>
 /// <param name="UnitPrice">The stored unit price snapshot.</param>
 /// <param name="Quantity">The stored quantity.</param>
+/// <param name="ImageUrl">The stored product image URL, when available.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other snapshot field, never System.Uri.
 public sealed record BasketItemSnapshot(
     BasketItemId ItemId,
     Guid ProductId,
     string Sku,
     string ProductName,
     Money UnitPrice,
-    Quantity Quantity);
+    Quantity Quantity,
+    string? ImageUrl = null);
+#pragma warning restore CA1054

@@ -1,0 +1,23 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - generic [ref=f1e5]: Tnosc EShop
+  - main [ref=f1e6]:
+    - heading "Sign in to your account" [level=1] [ref=f1e8]
+    - generic [ref=f1e9]:
+      - generic [ref=f1e12]:
+        - generic [ref=f1e13]:
+          - generic [ref=f1e14]: Email
+          - textbox "Email" [active] [ref=f1e17]
+        - generic [ref=f1e18]:
+          - generic [ref=f1e19]: Password
+          - generic [ref=f1e21]:
+            - textbox "Password" [ref=f1e24]
+            - button "Show password" [ref=f1e26] [cursor=pointer]:
+              - generic [ref=f1e27]: 
+          - link "Forgot Password?" [ref=f1e32] [cursor=pointer]:
+            - /url: /realms/eshop/login-actions/reset-credentials?client_id=eshop-web&tab_id=aADprkZ640U&client_data=eyJydSI6Imh0dHBzOi8vdG5vc2MtZXNob3AtY2xpZW50LXdlYi5kZXYubG9jYWxob3N0OjcyNzgvc2lnbmluLW9pZGMiLCJydCI6ImNvZGUiLCJybSI6ImZvcm1fcG9zdCIsInN0IjoiQ2ZESjhNcGROa015RHYxT2o3Ykg0b2YyWDF1VGhOWlFVTUV2ZGs0eGE3dzBxRzJNNkdsME9CU242VEt6cEVSMks1ZlpVOENSbGlDTlQxdVFCQl9lWHdreU1DVVhZZzRlNzZzZVppTmNzQzdyZ1FMMjdWS2t2XzZGOWh0bGJMMGJuYURKSkY1N2tWaWlfbW9CazdYTTlWNTZuV0VFRWRnVjZTdGhhV3QzQUs2NEVQamxjaUlCZlR1QUZXS3JEaTcxcThHVkNtZG52OC14Qlc5YmZkMW5QUW8xMVBVd1NSTGRyVEFCUWRMenJ3WTg0Yk5SdEt3WGwxM2U5RTFZa1dOR3BuRURkYkJtWWc3ZGk1SFZRRFVqeXFQNW01UFpSWmMtX1JxdV85R1F4RFpTbTEyNXF0Mm5CRlNBbVd5NEcwSWlPMlZCSGJzWEJ2OExjYlFPSmNWWmVOb3J2V1I5bFlyQS1lWEdXaUFtUDFQcG9Bc1VYQUZxMG9tQ2ZhcXpyMmRTdXRncl9NUDlzX1NFZmRzUHIxbkVTN2dqcTlRIn0
+        - button "Sign In" [ref=f1e35] [cursor=pointer]
+      - generic [ref=f1e41]:
+        - text: New user?
+        - link "Register" [ref=f1e42] [cursor=pointer]:
+          - /url: /realms/eshop/login-actions/registration?client_id=eshop-web&tab_id=aADprkZ640U&client_data=eyJydSI6Imh0dHBzOi8vdG5vc2MtZXNob3AtY2xpZW50LXdlYi5kZXYubG9jYWxob3N0OjcyNzgvc2lnbmluLW9pZGMiLCJydCI6ImNvZGUiLCJybSI6ImZvcm1fcG9zdCIsInN0IjoiQ2ZESjhNcGROa015RHYxT2o3Ykg0b2YyWDF1VGhOWlFVTUV2ZGs0eGE3dzBxRzJNNkdsME9CU242VEt6cEVSMks1ZlpVOENSbGlDTlQxdVFCQl9lWHdreU1DVVhZZzRlNzZzZVppTmNzQzdyZ1FMMjdWS2t2XzZGOWh0bGJMMGJuYURKSkY1N2tWaWlfbW9CazdYTTlWNTZuV0VFRWRnVjZTdGhhV3QzQUs2NEVQamxjaUlCZlR1QUZXS3JEaTcxcThHVkNtZG52OC14Qlc5YmZkMW5QUW8xMVBVd1NSTGRyVEFCUWRMenJ3WTg0Yk5SdEt3WGwxM2U5RTFZa1dOR3BuRURkYkJtWWc3ZGk1SFZRRFVqeXFQNW01UFpSWmMtX1JxdV85R1F4RFpTbTEyNXF0Mm5CRlNBbVd5NEcwSWlPMlZCSGJzWEJ2OExjYlFPSmNWWmVOb3J2V1I5bFlyQS1lWEdXaUFtUDFQcG9Bc1VYQUZxMG9tQ2ZhcXpyMmRTdXRncl9NUDlzX1NFZmRzUHIxbkVTN2dqcTlRIn0

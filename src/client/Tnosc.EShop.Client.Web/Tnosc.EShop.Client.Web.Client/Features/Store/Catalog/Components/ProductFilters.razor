@@ -1,26 +1,26 @@
 @namespace Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.Components
 @using Tnosc.EShop.Client.Web.Client.Features.Store.Catalog.ViewModels
 
-<div class="eshop-filters">
+<aside class="eshop-filters" aria-label="Filter products">
     <div class="eshop-filters-header">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
-            <line x1="4" y1="6" x2="20" y2="6"/>
-            <line x1="4" y1="12" x2="20" y2="12"/>
-            <line x1="4" y1="18" x2="20" y2="18"/>
-            <circle cx="9" cy="6" r="2"/>
-            <circle cx="15" cy="12" r="2"/>
-            <circle cx="9" cy="18" r="2"/>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+            <circle cx="9" cy="6" r="2" />
+            <circle cx="15" cy="12" r="2" />
+            <circle cx="9" cy="18" r="2" />
         </svg>
         Filters
     </div>
 
     <FluentTextInput TextInputType="TextInputType.Search"
-                      Label="Search"
-                      Placeholder="Search products…"
-                      Immediate="true"
-                      ImmediateDelay="300"
-                      Value="@Search"
-                      ValueChanged="@SearchChanged" />
+                     Label="Search"
+                     Placeholder="Search products…"
+                     Immediate="true"
+                     ImmediateDelay="300"
+                     Value="@Search"
+                     ValueChanged="@SearchChanged" />
 
     <div class="eshop-filters-group">
         <h3>Category</h3>
@@ -33,4 +33,4 @@
             }
         </FluentStack>
     </div>
-</div>
+</aside>

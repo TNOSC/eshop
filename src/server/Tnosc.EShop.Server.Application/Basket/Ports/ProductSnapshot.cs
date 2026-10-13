@@ -17,9 +17,13 @@ namespace Tnosc.EShop.Server.Application.Basket.Ports;
 /// <param name="Name">The product's display name.</param>
 /// <param name="PriceAmount">The product's current price amount.</param>
 /// <param name="PriceCurrency">The product's current price currency.</param>
+/// <param name="ImageUrl">The product's current image URL, when it has one.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other snapshot field, never System.Uri.
 public sealed record ProductSnapshot(
     Guid ProductId,
     string Sku,
     string Name,
     decimal PriceAmount,
-    string PriceCurrency);
+    string PriceCurrency,
+    string? ImageUrl = null);
+#pragma warning restore CA1054

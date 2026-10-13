@@ -9,6 +9,7 @@ using System;
 namespace Tnosc.EShop.Client.Web.Contracts.Basket;
 
 /// <summary>A single line in a customer's basket.</summary>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other field here, never System.Uri.
 public sealed record BasketItem(
     Guid ItemId,
     Guid ProductId,
@@ -16,4 +17,6 @@ public sealed record BasketItem(
     string ProductName,
     decimal UnitPriceAmount,
     string UnitPriceCurrency,
-    int Quantity);
+    int Quantity,
+    string? ImageUrl = null);
+#pragma warning restore CA1054

@@ -44,6 +44,11 @@ public sealed class BasketItem : Entity<BasketItemId>
     public string ProductName { get; private set; } = null!;
 
     /// <summary>
+    /// Gets the product image URL, as it was when this line was added.
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
     /// Gets the unit price the customer saw when this line was added. Never rewritten by a later
     /// catalogue price change.
     /// </summary>
@@ -62,13 +67,15 @@ public sealed class BasketItem : Entity<BasketItemId>
     /// <param name="productName">The product's display name at the time of adding.</param>
     /// <param name="unitPrice">The unit price the customer saw at the time of adding.</param>
     /// <param name="quantity">The line's initial quantity.</param>
+    /// <param name="imageUrl">The product image URL snapshot, when available.</param>
     /// <returns>The created <see cref="BasketItem"/>.</returns>
     internal static BasketItem Create(
         Guid productId,
         string sku,
         string productName,
         Money unitPrice,
-        Quantity quantity) =>
+        Quantity quantity,
+        string? imageUrl = null) =>
         new()
         {
             Id = BasketItemId.New(),
@@ -77,6 +84,7 @@ public sealed class BasketItem : Entity<BasketItemId>
             ProductName = productName,
             UnitPrice = unitPrice,
             Quantity = quantity,
+            ImageUrl = imageUrl,
         };
 
     /// <summary>
@@ -88,6 +96,7 @@ public sealed class BasketItem : Entity<BasketItemId>
     /// <param name="productName">The stored product name snapshot.</param>
     /// <param name="unitPrice">The stored unit price snapshot.</param>
     /// <param name="quantity">The stored quantity.</param>
+    /// <param name="imageUrl">The stored product image URL, when available.</param>
     /// <returns>The reconstructed <see cref="BasketItem"/>.</returns>
     internal static BasketItem Rehydrate(
         BasketItemId id,
@@ -95,7 +104,8 @@ public sealed class BasketItem : Entity<BasketItemId>
         string sku,
         string productName,
         Money unitPrice,
-        Quantity quantity) =>
+        Quantity quantity,
+        string? imageUrl = null) =>
         new()
         {
             Id = id,
@@ -104,6 +114,7 @@ public sealed class BasketItem : Entity<BasketItemId>
             ProductName = productName,
             UnitPrice = unitPrice,
             Quantity = quantity,
+            ImageUrl = imageUrl,
         };
 
     /// <summary>

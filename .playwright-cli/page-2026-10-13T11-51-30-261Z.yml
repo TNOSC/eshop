@@ -1,0 +1,81 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - group [ref=e5]:
+        - generic "Open navigation menu" [active] [ref=e6] [cursor=pointer]
+        - navigation "Main navigation" [ref=e171]:
+          - link "Catalogue" [ref=e172] [cursor=pointer]:
+            - /url: /products
+      - link "Tnosc EShop — home" [ref=e9] [cursor=pointer]:
+        - /url: /
+        - img "TNOSC" [ref=e10]
+      - generic [ref=e11]:
+        - link "Basket (0 items)" [ref=e97] [cursor=pointer]:
+          - /url: /basket
+        - link "Sign in" [ref=e17] [cursor=pointer]:
+          - /url: bff/login
+        - button "Toggle theme":
+          - generic [ref=e102] [cursor=pointer]
+  - generic [ref=e24]:
+    - generic [ref=e25]:
+      - generic [ref=e105]:
+        - heading "Catalogue" [level=1] [ref=e106]
+        - paragraph [ref=e107]: Browse everything in the store.
+      - generic [ref=e108]:
+        - complementary "Filter products" [ref=e109]:
+          - generic [ref=e110]: Filters
+          - generic [ref=e115]:
+            - generic: Search
+            - generic "Search" [ref=e117]:
+              - searchbox "Search" [ref=e119]
+          - generic [ref=e120]:
+            - heading "Category" [level=3] [ref=e121]
+            - generic [ref=e122]:
+              - link "All" [ref=e123] [cursor=pointer]:
+                - /url: https://localhost:7278/
+              - link "Accessories" [ref=e124] [cursor=pointer]:
+                - /url: https://localhost:7278/?categoryId=01a02b14-53f8-7679-98a6-c0096c6cc7b7
+              - link "Laptops" [ref=e125] [cursor=pointer]:
+                - /url: https://localhost:7278/?categoryId=01a02b14-53d2-7fc5-9ded-b272ebee3994
+              - link "Phones" [ref=e126] [cursor=pointer]:
+                - /url: https://localhost:7278/?categoryId=01a02b14-53f3-7ab2-a037-8d851e46abd6
+        - region "Product results" [ref=e127]:
+          - generic [ref=e128]:
+            - link "Contoso Phone X Contoso Phone X 899.00 EUR" [ref=e130] [cursor=pointer]:
+              - /url: /products/01a09070-95c8-703f-9127-36bf57a144f9
+              - img "Contoso Phone X" [ref=e132]
+              - generic [ref=e133]:
+                - generic [ref=e134]: Contoso Phone X
+                - generic [ref=e135]: 899.00 EUR
+            - link "Contoso UltraBook 13 Contoso UltraBook 13 1,299.00 EUR" [ref=e138] [cursor=pointer]:
+              - /url: /products/01a09070-9456-7199-91e7-c8379c7cdcc5
+              - img "Contoso UltraBook 13" [ref=e140]
+              - generic [ref=e141]:
+                - generic [ref=e142]: Contoso UltraBook 13
+                - generic [ref=e143]: 1,299.00 EUR
+            - link "Fabrikam Wireless Mouse Fabrikam Wireless Mouse 49.90 EUR" [ref=e146] [cursor=pointer]:
+              - /url: /products/01a09070-960a-714b-bb65-26d282037480
+              - img "Fabrikam Wireless Mouse" [ref=e148]
+              - generic [ref=e149]:
+                - generic [ref=e150]: Fabrikam Wireless Mouse
+                - generic [ref=e151]: 49.90 EUR
+            - link "Fabrikam WorkStation 15 Fabrikam WorkStation 15 1,899.50 EUR" [ref=e154] [cursor=pointer]:
+              - /url: /products/01a09070-9588-7338-973f-1bdcca390991
+              - img "Fabrikam WorkStation 15" [ref=e156]
+              - generic [ref=e157]:
+                - generic [ref=e158]: Fabrikam WorkStation 15
+                - generic [ref=e159]: 1,899.50 EUR
+            - link "Northwind Phone Mini Northwind Phone Mini 549.00 EUR" [ref=e162] [cursor=pointer]:
+              - /url: /products/01a09070-95e2-7d23-8bfc-f539579ed856
+              - img "Northwind Phone Mini" [ref=e164]
+              - generic [ref=e165]:
+                - generic [ref=e166]: Northwind Phone Mini
+                - generic [ref=e167]: 549.00 EUR
+          - link "1" [ref=e170] [cursor=pointer]:
+            - /url: https://localhost:7278/
+    - contentinfo [ref=e90]:
+      - generic [ref=e91]:
+        - img "TNOSC eShop" [ref=e93]:
+          - generic [ref=e94]: TNOSC
+          - generic [ref=e95]: eShop
+        - paragraph [ref=e96]: © Tnosc EShop

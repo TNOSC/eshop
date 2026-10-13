@@ -1,46 +1,92 @@
 .eshop-card {
     box-sizing: border-box;
-    padding: 2px;
+    height: 100%;
+    overflow: hidden;
     position: relative;
+    border: 1px solid var(--eshop-rule);
+    border-radius: 1rem;
+    background: var(--eshop-surface);
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.04);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .eshop-card:hover {
-    cursor: pointer;
-    padding: 0;
-    border: 2px solid var(--eshop-ink);
+    transform: translateY(-3px);
+    border-color: var(--colorNeutralStroke1);
+    box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.1);
+}
+
+.eshop-card:focus-within {
+    outline: 2px solid var(--colorBrandStroke1);
+    outline-offset: 3px;
 }
 
 .eshop-card-link {
-    text-decoration: none;
     display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.eshop-card-image {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--eshop-panel);
+}
+
+::deep .eshop-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    transition: transform 220ms ease;
+}
+
+.eshop-card:hover ::deep .eshop-product-image {
+    transform: scale(1.035);
 }
 
 .eshop-card-content {
-    padding: 0 0.75rem;
+    min-height: 4.25rem;
+    padding: 0.75rem 1rem;
 }
 
 .eshop-card-name {
     color: var(--eshop-ink);
-    font-size: var(--eshop-body-size);
+    font-size: 0.9375rem;
     font-weight: var(--eshop-weight-semibold);
-    line-height: var(--eshop-body-line);
+    line-height: 1.35;
     text-align: left;
 }
 
 .eshop-card-price {
-    color: var(--eshop-muted);
+    color: var(--eshop-ink);
+    white-space: nowrap;
     text-align: right;
-    font-size: var(--eshop-body-size);
+    font-size: 0.875rem;
     font-weight: var(--eshop-weight-semibold);
 }
 
 .eshop-card-flag {
     position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    padding: 0.25rem 0.5rem;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--eshop-radius-pill);
     background: var(--eshop-status-bad);
     color: var(--eshop-on-ink);
     font-size: var(--eshop-chip-size);
     font-weight: var(--eshop-weight-semibold);
+}
+
+.eshop-card-add-to-basket {
+    margin: 0 1rem 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eshop-card,
+    .eshop-card-image ::deep .eshop-product-image {
+        transition: none;
+    }
 }
