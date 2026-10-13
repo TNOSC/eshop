@@ -18,7 +18,7 @@ run the architecture tests, and report.
 1. The `.github/instructions/*.instructions.md` file for each project the change touches
    (`server-domain`, `server-application`, `server-persistence`, `server-api`, `server-shared`,
    `client-*`, `lib-framework`, `tests`)
-2. The root `AGENTS.md`
+2. The repository's `.github/copilot-instructions.md`
 3. The narrow policies, also in `.github/instructions/`: `cache-tags`, `migrations`, `domain-events`,
    `analyzer-suppressions`, `dependencies`, `idempotency`, `code-style`, `authorization`
 

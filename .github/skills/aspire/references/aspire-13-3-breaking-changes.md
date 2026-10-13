@@ -25,7 +25,7 @@ code, scripts, CI snippets, or skill routing. Source:
 | `ASPIREEXTENSION001` JS diagnostic ID renamed to `ASPIREJAVASCRIPT001` | Update `#pragma warning disable` and any code-search rules. |
 | Docker Swarm `UpdateConfig` property types changed | Update generated/hand-written Swarm overrides. |
 | `aspire init` no longer wires up the AppHost | Follow with `aspireify` (in-plugin sibling skill or project-local copy). |
-| In-dashboard GitHub Copilot UI removed | Replaced by `aspire agent init`-driven agentic flow (works with Copilot, Claude, Cursor, any MCP/skill agent). |
+| In-dashboard GitHub Copilot UI removed | Replaced by `aspire agent init`-driven agentic flow (works with Copilot, Cursor, and other MCP/skill-enabled agents). |
 
 ## TypeScript `withEnvironment` migration
 
@@ -57,7 +57,7 @@ now connect to your Aspire app through an **AppHost-level MCP server** plus skil
 aspire agent init
 ```
 
-Detection covers GitHub Copilot, Claude, Cursor, and any other agent that supports skills or
+Detection covers GitHub Copilot, Cursor, and any other agent that supports skills or
 MCP. The previous in-dashboard GitHub Copilot UI has been removed in favor of this flow.
 
 If a script or environment file still sets `ASPIRE_DASHBOARD_MCP_ENDPOINT_URL`, delete it.

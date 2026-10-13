@@ -139,7 +139,7 @@ and `min-width: 481px and max-width: 1024px`, mobile-last.
 
 ## Conventions
 
-Everything in [`../../.claude/rules/code-style.md`](../../.claude/rules/code-style.md) applies to `.cs`
+Everything in [`../../.github/instructions/code-style.instructions.md`](../../.github/instructions/code-style.instructions.md) applies to `.cs`
 files here, and [`../00-overview.md`](../00-overview.md) already restated the client-specific parts:
 
 - File header, explicit `using`s (System first), file-scoped namespace, one public type per file.

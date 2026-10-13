@@ -9,8 +9,7 @@ argument-hint: "[optional: files or feature to review; defaults to the working-t
 Review the given scope (default: `git diff` plus untracked files) against this repo's rules. Report
 findings with `file:line`, ordered by severity. **Do not fix anything unless asked.**
 
-Ground truth, in order: the scoped `CLAUDE.md` for each project touched, the root `CLAUDE.md`, and
-`.claude/rules/*.md`.
+Ground truth: the matching `.github/instructions/*.instructions.md` files and the repository's `.github/copilot-instructions.md`.
 
 Much of this is already mechanised — **run `dotnet test tests/server/Tnosc.EShop.Server.Tests.Architecture`
 first** and report failures as blockers. Then review what the tests cannot see.
@@ -71,7 +70,7 @@ first** and report failures as blockers. Then review what the tests cannot see.
 - Every `[Cacheable]` query has matching `[CacheTag(...)]` on every command that mutates its data.
 - **Cache tags are constants from `Server.Shared/<Context>/CacheTags.cs`.** Any string literal in a
   `[CacheTag(...)]` is a violation — the invalidating and populating handlers live in different
-  projects, so a literal drifts without failing the build (`.claude/rules/cache-tags.md`).
+  projects, so a literal drifts without failing the build (`.github/instructions/cache-tags.instructions.md`).
 - Domain events are raised by the aggregate (not the handler), carry flat primitives and ids, and have
   a unique `[DomainEventName("context.event-name.vN")]`.
 

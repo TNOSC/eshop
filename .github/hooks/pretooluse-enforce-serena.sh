@@ -8,8 +8,7 @@
 # Allows Serena MCP tools (serena-*) to proceed for .cs file editing.
 #
 # Reads the preToolUse event JSON on stdin; on a match, prints a FLAT deny decision as JSON on stdout
-# and exits 0. Copilot reads permissionDecision from the top level of stdout -- unlike Claude Code,
-# there is no hookSpecificOutput wrapper.
+# and exits 0. Copilot reads permissionDecision from the top level of stdout.
 #
 # IMPORTANT: Copilot preToolUse command hooks FAIL CLOSED -- exit 2, a crash, or any non-zero exit
 # denies the tool call (only a timeout fails open). So every non-match path below must exit 0, or a
@@ -31,8 +30,7 @@ if [[ "$tool_name" == serena-* ]]; then
   exit 0
 fi
 
-# Extract toolArgs.path without requiring jq. Copilot's file tools take `path`; Claude Code's took
-# `tool_input.file_path`.
+# Extract toolArgs.path without requiring jq. Copilot's file tools take `path`.
 file_path=$(printf '%s' "$payload" \
   | tr ',' '\n' \
   | grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' \
@@ -42,7 +40,6 @@ file_path=$(printf '%s' "$payload" \
 # Unescape the backslashes JSON adds to Windows paths, so "C:\\Projects\\x.cs" becomes
 # "C:/Projects/x.cs". Use tr, not the obvious ${file_path//\\//}: that parameter expansion deletes
 # every forward slash instead of replacing backslashes, which reduces every path to a bare filename.
-# That bug is why the .claude/hooks/ version of the postToolUse check never fired.
 file_path=$(printf '%s' "$file_path" | tr -s '\\' '/')
 
 [ -z "$file_path" ] && exit 0

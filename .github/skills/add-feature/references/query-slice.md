@@ -168,7 +168,7 @@ commit.
 string literal on either side. The populating query handler lives here in
 `Server.Infrastructure.Persistence`; the invalidating command handler lives in `Server.Application`.
 A literal mistyped in one of them doesn't fail the build, it just silently stops invalidating.
-See `.claude/rules/cache-tags.md`.
+See `.github/instructions/cache-tags.instructions.md`.
 
 ```csharp
 using Tnosc.EShop.Server.Shared.Catalog;

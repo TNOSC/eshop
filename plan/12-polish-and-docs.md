@@ -56,22 +56,13 @@ re-renders with identical data. Measurable in dev tools: two `GET /api/catalog/p
 Verify a Release publish actually runs before calling this done. Trimming plus a Razor class library is a
 combination that reliably finds something.
 
-## 3. `src/client/CLAUDE.md`
+## 3. Keep client instructions current
 
-A scoped `CLAUDE.md` alongside the existing ones (`lib/`, each `src/server/*`, `tests/`). It should be
-short and cover only what is not derivable from the code:
-
-- **The three-project split** and what belongs in each. Everything renderable lives in `.Client`; the host
-  holds only the shell, the BFF and OIDC.
-- **`ApiRoutes` constants are relative, never leading-slash** — and why (the `new Uri(base, "/x")`
-  base-path-discard rule).
-- **Components take dependencies via `[Inject]` properties**, the one sanctioned exception to the
-  repo's primary-constructor rule, because the framework requires a parameterless component.
-- **Logic goes in `.razor.cs` code-behind** past trivial markup.
-- **`@attribute [Authorize]` is not inherited through `_Imports.razor`** — repeat it on every admin page.
-- **The Fluent UI v5 rc.5 corrections** — point at [`00-overview.md`](00-overview.md)'s table, and say
-  plainly that the `fluentui-blazor-usage` skill is wrong on `FluentTextField`, `FluentNumberField`,
-  `IToastService`, `FluentNavItem.Icon` and `FluentNavCategory.Label`.
+Client conventions live in the scoped files under `.github/instructions/`: `client-bff.instructions.md`,
+`client-blazor.instructions.md`, and `client-contracts.instructions.md`. Keep the host/BFF boundary,
+component and ViewModel responsibilities, authorization behavior, route construction, and Fluent UI
+version-specific guidance in those files and their linked skills rather than creating duplicate
+instruction sources.
 
 ## 4. An ADR
 
@@ -130,7 +121,7 @@ cannot solve.
 - [ ] `/products` issues **one** `GET /api/catalog/products` per page load, not two.
 - [ ] `dotnet publish -c Release` on `.Client` succeeds with trimming on, and prices still format
       correctly in the published app.
-- [ ] `src/client/CLAUDE.md` exists and covers the six points above.
+- [ ] Client guidance stays in the three scoped `.github/instructions/client-*.instructions.md` files.
 - [ ] ADR-017 exists in `docs/decisions/`.
 - [ ] The README no longer claims `src/client/web/` is an empty folder.
 - [ ] `dotnet build Tnosc.EShop.slnx` is clean and every suite is green:

@@ -7,7 +7,7 @@ argument-hint: <target to cover, e.g. "UpdateProductPriceCommandHandler" or "the
 # Backfill Tests
 
 Read the target first, list its distinct outcomes, then mirror the closest existing test class.
-Full conventions: `tests/CLAUDE.md`. Templates: [../add-feature/references/tests.md](../add-feature/references/tests.md).
+Full conventions: `.github/instructions/tests.instructions.md`. Templates: [../add-feature/references/tests.md](../add-feature/references/tests.md).
 
 ## Pick the right suite
 

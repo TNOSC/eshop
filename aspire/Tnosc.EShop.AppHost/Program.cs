@@ -84,12 +84,18 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(name: "keycloa
 // can stay a fixed value instead of being threaded through as an env var the way KC_HOSTNAME is
 // above. A real storage account has one public DNS name already, so that setting stays absent from
 // appsettings.json and BlobProductImageStorage falls back to the client's own BlobClient.Uri there.
+//
+// WithDataVolume is deliberate, same reasoning as Postgres/Redis above: Postgres's product rows
+// persist across restarts, but the seeder is idempotent by SKU and skips the image re-upload for a
+// product that already exists - so without a volume here, a restarted Azurite comes up empty while
+// image_url values still point at its previous, now-gone container, and every product image 403s.
 IResourceBuilder<AzureStorageResource> storage = builder.AddAzureStorage(name: "storage");
 
 if (!builder.ExecutionContext.IsPublishMode)
 {
     storage.RunAsEmulator(configureContainer: azurite =>
         azurite.WithBlobPort(port: 10000)
+               .WithDataVolume()
                .WithUrlForEndpoint(endpointName: "blob", callback: url => url.DisplayText = "Azurite Blob"));
 }
 

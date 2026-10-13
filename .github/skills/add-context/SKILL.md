@@ -59,7 +59,7 @@ tests/…Tests.Integration/<Context>/{Context}IntegrationTestBase.cs
    `public const string` per tag. Required because the command handler that invalidates a tag lives in
    `Server.Application` and the query handler that populates it lives in
    `Server.Infrastructure.Persistence`; both reference `Server.Shared`, so the constant is the only
-   thing keeping them in step. Never a string literal (`.claude/rules/cache-tags.md`).
+   thing keeping them in step. Never a string literal (`.github/instructions/cache-tags.instructions.md`).
 
    ```csharp
    namespace Tnosc.EShop.Server.Shared.Basket;

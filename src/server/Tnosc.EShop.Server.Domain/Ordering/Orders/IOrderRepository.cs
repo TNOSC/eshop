@@ -40,7 +40,7 @@ public interface IOrderRepository : IRepository<Order, OrderId>
     /// The customer identifier is part of the lookup rather than something a handler checks afterwards.
     /// A customer asking for an order that is not theirs gets <see langword="null"/> — indistinguishable
     /// from one that does not exist — so ownership is structural and no handler ever contains an
-    /// <c>if (order.CustomerId != callerId)</c>. See <c>.claude/rules/authorization.md</c>.
+    /// <c>if (order.CustomerId != callerId)</c>. See <c>.github/instructions/authorization.instructions.md</c>.
     /// </remarks>
     /// <param name="orderId">The identifier of the order to retrieve.</param>
     /// <param name="customerId">The identifier of the customer the order must belong to.</param>

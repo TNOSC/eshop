@@ -10,7 +10,7 @@ Scaffold a full use case across Domain → Application → Infrastructure → Ap
 **Catalog** slice, which is the reference implementation. No MediatR: this codebase uses its own
 `ICommand`/`IQuery` abstractions, Scrutor-registered handlers, and a decorator pipeline.
 
-Read the root `CLAUDE.md` and the scoped `CLAUDE.md` in each project you touch before writing code.
+Read `.github/copilot-instructions.md` and the matching `.github/instructions/*.instructions.md` files for each project you touch before writing code.
 
 ## Workflow
 
@@ -62,14 +62,14 @@ Read the root `CLAUDE.md` and the scoped `CLAUDE.md` in each project you touch b
   cached data, `[Cacheable(seconds)]` on queries; `[CacheKey]` on query properties. **Tags are
   constants from `Server.Shared/<Context>/CacheTags.cs`, never string literals** — the invalidating
   and populating handlers sit in different projects and a literal drifts silently
-  (`.claude/rules/cache-tags.md`).
+  (`.github/instructions/cache-tags.instructions.md`).
 - Auth is **wired** (Keycloak, T11). Guard a write endpoint with
   `.HasPermission(Permissions.<Context>.Write)` — a constant from
   `Server.Shared/Authorization/Permissions.cs`, never a string literal, for the same reason cache tags
   are constants. Use `.RequireAuthorization()` when any authenticated caller suffices, and leave
   storefront reads anonymous. Never write an ownership check in a handler: a `me` endpoint resolves
   the caller from `IUserContext` so it structurally cannot reach another user's data
-  (`.claude/rules/authorization.md`).
+  (`.github/instructions/authorization.instructions.md`).
 
 ## Naming reference
 

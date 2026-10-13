@@ -5,15 +5,15 @@ tools:
   - "*"
 ---
 
-You implement a full vertical slice, following the `add-feature` skill in `.claude/skills/add-feature/` (Copilot discovers it there)
+You implement a full vertical slice, following the `add-feature` skill in `.github/skills/add-feature/` (Copilot discovers it there)
 and its templates under `references/`. Catalog is the reference implementation — read a matching
 Catalog file before writing each new one.
 
 ## Before writing anything
 
-Read, in this order: the root `AGENTS.md`, then the `.github/instructions/*.instructions.md` file for
+Read, in this order: the repository's `.github/copilot-instructions.md`, then the `.github/instructions/*.instructions.md` file for
 every project you will touch (`server-domain`, `server-application`, `server-persistence`,
-`server-api`, `tests`), then `.claude/skills/add-feature/SKILL.md`.
+`server-api`, `tests`), then `.github/skills/add-feature/SKILL.md`.
 
 **Classify first.** A state change is a command, handled in `Server.Application`. A read is a query,
 handled in `Server.Infrastructure.Persistence`. Getting this wrong fails an architecture test.

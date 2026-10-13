@@ -138,7 +138,7 @@ Fluent's generated markup breaks on every rc bump for no signal.
 
 ## Conventions
 
-From [`tests/CLAUDE.md`](../tests/CLAUDE.md):
+From [`.github/instructions/tests.instructions.md`](../.github/instructions/tests.instructions.md):
 
 - `MethodOrScenario_Should_ExpectedOutcome_When_Condition` (`CA1707` is suppressed, underscores are fine).
 - Test classes are `public sealed`.

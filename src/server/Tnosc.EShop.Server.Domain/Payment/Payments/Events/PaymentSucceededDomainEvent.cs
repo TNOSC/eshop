@@ -15,7 +15,7 @@ namespace Tnosc.EShop.Server.Domain.Payment.Payments.Events;
 /// <remarks>
 /// The cross-context half of the loop: Ordering's <c>PaymentSucceededMarkOrderPaidHandler</c> reacts
 /// to this and calls <c>Order.MarkPaid()</c>. The payload carries flat primitives only, per
-/// <c>.claude/rules/domain-events.md</c> — <see cref="OrderId"/> is the plain <see cref="Guid"/>
+/// <c>.github/instructions/domain-events.instructions.md</c> — <see cref="OrderId"/> is the plain <see cref="Guid"/>
 /// Ordering itself stores it as, never a typed <c>OrderId</c> or <c>PaymentId</c>.
 /// </remarks>
 /// <param name="Id">The domain event identifier — the key the inbox dedupes redeliveries on.</param>

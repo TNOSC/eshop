@@ -78,7 +78,7 @@ extra hop through its own pipeline, re-doing cookie auth for a request that alre
 Verified against `Microsoft.FluentUI.AspNetCore.Components.xml` in the NuGet cache for
 `5.0.0-rc.5-26219.1` — not the skill's prose.
 
-| `.claude/skills/fluentui-blazor-usage` says | rc.5 actually has |
+| `.github/skills/fluentui-blazor-usage` says | rc.5 actually has |
 |---|---|
 | `FluentTextField` | **`FluentTextInput`** (`Label`, `Placeholder`, `Required`, `TextInputType`, `Immediate`) |
 | `FluentNumberField` | **`FluentNumberInput<TValue>`** (`Min`, `Max`, `Step`, `IsDecimal`, `StepButtons`) |
@@ -100,7 +100,7 @@ The skill *is* right about: `FluentNav` / `FluentNavItem` / `FluentNavCategory` 
 
 ## Conventions
 
-From [`.claude/rules/code-style.md`](../.claude/rules/code-style.md), applied to every `.cs` file:
+From [`.github/instructions/code-style.instructions.md`](../.github/instructions/code-style.instructions.md), applied to every `.cs` file:
 
 ```csharp
 // ----------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ to protect.
 
 The repo already made this call once — `tests/server/Tnosc.EShop.Server.Tests.Acceptance/Contracts/`
 restates routes and shapes because *"a client that shared the server's route constants could not catch a
-path changing underneath it"* ([`tests/CLAUDE.md`](../tests/CLAUDE.md)). The web client follows the same
+path changing underneath it"* ([`.github/instructions/tests.instructions.md`](../.github/instructions/tests.instructions.md)). The web client follows the same
 reasoning.
 
 ## Architecture tests do not scan the client — keep it that way

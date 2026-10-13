@@ -7,7 +7,7 @@ argument-hint: <aggregate description, e.g. "Review with a rating, author and pr
 # Add a Domain Aggregate
 
 Create an aggregate and wire it through every layer, following the `Product` aggregate in `Catalog`.
-Read `src/server/Tnosc.EShop.Server.Domain/CLAUDE.md` first — this is a **rich** domain, not a bag of
+Read `.github/instructions/server-domain.instructions.md` first — this is a **rich** domain, not a bag of
 properties.
 
 ## Decide first
@@ -93,7 +93,7 @@ public sealed record ReviewPostedDomainEvent(
 `public sealed class Review : AggregateRoot<ReviewId>` — private EF constructor, `private set`
 properties, static `Result<T>` factory, behaviour methods that own their transitions. Every method
 that mutates state calls `IncrementVersion()` — **including `Create`** — and raises its domain event.
-See the canonical example in `Server.Domain/CLAUDE.md`.
+See the canonical example in `.github/instructions/server-domain.instructions.md`.
 
 Make `Create` `internal` if a `{Aggregate}Factory` must guard a rule that spans the aggregate.
 
@@ -157,7 +157,7 @@ rename means the configuration is wrong.
 ## Tests
 
 - Unit-test the aggregate's factory, every transition, and every value object — one test per
-  invariant, asserting the error code (`tests/CLAUDE.md`).
+  invariant, asserting the error code (`.github/instructions/tests.instructions.md`).
 - If you added a read model, integration-test the projection.
 - Run `dotnet build Tnosc.EShop.slnx` and `dotnet test Tnosc.EShop.slnx`; `Tests.Architecture`
   checks typed-id shape, value-object shape, no public setters, and unique domain-event names.

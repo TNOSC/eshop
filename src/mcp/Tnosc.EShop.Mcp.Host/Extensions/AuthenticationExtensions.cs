@@ -26,7 +26,7 @@ namespace Tnosc.EShop.Mcp.Host.Extensions;
 /// <remarks>
 /// <para>
 /// This is the one place in this Host where <c>IConfiguration</c> and <see cref="IOptions{TOptions}"/>
-/// may be touched, per <c>.claude/rules/configuration-options.md</c>. The bound options are unwrapped
+/// may be touched, per <c>.github/instructions/configuration-options.instructions.md</c>. The bound options are unwrapped
 /// to a plain singleton immediately, so no consumer ever sees the wrapper.
 /// </para>
 /// <para>

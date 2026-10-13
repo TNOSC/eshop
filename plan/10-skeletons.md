@@ -125,7 +125,7 @@ error.
 > **Note the `me` vs admin split.** `me` endpoints resolve the caller from `IUserContext` and accept no
 > identifier, so a customer structurally cannot address another customer's profile. The admin endpoints
 > take the id in the route and are permission-gated instead. Never build a screen that sends a customer id
-> to a `me` endpoint — see [`.claude/rules/authorization.md`](../.claude/rules/authorization.md).
+> to a `me` endpoint — see [`.github/instructions/authorization.instructions.md`](../.github/instructions/authorization.instructions.md).
 
 ---
 

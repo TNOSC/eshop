@@ -34,7 +34,7 @@ which is part of the definition of done for any feature.
   nothing to do with business logic. Inspecting IL directly (or the compiled method body) lets the rule
   target actual control-flow branching in the *logical* method, filtering out what the `async`/`await`
   transform introduces.
-- **A design rule that only lives in a `CLAUDE.md`/rule-file description degrades over time** as the
+- **A design rule that only lives in a policy-file description degrades over time** as the
   codebase grows past what a reviewer can hold in their head on every PR — dependency direction, unique
   event names, and configuration-injection discipline are exactly the kind of rule that's easy to state
   once and then slowly erode without an automated check.
@@ -58,7 +58,7 @@ which is part of the definition of done for any feature.
 
 **Harder:**
 - Every new design rule this codebase adopts needs its own mechanized test, or it silently reverts to
-  "documented but unenforced" — the rule files (`.claude/rules/*.md`) exist partly to record which rules
+  "documented but unenforced" — the instruction files exist partly to record which rules
   already have that enforcement and which do not.
 - IL-level tests (`NoBusinessBranchingTests`, `ConfigurationTests`) are more delicate to write and debug
   than source-level ones, and their false-positive edges (e.g. `?.`/`??` operators, compiler-generated

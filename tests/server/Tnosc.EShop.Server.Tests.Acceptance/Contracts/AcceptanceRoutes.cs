@@ -18,7 +18,7 @@ namespace Tnosc.EShop.Server.Tests.Acceptance.Contracts;
 /// under a client. These are a second, independent statement of the same contract — the client's
 /// half — and the same reasoning applies to <see cref="FeaturedSku"/> and the realm credentials.
 /// Drift here fails loudly on the next run, which is the difference between this and the silent
-/// failure <c>.claude/rules/cache-tags.md</c> is about.
+/// failure <c>.github/instructions/cache-tags.instructions.md</c> is about.
 /// </remarks>
 public static class AcceptanceRoutes
 {

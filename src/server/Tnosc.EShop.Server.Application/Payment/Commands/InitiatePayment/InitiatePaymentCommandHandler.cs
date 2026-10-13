@@ -33,7 +33,7 @@ namespace Tnosc.EShop.Server.Application.Payment.Commands.InitiatePayment;
 /// once, after settlement has already succeeded or the payment has already recorded its own decline,
 /// so a retried attempt never leaves a previous attempt's aggregate tracked-but-unsaved alongside a
 /// new one. Reaching for <c>[Transactional]</c> here — as the plan's summary table suggests — would
-/// buy nothing this shape does not already have, per <c>.claude/rules</c>'s guidance that the
+/// buy nothing this shape does not already have, per the repository instructions that the
 /// attribute is reserved for a handler spanning more than one aggregate or committing more than once.
 /// </para>
 /// <para>

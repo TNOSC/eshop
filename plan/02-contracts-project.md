@@ -25,7 +25,7 @@ to protect, and would pull EF Core into the WASM payload.
 
 The repo already made this call once — `tests/server/Tnosc.EShop.Server.Tests.Acceptance/Contracts/`
 restates routes and shapes deliberately, because *"a client that shared the server's route constants
-could not catch a path changing underneath it"* ([`tests/CLAUDE.md`](../tests/CLAUDE.md)).
+could not catch a path changing underneath it"* ([`.github/instructions/tests.instructions.md`](../.github/instructions/tests.instructions.md)).
 
 ---
 

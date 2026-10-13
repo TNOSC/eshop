@@ -231,7 +231,7 @@ login would loop forever.
 
 `OidcOptions` binds via `AddOptions<T>().Bind(...).ValidateDataAnnotations().ValidateOnStart()` and is
 unwrapped to a plain singleton, per
-[`.claude/rules/configuration-options.md`](../.claude/rules/configuration-options.md). No consumer takes
+[`.github/instructions/configuration-options.instructions.md`](../.github/instructions/configuration-options.instructions.md). No consumer takes
 `IConfiguration` or `IOptions<T>`.
 
 ---

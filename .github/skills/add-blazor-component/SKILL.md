@@ -8,7 +8,7 @@ argument-hint: <component description, e.g. "a page to list a customer's orders"
 
 Scaffold a new page or feature component in `Tnosc.EShop.Client.Web.Client`, following the
 **`Features/Store/Catalog`** slice, which is the reference implementation. Read
-`.claude/rules/blazor-client-mvvm.md` before writing code — this skill turns that rule into steps,
+`.github/instructions/blazor-client-mvvm.instructions.md` before writing code — this skill turns that rule into steps,
 it does not restate it.
 
 Core split: a routable page only composes child components. A component with real behavior (a form,
@@ -25,7 +25,7 @@ touches an `IXxxApi` client, validates, or maps to a request contract.
      service. Adding either here is ceremony, not architecture. Its `[Parameter]`s are never a
      `Tnosc.EShop.Client.Web.Contracts` type though — if it displays DTO-derived data, the parent's
      own service maps that DTO into a small colocated display ViewModel first
-     (`.claude/rules/blazor-client-mvvm.md`, "No DTO past the service").
+     (`.github/instructions/blazor-client-mvvm.instructions.md`, "No DTO past the service").
 
 2. **Place it**, mirroring `Features/Store/Catalog/`:
    ```
@@ -165,7 +165,7 @@ If the component needs an API endpoint that doesn't exist yet, that's server-sid
 ## Non-negotiable conventions
 
 - No page or component `[Inject]`s an `IXxxApi` client directly, except the one `<Name>Service` that
-  owns it (`.claude/rules/blazor-client-mvvm.md`).
+  owns it (`.github/instructions/blazor-client-mvvm.instructions.md`).
 - `ComponentState.Error` is never set by component code — only `StatefulBoundary`'s `ErrorBoundary`
   sets it; a `ClientProblem` failure still renders as `Content` via `ErrorPanel`.
 - Presentational components (no state, no API call of their own) get no ViewModel and no service —
@@ -175,9 +175,9 @@ If the component needs an API endpoint that doesn't exist yet, that's server-sid
   `[Parameter]`s, or a `GridItemsProvider<T>`/`FluentDataGrid<T>` type argument — the owning service
   maps every DTO to a colocated ViewModel before returning it, including read-only display data.
 - Every call with 3+ arguments is one per line, every argument named at every call site
-  (`.claude/rules/code-style.md`).
+  (`.github/instructions/code-style.instructions.md`).
 - `IConfiguration`/`IOptions<T>` never appear in a component or service constructor
-  (`.claude/rules/configuration-options.md`) — client-side settings follow the same rule as the
+  (`.github/instructions/configuration-options.instructions.md`) — client-side settings follow the same rule as the
   server.
 
 ## Naming reference

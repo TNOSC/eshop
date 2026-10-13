@@ -113,7 +113,7 @@ throw during static SSR).
 Do **not** treat 403 the same way. A 403 means authenticated-but-unpermitted — redirecting to login
 produces an infinite loop where the user signs in successfully and is bounced straight back. Show a
 "not permitted" message instead. The server's authorization chain is built specifically to distinguish
-these two (see [`.claude/rules/authorization.md`](../.claude/rules/authorization.md)); do not collapse
+these two (see [`.github/instructions/authorization.instructions.md`](../.github/instructions/authorization.instructions.md)); do not collapse
 them on the client.
 
 ---

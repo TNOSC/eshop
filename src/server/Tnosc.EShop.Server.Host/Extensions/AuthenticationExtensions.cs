@@ -33,7 +33,7 @@ internal static class AuthenticationExtensions
     /// <remarks>
     /// <para>
     /// This is the one place in the Host where <c>IConfiguration</c> and <see cref="IOptions{TOptions}"/>
-    /// may be touched, per <c>.claude/rules/configuration-options.md</c> — a rule
+    /// may be touched, per <c>.github/instructions/configuration-options.instructions.md</c> — a rule
     /// <c>ConfigurationTests</c> enforces against this assembly too. The bound options are unwrapped
     /// to a plain singleton immediately, so no consumer ever sees the wrapper.
     /// </para>

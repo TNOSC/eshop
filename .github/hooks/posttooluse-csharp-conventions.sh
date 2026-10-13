@@ -7,12 +7,11 @@
 #   - public members with no XML docs under lib/ (CS1591 is a build ERROR there)
 #   - string-literal cache tags (.github/instructions/cache-tags.instructions.md)
 #
-# Advisory only: always exits 0. Findings are returned to the model as `additionalContext` -- a
-# postToolUse hook's bare stdout is not shown to it, unlike Claude Code's PostToolUse.
+# Advisory only: always exits 0. Findings are returned to the model as `additionalContext`.
 
 payload=$(cat)
 
-# Copilot's file tools take `path`; Claude Code's took `tool_input.file_path`.
+# Copilot's file tools supply the path as `path`.
 file_path=$(printf '%s' "$payload" \
   | tr ',' '\n' \
   | grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' \
@@ -22,7 +21,7 @@ file_path=$(printf '%s' "$payload" \
 # Unescape the backslashes JSON adds to Windows paths, so "C:\\Projects\\x.cs" becomes
 # "C:/Projects/x.cs". Use tr, not the obvious ${file_path//\\//}: that parameter expansion deletes
 # every forward slash instead of replacing backslashes, which reduces every path to a bare filename
-# and makes the -f test below always fail. That bug is why the .claude/hooks/ version never fired.
+# and makes the -f test below always fail.
 file_path=$(printf '%s' "$file_path" | tr -s '\\' '/')
 
 [ -z "$file_path" ] && exit 0

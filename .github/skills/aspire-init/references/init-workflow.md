@@ -51,7 +51,7 @@ aspire init [options]
 
 - A Markdown skill file is installed into the AI agent's skill directory — the same
   directory chosen by `aspire agent init` (e.g., `.agents/skills/aspireify/`,
-  `.github/skills/aspireify/`, `.claude/skills/aspireify/`, or `.opencode/skill/aspireify/`).
+  `.github/skills/aspireify/`, or `.opencode/skill/aspireify/`).
 - The skill instructs the agent to scan the repo, propose a resource graph, edit the
   AppHost, and validate via `aspire start`.
 

@@ -22,8 +22,8 @@ endpoint.
 
 | | |
 |---|---|
-| 📐 Design rules | [`CLAUDE.md`](./CLAUDE.md) |
-| 📏 Narrow policies | [`.claude/rules/`](./.claude/rules) |
+| 📐 Design rules | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) |
+| 📏 Narrow policies | [`.github/instructions/`](./.github/instructions) |
 | 🧭 Design decisions | [`docs/decisions/`](./docs/decisions) |
 
 ### The architecture in a paragraph
@@ -93,7 +93,7 @@ Two placements are load-bearing, not incidental:
 
 - **`Idempotency` is innermost on every pipeline that has it**, so the key is claimed in the same
   database transaction as the handler's own writes - see
-  [`.claude/rules/idempotency.md`](./.claude/rules/idempotency.md).
+  [`.github/instructions/idempotency.instructions.md`](./.github/instructions/idempotency.instructions.md).
 - **`Retry` sits outside `Idempotency`**, so each attempt gets its own transaction rather than
   retrying inside one Postgres has already aborted.
 
@@ -113,7 +113,7 @@ Two things worth knowing before reading any code:
 - **Delivery is at-least-once, and the inbox closes the window.** `[Idempotent]` on a handler claims
   its key - the caller's `Idempotency-Key` for a command, `IDomainEvent.Id` for an event - in the
   *same transaction* as the handler's own writes. See
-  [`.claude/rules/idempotency.md`](./.claude/rules/idempotency.md).
+  [`.github/instructions/idempotency.instructions.md`](./.github/instructions/idempotency.instructions.md).
 
 ```mermaid
 sequenceDiagram
@@ -251,7 +251,7 @@ Or click **Authorize** in Scalar, which is pre-wired to the same client with PKC
 Roles live in Keycloak; permissions live in code. An endpoint names
 `Permissions.Catalog.Write`, never a role, and `KeycloakClaimsTransformation` expands a realm role
 into permission claims. Adding a permission is a constant, not a realm change - see
-[`.claude/rules/authorization.md`](./.claude/rules/authorization.md).
+[`.github/instructions/authorization.instructions.md`](./.github/instructions/authorization.instructions.md).
 
 ### Project layout
 
@@ -307,10 +307,9 @@ flowchart LR
 5. **Tests** - a unit test per domain rule and per handler, an integration test per query handler
    against real Postgres, and an architecture test if the slice introduced a new rule.
 
-Each layer has its own `CLAUDE.md` with the rules for that tree, and
-[`.claude/rules/`](./.claude/rules) holds the policies that span layers: cache tags, idempotency,
-domain events, migrations, configuration options, authorization, analyzer suppressions, dependencies,
-code style.
+Each layer has scoped guidance in [`.github/instructions/`](./.github/instructions), alongside the
+cross-cutting policies for cache tags, idempotency, domain events, migrations, configuration options,
+authorization, analyzer suppressions, dependencies, and code style.
 
 Catalog is the reference implementation. Copy its slice layout.
 
@@ -334,7 +333,7 @@ generated against it would be meaningless.
 **Then read the file it generated**, before trusting it: the schema must be created before its tables,
 no `DropColumn`/`RenameColumn` should appear that you did not ask for (EF infers a rename as
 drop-plus-add, which discards the data), and no other context's objects should be in there. Full
-checklist in [`.claude/rules/migrations.md`](./.claude/rules/migrations.md).
+checklist in [`.github/instructions/migrations.instructions.md`](./.github/instructions/migrations.instructions.md).
 
 ### Build
 
@@ -440,18 +439,15 @@ source file in this repository.
 This repo enforces its architecture with tests, not code review, so start with the rules rather than
 the code:
 
-- [`CLAUDE.md`](./CLAUDE.md) and its scoped per-project files for the conventions of the tree you're
-  editing.
-- [`.claude/rules/`](./.claude/rules) for narrow, cross-cutting policies (cache tags, idempotency,
-  domain events, migrations, configuration options, authorization, dependencies, code style).
+- [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) for the repository overview and
+  [`.github/instructions/`](./.github/instructions) for scoped and cross-cutting policies.
+- [`.github/skills/`](./.github/skills) for repeatable workflows and [`.github/agents/`](./.github/agents)
+  for delegated reviews and implementation tasks.
 - [`docs/decisions/`](./docs/decisions) for the reasoning behind decisions already made, before
   proposing to reverse one.
 
 A change is done when `dotnet build Tnosc.EShop.slnx` is clean, the new unit and integration tests
 are green, and the architecture suite still passes.
 
-This repo also leans on the **Claude Code harness** for day-to-day development: scoped `CLAUDE.md`
-files and [`.claude/rules/`](./.claude/rules) are read automatically by the agent, and
-[`.claude/agents/`](./.claude/agents) and [`.claude/skills/`](./.claude/skills) encode repeatable
-workflows (scaffolding a slice, backfilling tests, an architecture audit) as first-class tools rather
-than ad hoc prompts. Contributions using Claude Code should go through those rather than freehand.
+GitHub Copilot workflows are documented in [`.github/skills/`](./.github/skills) and reusable review
+or implementation agents are defined in [`.github/agents/`](./.github/agents).

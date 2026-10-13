@@ -1,12 +1,12 @@
 # .github — GitHub Copilot configuration
 
-This repo is configured for two assistants. Claude Code reads `.claude/` and the `CLAUDE.md` files;
-GitHub Copilot — both the CLI and VS Code Copilot Chat — reads this directory plus `AGENTS.md`.
-**This tree is authoritative**: where a policy exists in both places, the body lives here.
+This repository configures GitHub Copilot for the CLI and VS Code Copilot Chat. `.github/copilot-instructions.md` provides
+repository-wide guidance; this directory contains path-scoped instructions, reusable workflows,
+custom agents and hooks.
 
 ```
 .github/
-├── copilot-instructions.md         always loaded — the non-negotiables, kept short on purpose
+├── copilot-instructions.md         always loaded — repository-wide guidance and non-negotiables
 ├── instructions/                   path-scoped policy, loaded when a matching file is touched
 ├── agents/                         custom agents (subagents) — *.agent.md
 ├── prompts/                        VS Code Copilot Chat slash commands — *.prompt.md
@@ -15,17 +15,16 @@ GitHub Copilot — both the CLI and VS Code Copilot Chat — reads this director
 └── copilot/settings.json           repo-level permissions (settings.local.json is git-ignored)
 ```
 
-MCP servers are **not** here: `.mcp.json` at the repo root is what Copilot actually reads (it takes
-precedence over `.github/mcp.json`), and Claude Code reads the same file. One file, both tools.
-`.vscode/mcp.json` carries the same three servers for VS Code.
+MCP servers are configured in `.mcp.json` at the repository root; `.vscode/mcp.json` carries the same
+servers for VS Code.
 
 ## Which construct for which job
 
-The four surfaces are not interchangeable, and the difference is *when they load*:
+The surfaces are not interchangeable, and the difference is *when they load*:
 
 | | Loads | Use it for |
 |---|---|---|
-| **`copilot-instructions.md`** | Every session, always | The handful of rules that apply everywhere. Keep it short — it costs context on every turn. |
+| **`copilot-instructions.md`** | Every session, always | Repository-wide guidance and non-negotiables that apply everywhere. Keep it focused; scoped policy belongs in instructions files. |
 | **`instructions/*.instructions.md`** | When a file matching its `applyTo` glob is touched | Per-project and per-topic policy. This is where almost everything belongs. |
 | **`skills/<name>/SKILL.md`** | On request, or when the description matches | A *workflow with steps* — verify, migrate, triage. Produces a process and a report. |
 | **`agents/*.agent.md`** | Delegated as a subagent | Large, self-contained work you want in its own context window, or work you want to run with *fewer* tools than you have. |
@@ -53,19 +52,29 @@ applyTo: "src/server/**/*.cs"
 
 Comma-separate multiple patterns: `applyTo: "**/*.csproj,**/Directory.Packages.props"`.
 
-## Keeping the two trees in step
+## Authoritative sources
 
-| Content | Lives in | The other tree |
-|---|---|---|
-| The ten narrow policies | `instructions/*.instructions.md` | `.claude/rules/*.md` are stubs pointing here |
-| The three command workflows | `skills/<name>/SKILL.md` | `.claude/commands/*.md` are stubs pointing here |
-| Per-project conventions | `instructions/*.instructions.md` | **duplicated** in each scoped `CLAUDE.md` |
-| Repo-wide overview | `AGENTS.md` | **duplicated** in `CLAUDE.md` |
-| Scaffolding skills | `.claude/skills/` | *not* duplicated — Copilot discovers `.claude/skills/` natively |
-| MCP servers | `.mcp.json` (repo root) | same file for both; `.vscode/mcp.json` mirrors it |
+| Content | Lives in |
+|---|---|
+| Repository-wide overview | `.github/copilot-instructions.md` |
+| Scoped and cross-cutting policies | `instructions/*.instructions.md` |
+| Workflows | `skills/<name>/SKILL.md` |
+| Custom agent definitions | `agents/*.agent.md` |
+| MCP servers | `.mcp.json` at the repository root; `.vscode/mcp.json` mirrors it |
 
-Only the last two rows are free. **The two duplicated rows must be changed together** — there is no
-check that enforces it.
+## Adding an instruction policy
+
+Use a scoped instruction file for a cross-cutting policy or a project-specific convention that needs
+more detail than `.github/copilot-instructions.md`. Keep one authoritative copy in
+`instructions/<name>.instructions.md`, with an `applyTo` glob, and explain the rule, why it matters,
+how to follow it, and a short checklist. Update the mapping in `.github/copilot-instructions.md` when adding a new project
+scope; do not duplicate policy between files.
+
+## Writing a custom agent
+
+State the files and policies the agent must read before acting, keep its tool access to the minimum
+needed, specify what it must not do, and require an honest report of incomplete checks. A reviewer
+should not receive write tools; its read-only guarantee should come from its tool list.
 
 ## Verifying a change here
 

@@ -35,7 +35,7 @@ public static class ExternalExtensions
     /// Neither Redis-backed type implements <c>IRepository&lt;,&gt;</c> or <c>IQueryHandler&lt;,&gt;</c>,
     /// so neither is picked up by a Scrutor assembly scan — both are registered explicitly here. This
     /// is also the one place in this project that touches <see cref="IConfiguration"/> or
-    /// <see cref="IOptions{TOptions}"/>, per <c>.claude/rules/configuration-options.md</c>; every
+    /// <see cref="IOptions{TOptions}"/>, per <c>.github/instructions/configuration-options.instructions.md</c>; every
     /// consumer takes the plain <see cref="BasketOptions"/> class instead.
     /// </remarks>
     /// <param name="services">The service collection to register services with.</param>

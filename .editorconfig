@@ -8,7 +8,7 @@ root = true
 
 # Mirrors the [*.{cs,vb}] "Custom Rules" block below — Razor compiles through obj/**/*.razor.g.cs,
 # so those suppressions apply to @code blocks only by path coincidence and do not cover diagnostics
-# the Razor compiler reports against the .razor file itself. See .claude/rules/analyzer-suppressions.md.
+# the Razor compiler reports against the .razor file itself. See .github/instructions/analyzer-suppressions.instructions.md.
 
 # .NET Code Analyzers rules
 

@@ -210,7 +210,7 @@ Logging → Exception → Validation → Retry → CacheInvalidation → Transac
 The handler that *invalidates* a tag lives in `Server.Application` and the handler that *populates*
 it lives in `Server.Infrastructure.Persistence`; two literals in two projects drift silently, because
 a mistyped tag doesn't fail the build, it just stops invalidating. `Server.Shared` is referenced by
-both, which is exactly why the constant belongs there. See `.claude/rules/cache-tags.md`.
+both, which is exactly why the constant belongs there. See `.github/instructions/cache-tags.instructions.md`.
 
 ```csharp
 namespace Tnosc.EShop.Server.Shared.Catalog;

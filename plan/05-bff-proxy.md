@@ -16,12 +16,12 @@ through `ConfigureHttpClientDefaults` (`aspire/Tnosc.EShop.ServiceDefaults/Exten
 **bypasses that pipeline entirely** — wiring resilience back in is more code than the forwarder itself.
 
 YARP would also need route/cluster configuration bound from `IConfiguration`, which collides with
-[`.claude/rules/configuration-options.md`](../.claude/rules/configuration-options.md), and two new
+[`.github/instructions/configuration-options.instructions.md`](../.github/instructions/configuration-options.instructions.md), and two new
 packages.
 
 The forwarder is ~70 lines in one file and gives explicit control over the two things that actually
 matter here: `Idempotency-Key` pass-through and `Authorization` injection. Per
-[`.claude/rules/dependencies.md`](../.claude/rules/dependencies.md), state this reasoning in the commit
+[`.github/instructions/dependencies.instructions.md`](../.github/instructions/dependencies.instructions.md), state this reasoning in the commit
 message.
 
 ---

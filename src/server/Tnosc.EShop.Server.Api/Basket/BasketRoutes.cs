@@ -12,7 +12,7 @@ namespace Tnosc.EShop.Server.Api.Basket;
 /// <remarks>
 /// Every route resolves the caller's own basket from their token rather than from a route value — the
 /// same "no ownership check exists because there is nothing to check" shape as Identity's <c>me</c>
-/// routes. See <c>.claude/rules/authorization.md</c>.
+/// routes. See <c>.github/instructions/authorization.instructions.md</c>.
 /// </remarks>
 internal static class BasketRoutes
 {

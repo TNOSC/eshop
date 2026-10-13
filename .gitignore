@@ -417,6 +417,5 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Claude Code / GitHub Copilot — personal overrides (hooks and shared permissions are committed)
-.claude/settings.local.json
+# GitHub Copilot personal overrides (shared permissions are committed)
 .github/copilot/settings.local.json

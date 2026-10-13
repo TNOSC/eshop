@@ -113,7 +113,7 @@ Methods for this task: `SearchProductsAsync`, `GetProductAsync`, `GetCategoriesA
 [task 09](09-admin-catalog.md), where the idempotency-key parameter is designed.
 
 The class uses a **primary constructor** (it is a plain class, not a component) and named arguments at
-every call site, per [`.claude/rules/code-style.md`](../.claude/rules/code-style.md).
+every call site, per [`.github/instructions/code-style.instructions.md`](../.github/instructions/code-style.instructions.md).
 
 ---
 

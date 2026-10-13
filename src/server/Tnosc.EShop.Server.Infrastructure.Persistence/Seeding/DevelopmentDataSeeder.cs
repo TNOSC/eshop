@@ -78,7 +78,7 @@ internal sealed class DevelopmentDataSeeder(
         }
 
         // CreateAsyncScope, not CreateScope: UnitOfWork implements only IAsyncDisposable, and
-        // IServiceScope.Dispose() throws for such a service. See .claude/rules/idempotency.md.
+        // IServiceScope.Dispose() throws for such a service. See .github/instructions/idempotency.instructions.md.
         await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
 
         EShopWriteDbContext context = scope.ServiceProvider.GetRequiredService<EShopWriteDbContext>();

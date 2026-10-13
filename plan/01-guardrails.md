@@ -74,7 +74,7 @@ cover diagnostics the Razor compiler reports against the `.razor` file itself.
 
 Add a `[*.razor]` section mirroring the `[*.cs]` `dotnet_diagnostic` block, in the same grouped,
 commented style as the existing entries. Per
-[`.claude/rules/analyzer-suppressions.md`](../.claude/rules/analyzer-suppressions.md), say so in the
+[`.github/instructions/analyzer-suppressions.instructions.md`](../.github/instructions/analyzer-suppressions.instructions.md), say so in the
 commit message.
 
 **Rules likely to fire in new client code that are *not* currently suppressed:**

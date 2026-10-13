@@ -23,7 +23,7 @@ namespace Tnosc.EShop.Server.Domain.Ordering.Orders.Events;
 /// </para>
 /// <para>
 /// Delivery is at-least-once, so both subscribers must tolerate seeing this twice. See
-/// <c>.claude/rules/domain-events.md</c>.
+/// <c>.github/instructions/domain-events.instructions.md</c>.
 /// </para>
 /// </remarks>
 /// <param name="Id">The domain event identifier — the key the inbox dedupes redeliveries on.</param>

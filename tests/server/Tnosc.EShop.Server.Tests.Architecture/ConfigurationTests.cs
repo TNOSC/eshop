@@ -15,7 +15,7 @@ using Tnosc.EShop.Server.Tests.Architecture.Infrastructure;
 namespace Tnosc.EShop.Server.Tests.Architecture;
 
 /// <summary>
-/// Mechanises <c>.claude/rules/configuration-options.md</c>: <c>IConfiguration</c> and the
+/// Mechanises <c>.github/instructions/configuration-options.instructions.md</c>: <c>IConfiguration</c> and the
 /// <c>IOptions&lt;T&gt;</c> family may only ever be touched inside an <c>AddXxx</c> composition-root
 /// extension method — never taken as a constructor parameter by an ordinary class.
 /// </summary>
@@ -61,7 +61,7 @@ public sealed class ConfigurationTests
     {
         List<string> violations = CollectConstructorParameterViolations(isForbidden: IsConfigurationType);
 
-        violations.ShouldBeEmpty(customMessage: $"No class may constructor-inject IConfiguration/IConfigurationSection — bind a narrow <Feature>Options class in the owning AddXxx extension method instead (see .claude/rules/configuration-options.md): {string.Join(separator: ", ", values: violations)}");
+        violations.ShouldBeEmpty(customMessage: $"No class may constructor-inject IConfiguration/IConfigurationSection — bind a narrow <Feature>Options class in the owning AddXxx extension method instead (see .github/instructions/configuration-options.instructions.md): {string.Join(separator: ", ", values: violations)}");
     }
 
     // No class anywhere takes IOptions<T>/IOptionsSnapshot<T>/IOptionsMonitor<T> as a constructor
@@ -71,7 +71,7 @@ public sealed class ConfigurationTests
     {
         List<string> violations = CollectConstructorParameterViolations(isForbidden: IsOptionsWrapperType);
 
-        violations.ShouldBeEmpty(customMessage: $"No class may constructor-inject IOptions<T>/IOptionsSnapshot<T>/IOptionsMonitor<T> — unwrap to the plain settings class in the owning AddXxx extension method and inject that instead (see .claude/rules/configuration-options.md): {string.Join(separator: ", ", values: violations)}");
+        violations.ShouldBeEmpty(customMessage: $"No class may constructor-inject IOptions<T>/IOptionsSnapshot<T>/IOptionsMonitor<T> — unwrap to the plain settings class in the owning AddXxx extension method and inject that instead (see .github/instructions/configuration-options.instructions.md): {string.Join(separator: ", ", values: violations)}");
     }
 
     private static List<string> CollectConstructorParameterViolations(Func<TypeReference, bool> isForbidden)
