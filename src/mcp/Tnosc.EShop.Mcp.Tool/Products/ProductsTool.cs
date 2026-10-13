@@ -61,6 +61,28 @@ public static class ProductsTool
         return result.ToToolResult();
     }
 
+    /// <summary>Reads a single product's full details from the eShop catalog by its identifier.</summary>
+    [McpServerTool(UseStructuredContent = true, Name = McpToolNames.GetProduct)]
+    [Description("Reads a single product's full details from the eShop catalog — description, image, brand, category, stock and whether it is discontinued — by its identifier.")]
+    public static async Task<ToolResult<ProductDetails>> GetProductAsync(
+        IProductsQueryService productsQueryService,
+        string productId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!Guid.TryParse(input: productId, result: out Guid parsedProductId))
+        {
+            return ToolResult<ProductDetails>.Fail(
+                errorCode: "Products.InvalidProductId",
+                errorMessage: "productId must be a valid GUID.");
+        }
+
+        Result<ProductDetails> result = await productsQueryService.GetProductByIdAsync(
+            productId: parsedProductId,
+            cancellationToken: cancellationToken);
+
+        return result.ToToolResult();
+    }
+
     /// <summary>Adds a new product to the eShop catalog. Requires the <c>catalog:write</c> permission.</summary>
     [McpServerTool(UseStructuredContent = true, Name = McpToolNames.CreateProduct)]
     [Description("Adds a new product to the eShop catalog. Returns the new product's identifier.")]

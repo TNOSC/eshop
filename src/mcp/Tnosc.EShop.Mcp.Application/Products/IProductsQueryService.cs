@@ -4,6 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,4 +34,16 @@ public interface IProductsQueryService
         int page = 1,
         int pageSize = 20,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a single product's full details from the catalog.
+    /// </summary>
+    /// <param name="productId">The identifier of the product to retrieve.</param>
+    /// <param name="cancellationToken">The token used to cancel the request.</param>
+    /// <returns>
+    /// A successful result carrying the product's details, a not-found result when no product has
+    /// that identifier, or a failed result describing why the eShop catalog could not be reached
+    /// or understood.
+    /// </returns>
+    Task<Result<ProductDetails>> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken = default);
 }

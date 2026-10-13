@@ -25,4 +25,7 @@ public static class McpToolNames
 
     /// <summary>Adds a new product to the catalogue.</summary>
     public const string CreateProduct = "catalog_create_product";
+
+    /// <summary>Reads a single product's full details from the catalogue.</summary>
+    public const string GetProduct = "catalog_get_product";
 }

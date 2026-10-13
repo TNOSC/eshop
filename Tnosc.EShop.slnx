@@ -75,6 +75,9 @@
   <Folder Name="/tests/agent/">
     <Project Path="tests/agent/Tnosc.EShop.Agent.Tests.Unit/Tnosc.EShop.Agent.Tests.Unit.csproj" />
   </Folder>
+  <Folder Name="/tests/mcp/">
+    <Project Path="tests/mcp/Tnosc.EShop.Mcp.Tests.Unit/Tnosc.EShop.Mcp.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/tests/client/">
     <Project Path="tests/client/Tnosc.EShop.Client.Web.Tests.Unit/Tnosc.EShop.Client.Web.Tests.Unit.csproj" />
   </Folder>

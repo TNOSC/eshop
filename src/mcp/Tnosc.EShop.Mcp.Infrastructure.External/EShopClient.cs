@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -45,6 +46,27 @@ internal sealed class EShopClient(HttpClient httpClient) : IEShopClient
             cancellationToken: cancellationToken);
 
         return productsPage?.Items ?? [];
+    }
+
+    /// <inheritdoc />
+    public async Task<ProductDetails?> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken = default)
+    {
+        using HttpResponseMessage response = await httpClient.GetAsync(
+            requestUri: new Uri(uriString: $"/api/catalog/products/{productId}", uriKind: UriKind.Relative),
+            cancellationToken: cancellationToken);
+
+        // A missing product is an answer, not a transport failure — the service maps it to NotFound,
+        // which an exception would leave indistinguishable from an unreachable catalog.
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<ProductDetails>(
+            options: SerializerOptions,
+            cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />

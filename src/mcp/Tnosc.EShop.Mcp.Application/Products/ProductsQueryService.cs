@@ -4,6 +4,7 @@
 // Author: Ahmed HEDFI (ahmed.hedfi@gmail.com)
 // ----------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -33,6 +34,38 @@ internal sealed class ProductsQueryService(IEShopClient eShopClient) : IProducts
                 cancellationToken: cancellationToken);
 
             return Result<IReadOnlyCollection<Product>>.Success(value: products);
+        }
+        catch (HttpRequestException ex)
+        {
+            return Error.Failure(
+                code: "Products.Unavailable",
+                description: $"The eShop catalog could not be reached: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            return Error.Unexpected(
+                code: "Products.InvalidResponse",
+                description: $"The eShop catalog returned an unexpected response: {ex.Message}");
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<Result<ProductDetails>> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            ProductDetails? product = await eShopClient.GetProductByIdAsync(
+                productId: productId,
+                cancellationToken: cancellationToken);
+
+            if (product is null)
+            {
+                return Error.NotFound(
+                    code: "Products.NotFound",
+                    description: $"No product exists with identifier '{productId}'.");
+            }
+
+            return Result<ProductDetails>.Success(value: product);
         }
         catch (HttpRequestException ex)
         {

@@ -5,4 +5,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tnosc.EShop.Mcp.Tests.Unit" />
+  </ItemGroup>
 </Project>
