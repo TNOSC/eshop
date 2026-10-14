@@ -34,7 +34,7 @@ Two distinctions worth holding on to:
 
 - **Instructions describe; skills act.** If it is a policy the model should already know while editing,
   it is an instructions file. If it is a procedure someone invokes, it is a skill.
-- **An agent's value is often its *missing* tools.** `arch-auditor` has no write tools, so "it will
+- **An agent's value is often its *missing* tools.** `arch-reviewer` has no write tools, so "it will
   not edit anything" is a guarantee rather than a hope. That is worth more than the convenience.
 
 ## The `applyTo` glob is the whole mechanism

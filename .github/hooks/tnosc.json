@@ -1,14 +1,6 @@
 {
   "version": 1,
   "hooks": {
-    "preToolUse": [
-      {
-        "type": "command",
-        "matcher": "^(write|create|edit|str_replace|str_replace_editor)$",
-        "bash": "bash .github/hooks/pretooluse-enforce-serena.sh",
-        "timeoutSec": 10
-      }
-    ],
     "postToolUse": [
       {
         "type": "command",
