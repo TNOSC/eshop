@@ -9,7 +9,6 @@ custom agents and hooks.
 ├── copilot-instructions.md         always loaded — repository-wide guidance and non-negotiables
 ├── instructions/                   path-scoped policy, loaded when a matching file is touched
 ├── agents/                         custom agents (subagents) — *.agent.md
-├── prompts/                        VS Code Copilot Chat slash commands — *.prompt.md
 ├── skills/                         Copilot CLI workflows — <name>/SKILL.md
 ├── hooks/                          Copilot CLI lifecycle hooks — tnosc.json + the scripts
 └── copilot/settings.json           repo-level permissions (settings.local.json is git-ignored)

@@ -25,10 +25,6 @@ name. Supporting templates and references live beside each skill.
 | [`playwright-cli`](playwright-cli/SKILL.md) | Automates browser interaction and Playwright-based testing. |
 | [`verify`](verify/SKILL.md) | Runs the definition-of-done build and test gate, reporting skipped suites honestly. |
 
-`verify`, `migration` and `fix-build` are also exposed to VS Code Copilot Chat as `/verify`,
-`/migration` and `/fix-build` via [`../prompts/`](../prompts), which points back to each skill so
-each workflow has one authoritative body.
-
 ## Adding a skill
 
 Keep each skill focused on a workflow: provide `name` and `description` frontmatter, numbered steps,
