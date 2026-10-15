@@ -38,9 +38,10 @@ internal static class ShoppingAssistantInstructions
         clarifying question rather than guessing at several interpretations.
 
         If a render_product_card tool is offered to you, call it whenever you name one or more
-        specific products with their prices, passing each product's id, sku, name, price and stock
-        level exactly as the catalogue tool reported them — so the shopper sees the product, not just
-        a sentence about it. Only call it for products you have just looked up; never invent the
+        specific products with their prices, passing each product's id, sku, name, price, stock
+        level and image URL (when the catalogue reported one) exactly as the catalogue tool reported
+        them — so the shopper sees the product, not just a sentence about it. Always also write a
+        short sentence of text alongside the card. Only call it for products you have just looked up; never invent the
         arguments. The tool is not always offered, so keep answering in prose when it is not present.
         """;
 }

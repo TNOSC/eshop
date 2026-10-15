@@ -19,6 +19,8 @@ namespace Tnosc.EShop.Mcp.Application.Products;
 /// <param name="StockQuantity">The number of units currently on hand.</param>
 /// <param name="BrandName">The name of the product's brand.</param>
 /// <param name="CategoryName">The name of the product's category.</param>
+/// <param name="ImageUrl">The product's image URL, when it has one.</param>
+#pragma warning disable CA1054 // ImageUrl is a flat wire-format string like every other field here, never System.Uri.
 public sealed record Product(
     Guid Id,
     string Sku,
@@ -27,4 +29,6 @@ public sealed record Product(
     string PriceCurrency,
     int StockQuantity,
     string BrandName,
-    string CategoryName);
+    string CategoryName,
+    string? ImageUrl = null);
+#pragma warning restore CA1054

@@ -116,6 +116,7 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
                     if (string.Equals(a: call.Name, b: AssistantToolNames.RenderProductCard, comparisonType: StringComparison.Ordinal))
                     {
                         reply.Products = ParseProductCards(arguments: call.Arguments);
+                        reply.RenderCallId = call.CallId;
                     }
                 }
 
@@ -144,7 +145,7 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
 
         // A run that produced only tool traffic answers with nothing at all. Saying so beats leaving
         // an empty bubble that reads like a rendering bug.
-        if (reply.Text.Length == 0)
+        if (reply.Text.Length == 0 && reply.Products.Count == 0)
         {
             reply.Text = "I could not find an answer to that.";
         }
@@ -184,6 +185,28 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
 
         foreach (ChatMessageViewModel message in viewModel.Messages)
         {
+            if (message.RenderCallId is not null && !message.IsFromShopper)
+            {
+                // The render-only tool is never executed, so the call is replayed with an output —
+                // otherwise the provider rejects the thread for a function call with no output.
+                List<AIContent> contents = [];
+                if (message.Text.Length > 0)
+                {
+                    contents.Add(item: new TextContent(text: message.Text));
+                }
+
+                contents.Add(item: new FunctionCallContent(
+                    callId: message.RenderCallId,
+                    name: AssistantToolNames.RenderProductCard,
+                    arguments: ToCallArguments(products: message.Products)));
+
+                messages.Add(item: new ChatMessage(role: ChatRole.Assistant, contents: contents));
+                messages.Add(item: new ChatMessage(
+                    role: ChatRole.Tool,
+                    contents: [new FunctionResultContent(callId: message.RenderCallId, result: "Shown to the shopper.")]));
+                continue;
+            }
+
             if (message.Text.Length == 0)
             {
                 continue;
@@ -196,6 +219,21 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
 
         messages.Add(item: new ChatMessage(role: ChatRole.User, content: question));
         return messages;
+    }
+
+    private static Dictionary<string, object?> ToCallArguments(IReadOnlyList<ProductSummaryViewModel> products)
+    {
+        RenderProductCardArgs args = new(Products: [.. products.Select(selector: static product => new RenderProductCardArgs.ProductArg(
+            Id: product.Id,
+            Sku: product.Sku,
+            Name: product.Name,
+            PriceAmount: product.PriceAmount,
+            PriceCurrency: product.PriceCurrency,
+            StockQuantity: product.StockQuantity,
+            ImageUrl: product.ImageUrl))]);
+
+        string json = JsonSerializer.Serialize(value: args, options: AIJsonUtilities.DefaultOptions);
+        return JsonSerializer.Deserialize<Dictionary<string, object?>>(json: json, options: AIJsonUtilities.DefaultOptions) ?? [];
     }
 
     /// <summary>
@@ -226,6 +264,7 @@ internal sealed class ShoppingAssistantService(IShoppingAssistantApi assistantAp
             PriceAmount = product.PriceAmount,
             PriceCurrency = product.PriceCurrency,
             StockQuantity = product.StockQuantity,
+            ImageUrl = product.ImageUrl,
         })];
     }
 }

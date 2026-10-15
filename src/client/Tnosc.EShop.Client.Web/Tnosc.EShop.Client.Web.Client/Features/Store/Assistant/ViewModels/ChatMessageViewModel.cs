@@ -34,4 +34,11 @@ public sealed class ChatMessageViewModel
     /// <c>render_product_card</c> tool call. Empty for a turn that answered in prose only.
     /// </summary>
     public IReadOnlyList<ProductSummaryViewModel> Products { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets the id of the <c>render_product_card</c> call that produced <see cref="Products"/>.
+    /// The tool is render-only, so the next request must answer the call or the model provider
+    /// rejects the conversation as having a call with no output.
+    /// </summary>
+    public string? RenderCallId { get; set; }
 }

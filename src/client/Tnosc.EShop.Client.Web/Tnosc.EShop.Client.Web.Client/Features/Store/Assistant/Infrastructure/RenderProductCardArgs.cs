@@ -25,5 +25,6 @@ internal sealed record RenderProductCardArgs(IReadOnlyList<RenderProductCardArgs
         string Name,
         decimal PriceAmount,
         string PriceCurrency,
-        int StockQuantity);
+        int StockQuantity,
+        string? ImageUrl = null);
 }
