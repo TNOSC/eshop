@@ -47,14 +47,16 @@ lives in [`../docs/decisions/`](../docs/decisions/).
 
 | | Version | | Version |
 |---|---|---|---|
-| TFM / SDK | `net10.0` / 10.0.400-preview (no `global.json`) | Aspire | 13.5.0 (+ Hosting.PostgreSQL, Npgsql.EFCore) |
-| ASP.NET Core | 10.0.10 — Minimal APIs only, no MVC | Scrutor | 7.0.0 (`Scan` + `TryDecorate`) |
-| Keycloak | 26.6 — the only identity provider; owns users, credentials and realm roles | Aspire Keycloak | `Hosting.Keycloak` + `Keycloak.Authentication`, `13.5.0-preview.1.26417.10` (no stable build exists) |
-| EF Core | 10.0.10 (+ `.Relational`, `.Design`) | HybridCache | 10.8.0 |
-| Npgsql EFCore | 10.0.3 — Postgres is the only database | OpenAPI | AspNetCore.OpenApi 10.0.10, Scalar 2.10.0 |
+| TFM / SDK | `net10.0` / .NET 10 preview (`10.0.400-preview`; no `global.json`) | Aspire | 13.5.2 (+ `Hosting.PostgreSQL`, `Hosting.Keycloak`, `Hosting.Foundry`, `Hosting.Redis`) |
+| ASP.NET Core | 10.0.11 — Minimal APIs only, no MVC | Model Context Protocol | 2.2.0 |
+| Keycloak | 26.6 — the only identity provider; owns users, credentials and realm roles | Microsoft Agent Framework | `Microsoft.Agents.AI` 1.18.0; hosting + AG-UI `1.18.0-preview.260818.1`; `Microsoft.Extensions.AI` 10.9.0 |
+| EF Core | 10.0.11 (+ `.Relational`, `.Design`) | HybridCache | 10.8.0 |
+| Npgsql EFCore | 10.0.3 — Postgres is the only database | OpenAPI | `AspNetCore.OpenApi` 10.0.11, `Scalar.AspNetCore` 2.10.0 |
+| Fluent UI | `Microsoft.FluentUI.AspNetCore.Components` 5.0.0-rc.5-26219.1 | Azure AI / Foundry | `Azure.AI.Projects` 2.1.0-beta.4, `Azure.Identity` 1.21.0 |
 | xUnit / Shouldly | 2.9.3 / 4.3.0 | OpenTelemetry | 1.17.0 (via `ServiceDefaults`) |
 | NSubstitute / Bogus | 5.3.0 / 35.6.5 | Testcontainers / Respawn | 4.12.0 / 7.0.0 |
-| NetArchTest / Roslyn | 1.3.2 / 5.0.0 | Analyzers | Meziantou, Sonar, Roslynator, xunit |
+| NetArchTest / Roslyn | 1.3.2 / 5.0.0 | Analyzers | Meziantou, Sonar, Roslynator, xUnit |
+| Scrutor | 7.0.0 (`Scan` + `TryDecorate`) | Aspire Keycloak | `Aspire.Hosting.Keycloak` + `Aspire.Keycloak.Authentication`, `13.5.2-preview.1.26421.6` |
 
 ## Structure and architecture
 
