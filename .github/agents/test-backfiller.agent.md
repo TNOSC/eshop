@@ -7,9 +7,6 @@ tools:
   - execute
   - search
   - lsp
-  - serena-get_symbols_overview
-  - serena-find_symbol
-  - serena-find_referencing_symbols
 ---
 
 You find coverage gaps and fill them, following `.github/instructions/tests.instructions.md` and the `add-tests` skill.

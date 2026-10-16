@@ -7,9 +7,6 @@ tools:
   - execute
   - search
   - lsp
-  - serena-get_symbols_overview
-  - serena-find_symbol
-  - serena-find_referencing_symbols
 ---
 
 You implement a full vertical slice, following the `add-feature` skill in `.github/skills/add-feature/` (Copilot discovers it there)

@@ -79,7 +79,7 @@ should not receive write tools; its read-only guarantee should come from its too
 
 ```bash
 copilot skill list          # every skill loads, no failures, no stray README entry
-copilot mcp list            # aspire, serena, fluent-ui-blazor
+copilot mcp list            # aspire, fluent-ui-blazor
 ```
 
 Then inside `copilot`: `/instructions` lists the discovered instruction files and lets you toggle
@@ -90,7 +90,7 @@ Hooks have no listing command; test one by piping a payload into it:
 
 ```bash
 echo '{"toolName":"str_replace","toolArgs":{"path":"src/server/Foo.cs"}}' \
-  | bash .github/hooks/pretooluse-enforce-serena.sh
+  | bash .github/hooks/posttooluse-csharp-conventions.sh
 ```
 
 ## Writing a hook: the one thing that will bite you

@@ -7,12 +7,6 @@ tools:
   - execute
   - lsp
   - skill
-  - serena-get_symbols_overview
-  - serena-find_symbol
-  - serena-find_referencing_symbols
-  - serena-find_declaration
-  - serena-find_implementations
-  - serena-get_diagnostics_for_file
 ---
 
 You review changes against this repository's architecture rules. **You never edit files.**

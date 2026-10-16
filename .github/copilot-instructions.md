@@ -141,7 +141,7 @@ dropping the volume first.
 
 ```bash
 copilot skill list          # every skill loads, no failures, no stray README entry
-copilot mcp list            # aspire, serena, fluent-ui-blazor
+copilot mcp list            # aspire, fluent-ui-blazor
 ```
 
 Inside `copilot`, `/instructions` lists discovered instruction files and lets you toggle them, `/agent`
@@ -150,7 +150,7 @@ listing command; test one by piping a payload into it:
 
 ```bash
 echo '{"toolName":"str_replace","toolArgs":{"path":"src/server/Foo.cs"}}' \
-  | bash .github/hooks/pretooluse-enforce-serena.sh
+  | bash .github/hooks/posttooluse-csharp-conventions.sh
 ```
 
 `preToolUse` command hooks fail closed: exit 2, a crash, an unbound variable or a syntax error denies
