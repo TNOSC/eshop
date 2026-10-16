@@ -143,6 +143,13 @@
       the patched release. Drop this line once Testcontainers ships a version that requires it itself.
     -->
     <PackageVersion Include="SSH.NET" Version="2026.0.0" />
+    <!--
+      Transitive pin, not a package this solution uses directly. Aspire pulls MessagePack 2.5.302 through
+      StreamJsonRpc, which GHSA-qhrr-8q5h-9q3h (medium) covers for "< 2.5.303"; NU1902 is an error here,
+      so restore fails. 2.5.307 is the latest 2.5 release. Pinned centrally; referenced from the AppHost,
+      which the Acceptance project depends on. Drop once Aspire ships a version that requires it itself.
+    -->
+    <PackageVersion Include="MessagePack" Version="2.5.307" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
