@@ -34,6 +34,14 @@ public interface IEShopClient
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Fetches a single product's full details from the catalog.
+    /// </summary>
+    /// <param name="productId">The identifier of the product to fetch.</param>
+    /// <param name="cancellationToken">The token used to cancel the request.</param>
+    /// <returns>The product's details, or <see langword="null"/> when no product has that identifier.</returns>
+    Task<ProductDetails?> GetProductByIdAsync(Guid productId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Adds a new product to the catalog.
     /// </summary>
     /// <param name="request">The data describing the product to create.</param>
